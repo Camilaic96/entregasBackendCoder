@@ -38,8 +38,11 @@ class ProductManager {
             if (fs.existsSync(this.path)) {
                 const data = await fs.promises.readFile(this.path, 'utf-8')
                 const product = JSON.parse(data).find(product => product.id === idProduct)
-                if (!product) { return `Not found` }
-                return product
+                if (product) {
+                    return product
+                } else {
+                    return "Not found"
+                }
             }
         } catch (error) {
             console.log(error)
@@ -50,13 +53,16 @@ class ProductManager {
         try {
             if (fs.existsSync(this.path)) {
                 const data = await fs.promises.readFile(this.path, 'utf-8')
-                const product = JSON.parse(data).find(product => product.id === idProduct)
-                changedProduct = {
+                const products = JSON.parse(data)
+                const indexDelete = products.findIndex(product => parseInt(product.id) === parseInt(idProduct))
+                if (indexDelete === -1) { return "Not found" }
+                products.splice(indexDelete, 1)               
+                const changedProduct = {
                     id: idProduct,
                     ...newData
                 }
-                this.addProduct(changedProduct);
-                console.log(changedProduct)
+                products.push(changedProduct);
+                await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
             }
         } catch (error) {
             console.log(error)
@@ -69,13 +75,9 @@ class ProductManager {
                 const data = await fs.promises.readFile(this.path, 'utf-8')
                 const products = JSON.parse(data)
                 const indexDelete = products.findIndex(product => parseInt(product.id) === parseInt(idProduct))
-                if (indexDelete !== -1) {
-                    products.splice(indexDelete, 1)
-                    await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-                    console.log("Producto de id " + parseInt(idProduct) + " ha sido eliminado")
-                } else {
-                    console.log("No existe el producto de id " + parseInt(idProduct))
-                }
+                if (indexDelete === -1) { return "Not found" }
+                products.splice(indexDelete, 1)
+                await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
             }
         } catch (error) {
             console.log(error)
@@ -85,59 +87,38 @@ class ProductManager {
 
 const manejadorDeProductos = new ProductManager('./productsList.json')
 
+//TESTING
 const newProduct = {
-    title: "ajedrez",
-    description: "fsdfsf",
-    price: 1000,
-    thumbnail: 'https://http2.mlstatic.com/D_NQ_NP_13522-MLA3016582739_082012-O.jpg',
-    code: 12346,
-    stock: 3
+    title: "producto prueba",
+    description: "Este es un producto prueba",
+    price: 200,
+    thumbnail: 'Sin imagen',
+    code: 'abc123',
+    stock: 25
+}
+const nuevo = {
+    title: "prueba cambio valor campo",
+    description: "Este es un producto prueba",
+    price: 200,
+    thumbnail: 'Sin imagen',
+    code: 'abc123',
+    stock: 25
 }
 
-const promesa2 = async () => {
+const testing = async () => {
+    console.log("prueba getProducts vacío: ", await manejadorDeProductos.getProducts())
+    console.log("Agregar un producto")
     await manejadorDeProductos.addProduct(newProduct)
+    console.log("prueba getProducts con el producto agregado:\n", await manejadorDeProductos.getProducts())
+    console.log("Agregar dos productos más")
+    await manejadorDeProductos.addProduct(newProduct)
+    await manejadorDeProductos.addProduct(newProduct)
+    console.log("prueba getProductById existente id 3:\n", await manejadorDeProductos.getProductById(3))
+    console.log("prueba getProductById no existente id 8: ", await manejadorDeProductos.getProductById(8))
+    console.log("prueba updateProduct name prod id 2:\n", await manejadorDeProductos.updateProduct(2, nuevo))
+    console.log("prueba getProductById después del cambio de nombre id 2:\n", await manejadorDeProductos.getProductById(2))
+    console.log("prueba deleteProduct id 1:\n", await manejadorDeProductos.deleteProduct(1))
+    console.log("prueba getProductById después de eliminar id 1:\n", await manejadorDeProductos.getProductById(1))
 }
-const promesa = async () => {
-    await manejadorDeProductos.getProducts()
-}
-//promesa()
 
-//promesa2()
-
-const promesa3 = async () => {
-    await manejadorDeProductos.getProductById(5)
-}
-//promesa3()
-
-const promesa4 = async () => {
-    await manejadorDeProductos.deleteProduct(5)
-}
-//promesa4()
-
-const promesa5 = async () => {
-    const nuevo = {
-        title: "prueba nuevo",
-        description: "fsdfsf",
-        price: 1000,
-        thumbnail: 'https://http2.mlstatic.com/D_NQ_NP_13522-MLA3016582739_082012-O.jpg',
-        code: 12346,
-        stock: 3
-    }
-
-    await manejadorDeProductos.changedProduct(3, nuevo)
-}
-promesa5()
-
-
-/*
-console.log(manejadorDeProductos.getProducts())
-
-console.log(manejadorDeProductos.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25))
-
-console.log(manejadorDeProductos.getProducts())
-
-console.log(manejadorDeProductos.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25))
-
-console.log(manejadorDeProductos.getProductById(65))
-console.log(manejadorDeProductos.getProductById(1))
-*/
+testing()
