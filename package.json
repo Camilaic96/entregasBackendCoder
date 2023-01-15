@@ -1,12 +1,22 @@
 {
   "name": "backendcoder",
   "version": "1.0.0",
-  "description": "",
-  "main": "entregable1.js",
+  "main": "entregables.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Camilaic96/entregasBackendCoder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Camilaic96/entregasBackendCoder/issues"
+  },
+  "homepage": "https://github.com/Camilaic96/entregasBackendCoder#readme",
+  "description": ""
 }
