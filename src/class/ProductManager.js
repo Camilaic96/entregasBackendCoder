@@ -1,4 +1,4 @@
-import fs from 'fs'
+const fs = require('fs');
 
 class ProductManager {
     constructor(path) {
@@ -85,40 +85,4 @@ class ProductManager {
     }
 }
 
-const manejadorDeProductos = new ProductManager('./productsList.json')
-
-//TESTING
-const newProduct = {
-    title: "producto prueba",
-    description: "Este es un producto prueba",
-    price: 200,
-    thumbnail: 'Sin imagen',
-    code: 'abc123',
-    stock: 25
-}
-const nuevo = {
-    title: "prueba cambio valor campo",
-    description: "Este es un producto prueba",
-    price: 200,
-    thumbnail: 'Sin imagen',
-    code: 'abc123',
-    stock: 25
-}
-
-const testing = async () => {
-    console.log("prueba getProducts vacío: ", await manejadorDeProductos.getProducts())
-    console.log("Agregar un producto")
-    await manejadorDeProductos.addProduct(newProduct)
-    console.log("prueba getProducts con el producto agregado:\n", await manejadorDeProductos.getProducts())
-    console.log("Agregar dos productos más")
-    await manejadorDeProductos.addProduct(newProduct)
-    await manejadorDeProductos.addProduct(newProduct)
-    console.log("prueba getProductById existente id 3:\n", await manejadorDeProductos.getProductById(3))
-    console.log("prueba getProductById no existente id 8: ", await manejadorDeProductos.getProductById(8))
-    console.log("prueba updateProduct name prod id 2:\n", await manejadorDeProductos.updateProduct(2, nuevo))
-    console.log("prueba getProductById después del cambio de nombre id 2:\n", await manejadorDeProductos.getProductById(2))
-    console.log("prueba deleteProduct id 1:\n", await manejadorDeProductos.deleteProduct(1))
-    console.log("prueba getProductById después de eliminar id 1:\n", await manejadorDeProductos.getProductById(1))
-}
-
-testing()
+module.exports = ProductManager;
