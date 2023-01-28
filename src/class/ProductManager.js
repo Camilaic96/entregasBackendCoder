@@ -8,9 +8,9 @@ class ProductManager {
     async getProducts() {
         try {
             if (fs.existsSync(this.path)) {
-                const data = await fs.promises.readFile(this.path, 'utf-8')
-                const products = JSON.parse(data)
-                return products
+                const data = await fs.promises.readFile(this.path, 'utf-8');
+                const products = JSON.parse(data);
+                return products;
             }
             return []
 
@@ -36,13 +36,9 @@ class ProductManager {
     async getProductById(idProduct) {
         try {
             if (fs.existsSync(this.path)) {
-                const data = await fs.promises.readFile(this.path, 'utf-8')
-                const product = JSON.parse(data).find(product => product.id === idProduct)
-                if (product) {
-                    return product
-                } else {
-                    return "Not found"
-                }
+                const data = await fs.promises.readFile(this.path, 'utf-8');
+                const product = JSON.parse(data).find(product => product.id === idProduct);
+                return (product ? product : "Not found" );
             }
         } catch (error) {
             console.log(error)

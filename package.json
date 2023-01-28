@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/Camilaic96/entregasBackendCoder#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   },
-  "devDependencies": {},
   "description": ""
 }
