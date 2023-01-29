@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const uploader = require('../utils.js');
 const ProductManager = require('./class/ProductManager.js');
 
 const router = Router();
@@ -21,7 +22,7 @@ router.get('/:pid', async (req, res) => {
     res.status(200).json({ message: productById });
 })
 
-router.post('/', async (req, res) => {
+router.post('/', uploader.array('files'), async (req, res) => {
     const { title, description, code, price, status, stock, category, thumbnails } = req.body;
     if ( !title || !description || !code || !price || !status || !stock || !category ) {
         return res.status(400).json( {error: 'Faltan datos' });
@@ -33,14 +34,20 @@ router.post('/', async (req, res) => {
         price,
         status,
         stock,
-        category,
-        thumbnails
+        category
+    }
+    newProduct.thumbnails = []
+    console.log(req.files)
+    if(req.files){
+        req.files.map(file => {
+            newProduct.thumbnails.push(file.path)
+        })
     }
     manejadorDeProductos.addProduct(newProduct)
     res.json({ message: 'Producto creado'});
 })
 
-router.put('/:pid', async (req, res) => {
+router.put('/:pid', uploader.array('files'), async (req, res) => {
     const { pid } = req.params;
     const { title, description, code, price, status, stock, category, thumbnails } = req.body;
     if ( !title || !description || !code || !price || !status || !stock || !category ) {
@@ -53,8 +60,14 @@ router.put('/:pid', async (req, res) => {
         price,
         status,
         stock,
-        category,
-        thumbnails
+        category
+    }
+
+    newDataProduct.thumbnails = []
+    if(req.files){
+        req.files.map(file => {
+            newDataProduct.thumbnails.push(file.path)
+        })
     }
     
     if(!await manejadorDeProductos.updateProduct(Number(pid), newDataProduct)) {
