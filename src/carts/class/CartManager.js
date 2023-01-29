@@ -21,12 +21,10 @@ class CartManager {
 
     async getCartById(idCart) {
         try {
-            if (fs.existsSync(this.path)) {
-                const data = await fs.promises.readFile(this.path, 'utf-8');
-                const cart = JSON.parse(data).find(cart => cart.id === idCart);
-                return (cart ? cart : "Not found" );
-            }
-        } catch (error) {
+            const carts = await this.getCarts();
+            const cart = carts.find(cart => cart.id === idCart);
+            return (cart ? cart : false );
+        } catch (error) { 
             console.log(error)
         }
     }
@@ -41,12 +39,10 @@ class CartManager {
                 id,
                 products: prods
             }
-
             carts.push(newCart);
-
             await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));
 
-            return cart
+            return newCart
         } catch (error) {
             console.log(error)
         }
@@ -56,17 +52,16 @@ class CartManager {
         try {
                 const carts = await this.getCarts();
                 const cart = await this.getCartById(cid);
-                let products = cart.products;
-                let product = products.find(product => product.pid === pid)
-                product ? product.quantity += quantity : products.push({ pid, quantity })
+                let product = cart.products.find(product => product.pid === pid)
+                product ? product.quantity += quantity : cart.products.push({ pid, quantity })
                 
                 const indexDelete = carts.findIndex(cart => parseInt(cart.id) === cid)
-                if (indexDelete === -1) { return "Not found" }
+                if (indexDelete === -1) { return false }
                 carts.splice(indexDelete, 1)      
 
                 const changedCart = {
                     id: cid,
-                    products: [...products]
+                    products: [...cart.products]
                 }
                 carts.push(changedCart);
 

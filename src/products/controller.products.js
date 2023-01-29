@@ -1,9 +1,9 @@
 const { Router } = require('express');
-const ProductManager = require('../class/ProductManager.js');
+const ProductManager = require('./class/ProductManager.js');
 
 const router = Router();
 
-const manejadorDeProductos = new ProductManager('./src/productsList.json');
+const manejadorDeProductos = new ProductManager('./src/products/productsList.json');
 
 router.get('/', async (req, res) => {
     const { limit } = req.query;
@@ -15,16 +15,16 @@ router.get('/', async (req, res) => {
 router.get('/:pid', async (req, res) => {
     const { pid } = req.params;
     productById = await manejadorDeProductos.getProductById(Number(pid))
-    res.json({ message: productById });
+    if(!productById) {
+        return res.status(400).json( {error: 'No existe el producto' });
+    }
+    res.status(200).json({ message: productById });
 })
 
 router.post('/', async (req, res) => {
     const { title, description, code, price, status, stock, category, thumbnails } = req.body;
     if ( !title || !description || !code || !price || !status || !stock || !category ) {
         return res.status(400).json( {error: 'Faltan datos' });
-    }
-    if(!thumbnails) {
-        thumbnails = "";
     }
     const newProduct = {
         title,
@@ -46,9 +46,6 @@ router.put('/:pid', async (req, res) => {
     if ( !title || !description || !code || !price || !status || !stock || !category ) {
         return res.status(400).json( {error: 'Faltan datos' });
     }
-    if(!thumbnails) {
-        const thumbnails = "";
-    }
     const newDataProduct = {
         title,
         description,
@@ -59,14 +56,20 @@ router.put('/:pid', async (req, res) => {
         category,
         thumbnails
     }
-    await manejadorDeProductos.updateProduct(Number(pid), newDataProduct)
-    res.json({ message: 'Hi products with PUT'});
+    
+    if(!await manejadorDeProductos.updateProduct(Number(pid), newDataProduct)) {
+        return res.status(400).json( {error: 'No existe el producto' });
+    }
+    res.json({ message: 'Producto modificado'});
 })
 
 router.delete('/:pid', async (req, res) => {
     const { pid } = req.params;
     productById = await manejadorDeProductos.deleteProduct(Number(pid))
-    res.json({ message: `Producto de id: ${pid} eliminado` });
+    if(!productById) {
+        return res.status(400).json( {error: 'No existe el producto' });
+    }
+    res.json({ message: `Producto de id ${pid} eliminado` });
 })
 
 module.exports = router;
