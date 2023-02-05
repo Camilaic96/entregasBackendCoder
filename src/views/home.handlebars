@@ -1,0 +1,15 @@
+<h2>Lista de productos</h2>
+
+<div class="row">
+    {{#each products}}
+    <div class="col-md-3 m-3">
+        <p><strong>Id: </strong>{{this.id}}</p>
+        <p><strong>Title: </strong>{{this.title}}</p>
+        <p><strong>Description: </strong>{{this.description}}</p>
+        <p><strong>Code: </strong>{{this.code}}</p>
+        <p><strong>Price: </strong>{{this.price}}</p>
+        <p><strong>Stock: </strong>{{this.stock}}</p>
+        <p><strong>Category: </strong>{{this.category}}</p>
+    </div>
+    {{/each}}
+</div>
