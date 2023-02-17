@@ -2,10 +2,10 @@ const express = require('express');
 const handlebars = require('express-handlebars');
 const morgan = require('morgan');
 const { Server } = require('socket.io');
-
 const router = require('./router/app.js');
 
 const port = 8080;
+
 const app = express();
 
 app.use(express.json());
@@ -24,6 +24,20 @@ const httpServer = app.listen(port, () => {
 
 global.io = new Server(httpServer);
 
-io.on('connection', socket => {
-    console.log(`New client with id: ${socket.id}`)
+
+const messages = []
+
+global.io.on('connection', socket => {
+    console.log(`Client with id: ${socket.id}`)
+
+    socket.on('newUser', user => {
+        socket.broadcast.emit('userConnected', user)
+
+        socket.emit('messageLogs', messages)
+    })
+
+    socket.on('message', data => {
+        messages.push(data)
+        io.emit('messageLogs', data)
+    })
 })
