@@ -7,7 +7,8 @@
 		"price": 1500,
 		"status": true,
 		"stock": 10,
-		"category": "3"
+		"category": "3",
+        "thumbnail": ""
 	},
 	{
 		"id": 2,
@@ -17,7 +18,8 @@
 		"price": 1500,
 		"status": true,
 		"stock": 10,
-		"category": "3"
+		"category": "3",
+        "thumbnail": ""
 	},
 	{
 		"id": 3,
@@ -27,7 +29,8 @@
 		"price": 1500,
 		"status": true,
 		"stock": 10,
-		"category": "3"
+		"category": "3",
+        "thumbnail": ""
 	},
 	{
 		"id": 4,

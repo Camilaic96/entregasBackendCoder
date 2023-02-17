@@ -1,14 +1,15 @@
 const socket = io()
 
 const message = document.getElementById('message')
-message.innerHTML = ""
+const messageProduct = document.getElementById('messageProduct')
+messageProduct.innerHTML = ""
 
 socket.on('mostrarProductos', data => {
     console.log("llega a cliente mostrar")
     console.log(data)
-    message.innerHTML = ""
+    messageProduct.innerHTML = ""
     data.map(product => {
-        message.innerHTML += `
+        messageProduct.innerHTML += `
             <div class="card mb-3 col-3">
             <div class="card-body">
             <p class="card-text">Id: <b>${product.id}</b></p>
@@ -27,9 +28,9 @@ socket.on('mostrarProductos', data => {
 socket.on('crearProducto', data => {
     console.log("llega a cliente crear")
     console.log(data)
-    message.innerHTML = ""
+    messageProduct.innerHTML = ""
     data.map(product => {
-        message.innerHTML += `
+        messageProduct.innerHTML += `
             <div class="card mb-3 col-3">
             <div class="card-body">
             <p class="card-text">Id: <b>${product.id}</b></p>
@@ -48,9 +49,9 @@ socket.on('crearProducto', data => {
 socket.on('modificarProducto', data => {
     console.log("llega a cliente modificar")
     console.log(data)
-    message.innerHTML = ""
+    messageProduct.innerHTML = ""
     data.map(product => {
-        message.innerHTML += `
+        messageProduct.innerHTML += `
             <div class="card mb-3 col-3">
             <div class="card-body">
             <p class="card-text">Id: <b>${product.id}</b></p>
@@ -69,9 +70,9 @@ socket.on('modificarProducto', data => {
 socket.on('eliminarProducto', data => {
     console.log("llega a cliente eliminar")
     console.log(data)
-    message.innerHTML = ""
+    messageProduct.innerHTML = ""
     data.map(product => {
-        message.innerHTML += `
+        messageProduct.innerHTML += `
         <div class="card mb-3 col-3">
         <div class="card-body">
         <p class="card-text">Id: <b>${product.id}</b></p>
@@ -87,12 +88,6 @@ socket.on('eliminarProducto', data => {
     })
 });
 
-//crear una funcion mostrarProducto que reciba por parametro el prod para reemplazar el codigo inyectado
-
-
-//modificaciones sweerAlert
-
-//buscar cómo hacer para bloquear la pantalla hasta que coloque el usuario. Al clickear afuera no se salga el mensaje
 const swal = async () => {
     const chatBox = document.getElementById("chatBox")
     const result = await Swal.fire({
@@ -109,7 +104,6 @@ const swal = async () => {
     socket.emit('newUser', user)
     socket.on('userConnected', user => {
         Swal.fire({
-            // title: "Bienvenido!",
             text: `Bienvenido ${user} al chat!`,
             toast: true,
             position: "top-right",
