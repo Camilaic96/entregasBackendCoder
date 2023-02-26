@@ -1,7 +1,8 @@
 const { Router } = require('express');
-const MessagesDao = require('../dao/Message.dao.js')
-const Message = new MessagesDao('Messages.json');
-const FilesDao = require('../dao/Files.dao')
+
+const MessageDao = require('../dao/mongoManager/Message.dao')
+const Message = new MessageDao('Messages.json');
+const FilesDao = require('../dao/fsManager/Files.dao')
 const MessageManager = new FilesDao('Messages.json')
 
 const router = Router();

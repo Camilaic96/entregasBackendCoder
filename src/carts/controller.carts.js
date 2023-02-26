@@ -1,11 +1,10 @@
 const { Router } = require('express');
 
-const CartDao = require('../dao/Cart.dao.js');
+const CartDao = require('../dao/mongoManager/Cart.dao.js');
 const Cart = new CartDao('Carts.json');
-const ProductDao = require('../dao/Product.dao.js');
+const ProductDao = require('../dao/mongoManager/Product.dao.js');
 const Product = new ProductDao('Products.json');
-const FilesDao = require('../dao/Files.dao');
-const { parse } = require('dotenv');
+const FilesDao = require('../dao/fsManager/Files.dao');
 const CartManager = new FilesDao('Carts.json')
 
 const router = Router();

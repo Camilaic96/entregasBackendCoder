@@ -1,22 +1,8 @@
-const fs = require('fs');
-const Message = require('./models/Messages.model')
+const Message = require('../models/Messages.model')
 
 class MessageDao {
     constructor(file) {
         this.file = `${process.cwd()}/src/files/${file}`
-    }
-
-    async getMessages() {
-        try {
-            if (fs.existsSync(this.file)) {
-                const data = await fs.promises.readFile(this.file, 'utf-8');
-                const messages = JSON.parse(data);
-                return messages;
-            }
-            return []
-        } catch (error) {
-            console.log(error)
-        }
     }
 
     async find() {

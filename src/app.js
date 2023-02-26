@@ -2,7 +2,7 @@ const app = require('./index')
 const { port } = require('./config')
 const { Server } = require('socket.io');
 
-const MessagesDao = require('./dao/Message.dao.js')
+const MessagesDao = require('./dao/mongoManager/Message.dao')
 const Message = new MessagesDao('Messages.json');
 
 const httpServer = app.listen(port, () => {

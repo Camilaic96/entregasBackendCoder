@@ -1,7 +1,6 @@
 const fs = require('fs');
-const Cart = require('./models/Carts.model')
 
-class CartDao {
+class cartManager {
     constructor(path) {
         this.path = path
     }
@@ -71,80 +70,5 @@ class CartDao {
             console.log(error)
         }
     }
-
-    async find() {
-        try {
-            const carts = await Cart.find()
-            return carts
-        } catch (error) {
-            return error
-        }
-    }
-
-    async findOne(param) {
-        try {
-            const cart = await Cart.findOne(param)
-            return cart
-        } catch (error) {
-            return error
-        }
-    }
-    
-    async insertMany(newCarts) {
-        try {
-            const carts = await Cart.insertMany(newCarts)
-            return carts
-        } catch (error) {
-            return error
-        }
-    }
-
-    async create(newCart) {
-        try {
-            await Cart.create(newCart)
-            return 'Carrito creado'
-        } catch (error) {
-            return error
-        }
-    }
-/*
-    async updateOne(rule, newData, option) {
-        try {
-            const cart = await Cart.updateOne(rule, newData, option)
-            return cart
-        } catch (error) {
-            return error
-        }
-    }
-*/
-    async updateOne(cartId, newProducts) {
-        try {
-            const cart = await Cart.findOne({ id: cartId })
-            cart.products = newProducts
-            const response = Cart.updateOne({ id: cartId }, cart)
-            return response
-        } catch (error) {
-            return error
-        }
-    }
-
-    async deleteOne(param) {
-        try {
-            const cart = await Cart.deleteOne(param)
-            return cart
-        } catch (error) {
-            return error
-        }
-    }
-
-    async deleteMany() {
-        try {
-            await Cart.deleteMany()
-            return 'Carritos eliminados'
-        } catch (error) {
-            return error
-        }
-    }
 }
-
-module.exports = CartDao;
+module.exports = cartManager;

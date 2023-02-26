@@ -1,8 +1,9 @@
 const { Router } = require('express');
 const uploader = require('../utils.js');
-const ProductDao = require('../dao/Product.dao.js');
-const FilesDao = require('../dao/Files.dao')
+
+const ProductDao = require('../dao/mongoManager/Product.dao.js');
 const Product = new ProductDao('Products.json');
+const FilesDao = require('../dao/fsManager/Files.dao')
 const ProductManager = new FilesDao('Products.json')
 
 const router = Router();
