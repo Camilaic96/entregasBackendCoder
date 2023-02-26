@@ -9,8 +9,26 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        //const { limit, page, sort, query } = req.query;
-        const productsBD = await Product.find()
+        const limit = parseInt(req.query.limit) || 10
+        const page = parseInt(req.query.page) || 1
+        let sort = req.query.sort ? req.query.sort.toLowerCase() : '';
+        sort = sort === 'asc' ? 1 :
+        sort === 'desc' ? -1 :
+        undefined
+        const optionsFind = {
+            page,
+            limit,
+            sort: { price: sort }
+        }
+        const category = req.query.category;
+        const stock = req.query.stock;
+        const filter = {
+            ...(category && { category }),
+            ...(stock && { stock: parseInt(stock) }),
+        };
+
+        const products = await Product.find(optionsFind, filter)
+        /*
         const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
             id,
             title,
@@ -22,7 +40,8 @@ router.get('/', async (req, res) => {
             category,
             thumbnails
         }))
-        res.render('home.handlebars', { products })
+        res.render('home.handlebars', { products })*/
+        res.json({ products })
     } catch (error) {
         res.status(400).json({ error })
     }

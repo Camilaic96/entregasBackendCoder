@@ -71,9 +71,11 @@ class ProductDao {
         }
     }
 
-    async find() {
+    async find(optionsFind, filter) {
         try {
-            const products = await Product.paginate({}, { limit: 3, page: 1 })
+            //const prevLink = `localhost:8080/api/products?page=${page}`
+            //const nextLink = `localhost:8080/api/products?page=${page}`
+            const products = await Product.paginate( filter, optionsFind )
             return products
         } catch (error) {
             return error
