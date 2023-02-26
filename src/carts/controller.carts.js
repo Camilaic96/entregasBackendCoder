@@ -53,7 +53,7 @@ router.get('/:cid', async (req, res) => {
     }
 })
 
-router.post('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/products/:pid', async (req, res) => {
     try {
         const { cid, pid } = req.params;
         const { quantity } = req.body;
@@ -72,15 +72,29 @@ router.delete('/', async (req, res) => {
     res.json({ message: 'Todos los carritos eliminados' })
 })
 
-//NUEVO ENTREGA CLASE 9
-router.delete('/:cid/product/:pid', async (req, res) => {
+router.delete('/:cid/products/:pid', async (req, res) => {
     try {
-        
+        const { cid, pid } = req.params;
+        const cart = await Cart.findOne({ id: parseInt(cid) })
+        newProducts = cart.products.filter(product => product.pid !== parseInt(pid))
+        await Cart.updateOne(parseInt(cid), newProducts)
+        res.json({ message: 'Producto eliminado'})
     } catch (error) {
         res.status(400).json({ error });
     }
 })
 
+router.delete('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        await Cart.deleteOne({ id: parseInt(cid) })
+        res.json({ message: 'Carrito eliminado'})
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
+//FALTA
 router.put('/:cid', async (req, res) => {
     try {
 
@@ -89,15 +103,7 @@ router.put('/:cid', async (req, res) => {
     }
 })
 
-router.put('/:cid/product/:pid', async (req, res) => {
-    try {
-        
-    } catch (error) {
-        res.status(400).json({ error });
-    }
-})
-
-router.delete('/:cid', async (req, res) => {
+router.put('/:cid/products/:pid', async (req, res) => {
     try {
         
     } catch (error) {

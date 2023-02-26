@@ -117,13 +117,13 @@ class CartDao {
         }
     }
 */
-    async updateOne(cartId, productId) {
+    async updateOne(cartId, newProducts) {
         try {
-            const cart = await Cart.findOne({ cid: cartId })
-            cart.products.push({ product: productId })
-            const response = Cart.updateOne({ cid: cartId }, cart)
+            const cart = await Cart.findOne({ id: cartId })
+            cart.products = newProducts
+            const response = Cart.updateOne({ id: cartId }, cart)
+            console.log(response)
             return response
-            return cart
         } catch (error) {
             return error
         }
