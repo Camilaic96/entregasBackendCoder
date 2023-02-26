@@ -95,12 +95,16 @@ router.delete('/:cid', async (req, res) => {
     }
 })
 
-//FALTA
 router.put('/:cid', async (req, res) => {
     try {
+        const { cid } = req.params
+        const { products } = req.body
 
+        await Cart.updateOne(parseInt(cid), products)
+
+        res.json({ message: 'Carrito modificado' })
     } catch (error) {
-        res.status(400).json({ error });
+        res.status(500).json({ error })
     }
 })
 
@@ -119,18 +123,6 @@ router.put('/:cid/products/:pid', async (req, res) => {
         res.json({ message: 'Producto modificado'})
     } catch (error) {
         res.status(400).json({ error });
-    }
-})
-
-router.patch('/:cid', async (req, res) => {
-    try {
-        const { cid } = req.params
-        const { product } = req.body
-        const response = await Cart.updateOne(parseInt(cid), product)
-
-        res.json({ message: response })
-    } catch (error) {
-        res.status(500).json({ error })
     }
 })
 
