@@ -15,7 +15,7 @@ io.on('connection', socket => {
     console.log(`Client with id: ${socket.id}`)
 
     socket.on('newUser', async user => {
-        socket.broadcast.emit('userConnected', user)
+        socket.emit('userConnected', user)
         const messages = await Message.find()
         socket.emit('messageLogs', messages)
     })

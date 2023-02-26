@@ -1,7 +1,5 @@
 const socket = io()
 
-//const message = document.getElementById('message')
-
 const swal = async () => {
     const chatBox = document.getElementById("chatBox")
     const result = await Swal.fire({
