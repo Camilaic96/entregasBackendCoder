@@ -4,7 +4,8 @@ const CartDao = require('../dao/Cart.dao.js');
 const Cart = new CartDao('Carts.json');
 const ProductDao = require('../dao/Product.dao.js');
 const Product = new ProductDao('Products.json');
-const FilesDao = require('../dao/Files.dao')
+const FilesDao = require('../dao/Files.dao');
+const { parse } = require('dotenv');
 const CartManager = new FilesDao('Carts.json')
 
 const router = Router();
@@ -105,7 +106,17 @@ router.put('/:cid', async (req, res) => {
 
 router.put('/:cid/products/:pid', async (req, res) => {
     try {
-        
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+        const cart = await Cart.findOne({ id: parseInt(cid) })
+        const newData = cart.products.map(product => {
+            if (product.pid === parseInt(pid)) {
+                product.quantity = parseInt(quantity)
+            }
+            return product;
+        });
+        await Cart.updateOne(parseInt(cid), newData)
+        res.json({ message: 'Producto modificado'})
     } catch (error) {
         res.status(400).json({ error });
     }

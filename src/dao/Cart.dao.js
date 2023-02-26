@@ -122,7 +122,6 @@ class CartDao {
             const cart = await Cart.findOne({ id: cartId })
             cart.products = newProducts
             const response = Cart.updateOne({ id: cartId }, cart)
-            console.log(response)
             return response
         } catch (error) {
             return error
