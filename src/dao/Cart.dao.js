@@ -1,6 +1,7 @@
 const fs = require('fs');
+const Cart = require('./models/Carts.model')
 
-class CartManager {
+class CartDao {
     constructor(path) {
         this.path = path
     }
@@ -70,6 +71,81 @@ class CartManager {
             console.log(error)
         }
     }
+
+    async find() {
+        try {
+            const carts = await Cart.find()
+            return carts
+        } catch (error) {
+            return error
+        }
+    }
+
+    async findOne(param) {
+        try {
+            const cart = await Cart.findOne(param)
+            return cart
+        } catch (error) {
+            return error
+        }
+    }
+    
+    async insertMany(newCarts) {
+        try {
+            const carts = await Cart.insertMany(newCarts)
+            return carts
+        } catch (error) {
+            return error
+        }
+    }
+
+    async create(newCart) {
+        try {
+            await Cart.create(newCart)
+            return 'Carrito creado'
+        } catch (error) {
+            return error
+        }
+    }
+/*
+    async updateOne(rule, newData, option) {
+        try {
+            const cart = await Cart.updateOne(rule, newData, option)
+            return cart
+        } catch (error) {
+            return error
+        }
+    }
+*/
+    async updateOne(cartId, productId) {
+        try {
+            const cart = await Cart.findOne({ cid: cartId })
+            cart.products.push({ product: productId })
+            const response = Cart.updateOne({ cid: cartId }, cart)
+            return response
+            return cart
+        } catch (error) {
+            return error
+        }
+    }
+
+    async deleteOne(param) {
+        try {
+            const cart = await Cart.deleteOne(param)
+            return cart
+        } catch (error) {
+            return error
+        }
+    }
+
+    async deleteMany() {
+        try {
+            await Cart.deleteMany()
+            return 'Carritos eliminados'
+        } catch (error) {
+            return error
+        }
+    }
 }
 
-module.exports = CartManager;
+module.exports = CartDao;

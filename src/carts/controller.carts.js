@@ -1,29 +1,32 @@
 const { Router } = require('express');
-const Cart = require('../dao/models/Carts.model')
-const Product = require('../dao/models/Products.model')
-const CartManager = require('../dao/CartManager.js');
-const ProductManager = require('../dao/ProductManager.js');
+
+const CartDao = require('../dao/Cart.dao.js');
+const Cart = new CartDao('Carts.json');
+const ProductDao = require('../dao/Product.dao.js');
+const Product = new ProductDao('Products.json');
+const FilesDao = require('../dao/Files.dao')
+const CartManager = new FilesDao('Carts.json')
 
 const router = Router();
 
-const manejadorDeCarritos = new CartManager('./src/files/Carts.json');
-const manejadorDeProductos = new ProductManager('./src/files/Products.json');
+router.get('/', async (req, res) => {
+    try {
+        const carts = await Cart.find()
+        res.json( { response: carts })
+    } catch (error) {
+        res.status(500).json({ error })
+    }
+})
+
+router.post('/populate', async (req, res) => {
+    const carts = await CartManager.loadItems()
+    const response = await Cart.insertMany(carts)
+    res.json({ message: response })
+})
 
 router.post('/', async (req, res) => {
-    const { products } = req.body;
-    /*
-    if (!products) {
-        return res.status(400).json({ error: 'Faltan datos' });
-    }
-    for (let i = 0; i < products.length; i++) {
-        if (!(await manejadorDeProductos.getProductById(Number(products[i].pid)))) {
-            return res.status(400).json({ error: 'Productos inválidos' });
-        }
-    }
-    manejadorDeCarritos.addCart(products);
-    res.status(200).json({ message: 'Carrito creado' });
-    */
     try {
+        const { products } = req.body;
         for (let i = 0; i < products.length; i++) {
             if (!(await Cart.findOne({ id: Number(products[i].pid) }))) {
                 return res.status(400).json({ error: 'Productos inválidos' });
@@ -38,14 +41,6 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/:cid', async (req, res) => {
-    /*
-    const { cid } = req.params;
-    cartById = await manejadorDeCarritos.getCartById(Number(cid))
-    if (!cartById) {
-        return res.status(400).json({ error: 'No existe el carrito' });
-    }
-    res.json({ message: cartById });
-    */
     try {
         const { cid } = req.params;
         const cartById = await Cart.findOne({ id: parseInt(cid) });
@@ -59,16 +54,6 @@ router.get('/:cid', async (req, res) => {
 })
 
 router.post('/:cid/product/:pid', async (req, res) => {
-    /*
-    const { cid, pid } = req.params;
-    const { quantity } = req.body;
-    if (!quantity || (Number(quantity) < 1) || !(await manejadorDeCarritos.getCartById(Number(cid))) || !(await manejadorDeProductos.getProductById(Number(pid)))) {
-        return res.status(400).json({ error: 'Datos inválidos' });
-    }
-
-    await manejadorDeCarritos.addProductToCart(Number(cid), Number(pid), Number(quantity));
-    res.status(200).json({ message: 'Producto agregado correctamente' });
-    */
     try {
         const { cid, pid } = req.params;
         const { quantity } = req.body;
@@ -78,6 +63,57 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
     } catch (error) {
         res.status(400).json({ error });
+    }
+})
+
+//Delete all carts bd
+router.delete('/', async (req, res) => {
+    await Cart.deleteMany()
+    res.json({ message: 'Todos los carritos eliminados' })
+})
+
+//NUEVO ENTREGA CLASE 9
+router.delete('/:cid/product/:pid', async (req, res) => {
+    try {
+        
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
+router.put('/:cid', async (req, res) => {
+    try {
+
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
+router.put('/:cid/product/:pid', async (req, res) => {
+    try {
+        
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
+router.delete('/:cid', async (req, res) => {
+    try {
+        
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
+router.patch('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        const { product } = req.body
+        const response = await Cart.updateOne(parseInt(cid), product)
+
+        res.json({ message: response })
+    } catch (error) {
+        res.status(500).json({ error })
     }
 })
 

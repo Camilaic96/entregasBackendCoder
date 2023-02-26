@@ -1,43 +1,56 @@
 const { Router } = require('express');
 const uploader = require('../utils.js');
-const Product = require('../dao/models/Products.model')
-const ProductManager = require('../dao/ProductManager.js');
+const ProductDao = require('../dao/Product.dao.js');
+const FilesDao = require('../dao/Files.dao')
+const Product = new ProductDao('Products.json');
+const ProductManager = new FilesDao('Products.json')
 
 const router = Router();
 
-const manejadorDeProductos = new ProductManager('./src/files/Products.json');
-
 router.get('/', async (req, res) => {
-    /*
-    const { limit } = req.query;
-    const products = await manejadorDeProductos.getProducts();
-    const response = limit ? products.slice(0, Number(limit)) : products;
-    res.render('home.handlebars', { products: response })*/
     try {
-        const { limit } = req.query;
-        const products = await Product.find().limit(parseInt(limit));
-        res.json({ message: products })
+        //const { limit, page, sort, query } = req.query;
+        const productsBD = await Product.find()
+        const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
+            id,
+            title,
+            description,
+            code,
+            price,
+            stock,
+            status,
+            category,
+            thumbnails
+        }))
+        res.render('home.handlebars', { products })
     } catch (error) {
         res.status(400).json({ error })
     }
 })
 
 router.get('/realtimeproducts', async (req, res) => {
-    //const products = await manejadorDeProductos.getProducts();
-    const products = await Product.find()
-    global.io.emit('mostrarProductos', {});
-    res.render('realTimeProducts.handlebars', products)
+    try {
+        //const { limit } = req.query;
+        const productsBD = await Product.find()//.limit(parseInt(limit));
+        const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
+            id,
+            title,
+            description,
+            code,
+            price,
+            stock,
+            status,
+            category,
+            thumbnails
+        }))
+        global.io.emit('mostrarProductos', products );
+        res.render('realTimeProducts.handlebars', {})
+    } catch (error) {
+        res.status(400).json({ error })
+    }
 })
 
 router.get('/:pid', async (req, res) => {
-    /*
-    const { pid } = req.params;
-    productById = await manejadorDeProductos.getProductById(Number(pid))
-    if (!productById) {
-        return res.status(400).json({ error: 'No existe el producto' });
-    }
-    res.status(200).json({ message: productById });
-    */
     try {
         const { pid } = req.params;
         const product = await Product.findOne({ id: parseInt(pid) });
@@ -50,18 +63,16 @@ router.get('/:pid', async (req, res) => {
     }
 })
 
-/*
-router.post('/', uploader.array('files'), async (req, res) => {
-    const products = await manejadorDeProductos.getProducts()
-    await Product.insertMany(products)
-    res.json({ message: 'Productos cargados' })
+router.post('/populate', uploader.array('files'), async (req, res) => {
+    const products = await ProductManager.loadItems()
+    const response = await Product.insertMany(products)
+    res.json({ message: response })
 })
-*/
 
 router.post('/', uploader.array('files'), async (req, res) => {
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-        if (!title || !description || !code || !price || !status || !stock || !category) {
+        if (!title || !description || !code || !price || !stock || !category) {
             return res.status(400).json({ error: 'Faltan datos' });
         }
         const newProduct = {
@@ -88,28 +99,6 @@ router.post('/', uploader.array('files'), async (req, res) => {
 })
 
 router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
-    /*
-    const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-    if (!title || !description || !code || !price || !status || !stock || !category) {
-        return res.status(400).json({ error: 'Faltan datos' });
-    }
-    const newProduct = {
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category
-    }
-    newProduct.thumbnails = []
-    if (req.files) {
-        req.files.map(file => {
-            newProduct.thumbnails.push(file.path)
-        })
-    }
-    manejadorDeProductos.addProduct(newProduct)
-    const products = await manejadorDeProductos.getProducts();*/
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
         if (!title || !description || !code || !price || !status || !stock || !category) {
@@ -132,7 +121,18 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
         }
         await Product.create(newProduct)
 
-        const products = await Product.find()
+        const productsBD = Product.find()
+        const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
+            id,
+            title,
+            description,
+            code,
+            price,
+            stock,
+            status,
+            category,
+            thumbnails
+        }))
         global.io.emit('crearProducto', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
@@ -141,36 +141,6 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
 })
 
 router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) => {
-    /*
-    const { pid } = req.params;
-    const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-    if (!title || !description || !code || !price || !status || !stock || !category) {
-        return res.status(400).json({ error: 'Faltan datos' });
-    }
-    const newDataProduct = {
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category
-    }
-
-    newDataProduct.thumbnails = []
-    if (req.files) {
-        req.files.map(file => {
-            newDataProduct.thumbnails.push(file.path)
-        })
-    }
-
-    if (!await manejadorDeProductos.updateProduct(Number(pid), newDataProduct)) {
-        return res.status(400).json({ error: 'No existe el producto' });
-    }
-    const products = await manejadorDeProductos.getProducts();
-    global.io.emit('modificarProducto', products);
-    res.render('realTimeProducts.handlebars', {})
-    */
     try {
         const { pid } = req.params;
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
@@ -199,7 +169,18 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
-        const products = await Product.find()
+        const productsBD = Product.find()
+        const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
+            id,
+            title,
+            description,
+            code,
+            price,
+            stock,
+            status,
+            category,
+            thumbnails
+        }))
         global.io.emit('modificarProducto', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
@@ -208,20 +189,24 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
 })
 
 router.delete('/realtimeproducts/:pid', async (req, res) => {
-    const { pid } = req.params;
-    /*
-    productById = await manejadorDeProductos.deleteProduct(Number(pid))
-    if (!productById) {
-        return res.status(400).json({ error: 'No existe el producto' });
-    }
-    const products = await manejadorDeProductos.getProducts();
-    */
     try {
+        const { pid } = req.params;
         const result = await Product.deleteOne({ id: parseInt(pid) });
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
-        const products = Product.find()
+        const productsBD = Product.find()
+        const products = productsBD.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
+            id,
+            title,
+            description,
+            code,
+            price,
+            stock,
+            status,
+            category,
+            thumbnails
+        }))
         global.io.emit('eliminarProducto', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
@@ -229,6 +214,7 @@ router.delete('/realtimeproducts/:pid', async (req, res) => {
     }    
 })
 
+//Delete all products bd
 router.delete('/', async (req, res) => {
     await Product.deleteMany()
     res.json({ message: 'Todos los productos eliminados' })
