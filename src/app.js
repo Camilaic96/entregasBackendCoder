@@ -1,32 +1,9 @@
-const app = require('./index')
+const router = require('./router/app.js');
 const { port } = require('./config')
-const { Server } = require('socket.io');
+const { server, app}= require("./index.js");
 
-const MessagesDao = require('./dao/mongoManager/Message.dao')
-const Message = new MessagesDao('Messages.json');
+router(app)
 
-const httpServer = app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server running at port ${port}`);
 });
-
-global.io = new Server(httpServer);
-
-io.on('connection', socket => {
-    console.log(`Client with id: ${socket.id}`)
-
-    socket.on('newUser', async user => {
-        socket.emit('userConnected', user)
-        const messages = await Message.find()
-        socket.emit('messageLogs', messages)
-    })
-
-    socket.on('message', async data => {
-        Message.create(data)
-        const messages = await Message.find()
-        io.emit('messageLogs', messages)
-    })
-
-    socket.on('disconnect', () => {
-        console.log('socket disconnected');
-    });
-})

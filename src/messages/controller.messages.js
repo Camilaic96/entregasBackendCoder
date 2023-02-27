@@ -7,25 +7,8 @@ const MessageManager = new FilesDao('Messages.json')
 
 const router = Router();
 
-router.get('/', /*async*/ (req, res) => {
+router.get('/', (req, res) => {
     res.render('chat.handlebars', {})
-    /*
-    try {
-        const messages = await Message.find()
-        res.json( { response: messages })
-        //
-        const messages = messagesBD.map(({ user, message }) => ({
-            user,
-            message
-        }))
-        
-        global.io.emit('messageLogs', messages )
-        res.render('chat.handlebars', {})
-        //
-    } catch (error) {
-        res.status(400).json({ error })
-    }
-    */
 })
 
 router.post('/populate', async (req, res) => {
