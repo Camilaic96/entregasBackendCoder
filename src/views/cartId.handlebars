@@ -1,0 +1,10 @@
+<h2>Carrito</h2>
+
+<div class="row">
+    {{#each products}}
+    <div class="col-md-3 m-3">
+        <p><strong>Id: </strong>{{this.pid}}</p>
+        <p><strong>Quantity: </strong>{{this.quantity}}</p>
+    </div>
+    {{/each}}
+</div>

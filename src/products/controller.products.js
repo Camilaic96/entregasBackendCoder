@@ -92,7 +92,6 @@ router.get('/:pid', async (req, res) => {
         if (!product) {
             return res.status(400).json({ error: 'No se encontró ningún producto con el código especificado' });
         }
-        console.log(product)
         res.render('productId.handlebars', product )
     } catch (error) {
         res.status(400).json({ error });

@@ -47,7 +47,8 @@ router.get('/:cid', async (req, res) => {
         if (!cartById) {
             return res.status(400).json({ error: 'No existe el carrito' });
         }
-        res.status(200).json({ message: cartById });
+        const products = cartById.products
+        res.render('cartId.handlebars', { products })
     } catch (error) {
         res.status(400).json({ error });
     }

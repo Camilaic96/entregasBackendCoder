@@ -1,0 +1,9 @@
+Ver cómo agregar id cuando creo producto
+
+Corregir real time
+
+Falta enlaces paginate
+
+Corregir view cartId.handlebars
+
+Hacer funcionar el populate en la ruta /:cid para que al traer todos los productos, los traiga  completos.
