@@ -18,6 +18,21 @@ router.get('/', async (req, res) => {
     }
 })
 
+router.get('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const cartById = await Cart.findOne({ id: parseInt(cid) });
+        if (!cartById) {
+            return res.status(400).json({ error: 'No existe el carrito' });
+        }
+        const products = cartById.products
+        console.log(products)
+        res.render('cartId.handlebars', { products })
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+})
+
 router.post('/populate', async (req, res) => {
     const carts = await CartManager.loadItems()
     const response = await Cart.insertMany(carts)
@@ -37,20 +52,6 @@ router.post('/', async (req, res) => {
         res.json({ message: response })
     } catch (error) {
         res.status(400).json({ error })
-    }
-})
-
-router.get('/:cid', async (req, res) => {
-    try {
-        const { cid } = req.params;
-        const cartById = await Cart.findOne({ id: parseInt(cid) });
-        if (!cartById) {
-            return res.status(400).json({ error: 'No existe el carrito' });
-        }
-        const products = cartById.products
-        res.render('cartId.handlebars', { products })
-    } catch (error) {
-        res.status(400).json({ error });
     }
 })
 
