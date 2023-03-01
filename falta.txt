@@ -1,7 +1,5 @@
 Ver cómo agregar id cuando creo producto
 
-Corregir real time
-
 Enlaces paginate
 
 Corregir view cartId.handlebars

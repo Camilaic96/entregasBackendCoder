@@ -2,14 +2,16 @@
 
 <div class="row">
     {{#each products}}
-    <div class="col-md-3 m-3">
-        <p><strong>Id: </strong>{{this.id}}</p>
-        <p><strong>Title: </strong>{{this.title}}</p>
-        <p><strong>Description: </strong>{{this.description}}</p>
-        <p><strong>Code: </strong>{{this.code}}</p>
-        <p><strong>Price: </strong>{{this.price}}</p>
-        <p><strong>Stock: </strong>{{this.stock}}</p>
-        <p><strong>Category: </strong>{{this.category}}</p>
-    </div>
+        <div class="card col-3 mb-3">
+            <div class="card-body">
+                <p class="card-text">Id: <b>{{this.id}}</b></p>
+                <p class="card-text">Title: <b>{{this.title}}</b></p>
+                <p class="card-text">Description: <b>{{this.description}}</b></p>
+                <p class="card-text">Code: <b><{{this.code}}</b></p>
+                <p class="card-text">Price: <b>{{this.price}}</b></p>
+                <p class="card-text">Stock: <b>{{this.stock}}</b></p>
+                <p class="card-text">Category: <b>{{this.category}}</b></p>
+            </div>
+        </div>
     {{/each}}
 </div>

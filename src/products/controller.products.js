@@ -78,8 +78,8 @@ router.get('/realtimeproducts', async (req, res) => {
             category,
             thumbnails
         }))
-        global.io.emit('eliminarProducto', products);
-        res.render('realTimeProducts.handlebars', {})
+        global.io.emit('mostrarProductos', products);
+        res.render('realTimeProducts.handlebars', { products })
     } catch (error) {
         res.status(400).json({ error })
     }
@@ -168,7 +168,7 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
             category,
             thumbnails
         }))
-        global.io.emit('crearProducto', products);
+        global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error })
@@ -216,7 +216,7 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
             category,
             thumbnails
         }))
-        global.io.emit('modificarProducto', products);
+        global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error });
@@ -242,7 +242,7 @@ router.delete('/realtimeproducts/:pid', async (req, res) => {
             category,
             thumbnails
         }))
-        global.io.emit('eliminarProducto', products);
+        global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error: error.message });
