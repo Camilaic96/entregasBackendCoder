@@ -8,14 +8,29 @@ const FilesManager = new FilesDao('Products.json')
 
 const router = Router();
 
+const mapProducts = (prod) => {
+    const products = prod.map(({ _id, title, description, code, price, stock, status, category, thumbnails}) => ({
+        id: _id,
+        title,
+        description,
+        code,
+        price,
+        stock,
+        status,
+        category,
+        thumbnails
+    }))
+    return products
+}
+
 router.get('/', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10
         const page = parseInt(req.query.page) || 1
         let sort = req.query.sort ? req.query.sort.toLowerCase() : '';
-        sort = sort === 'asc' ? 1 :
-        sort === 'desc' ? -1 :
-        undefined
+        sort = sort === 'asc' ? 1 
+            : sort === 'desc' ? -1 
+            : undefined
         const optionsFind = {
             page,
             limit,
@@ -29,17 +44,8 @@ router.get('/', async (req, res) => {
         };
 
         const productsBd = await Product.find(optionsFind, filter)
-        const products = productsBd.docs.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
-            id,
-            title,
-            description,
-            code,
-            price,
-            stock,
-            status,
-            category,
-            thumbnails
-        }))
+        const products = mapProducts(productsBd.docs)
+
         res.render('home.handlebars', { products })
     } catch (error) {
         res.status(400).json({ error })
@@ -67,17 +73,8 @@ router.get('/realtimeproducts', async (req, res) => {
         };
 
         const productsBd = await Product.find(optionsFind, filter)
-        const products = productsBd.docs.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
-            id,
-            title,
-            description,
-            code,
-            price,
-            stock,
-            status,
-            category,
-            thumbnails
-        }))
+        const products = mapProducts(productsBd.docs)
+
         global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', { products })
     } catch (error) {
@@ -88,7 +85,7 @@ router.get('/realtimeproducts', async (req, res) => {
 router.get('/:pid', async (req, res) => {
     try {
         const { pid } = req.params;
-        const product = await Product.findOne({ id: parseInt(pid) });
+        const product = await Product.findOne({ _id: pid });
         if (!product) {
             return res.status(400).json({ error: 'No se encontró ningún producto con el código especificado' });
         }
@@ -156,18 +153,9 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
         }
         await Product.create(newProduct)
 
-        const productsBD = await Product.find()
-        const products = productsBD.docs.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
-            id,
-            title,
-            description,
-            code,
-            price,
-            stock,
-            status,
-            category,
-            thumbnails
-        }))
+        const productsBd = await Product.find()
+        const products = mapProducts(productsBd.docs)
+
         global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
@@ -199,23 +187,14 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
             })
         }
 
-        const result = await Product.updateOne({ id: parseInt(pid) }, newDataProduct, { new: true });
+        const result = await Product.updateOne({ _id: pid }, newDataProduct, { new: true });
         if (result.nModified === 0) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
         const productsBd = await Product.find()
-        const products = productsBd.docs.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
-            id,
-            title,
-            description,
-            code,
-            price,
-            stock,
-            status,
-            category,
-            thumbnails
-        }))
+        const products = mapProducts(productsBd.docs)
+
         global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
@@ -226,22 +205,13 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
 router.delete('/realtimeproducts/:pid', async (req, res) => {
     try {
         const { pid } = req.params;
-        const result = await Product.deleteOne({ id: parseInt(pid) });
+        const result = await Product.deleteOne({ _id: pid });
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         const productsBd = await Product.find()
-        const products = productsBd.docs.map(({ id, title, description, code, price, stock, status, category, thumbnails}) => ({
-            id,
-            title,
-            description,
-            code,
-            price,
-            stock,
-            status,
-            category,
-            thumbnails
-        }))
+        const products = mapProducts(productsBd.docs)
+
         global.io.emit('mostrarProductos', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
