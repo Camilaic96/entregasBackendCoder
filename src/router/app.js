@@ -1,6 +1,6 @@
-const productsController = require('../products/controller.products')
-const cartsController = require('../carts/controller.carts');
-const messagesController = require('../messages/controller.messages');
+const productsController = require('../controllers/controller.products')
+const cartsController = require('../controllers/controller.carts');
+const messagesController = require('../controllers/controller.messages');
 
 const router = (app) => {
     app.use('/api/products', productsController);

@@ -8,25 +8,6 @@ const FilesDao = require('../dao/fsManager/Files.dao');
 const CartManager = new FilesDao('Carts.json')
 
 const router = Router();
-/*
-const mapProducts = (products) => {
-    const mappedProducts = products.map(item => {
-        return {
-            id: item.product._id,
-            title: item.product.title,
-            description: item.product.description,
-            code: item.product.code,
-            price: item.product.price,
-            status: item.product.status,
-            stock: item.product.stock,
-            category: item.product.category,
-            thumbnail: item.product.thumbnail,
-            quantity: item.quantity
-        };
-    });
-    console(mappedProducts)
-    return mappedProducts
-}*/
 
 router.get('/', async (req, res) => {
     try {
