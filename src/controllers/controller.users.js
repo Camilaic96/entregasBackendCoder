@@ -25,4 +25,24 @@ router.post('/', async (req, res) => {
     }
 })
 
+router.post('/admin', async (req, res) => {
+    try {
+        const newUserInfoAdmin = {
+            first_name: 'Admin',
+            last_name: 'Coder',
+            age: 0,
+            email: 'adminCoder@coder.com',
+            password: 'adminCod3r123',
+            role: 'admin'
+        }
+
+        await User.create(newUserInfoAdmin)
+
+        res.json({ message: 'Usuario admin creado'})
+    } catch (error) {
+        if(error.code === 11000) return res.status(400).json({ error: 'El usuario ya existe'})
+        res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
 module.exports = router
