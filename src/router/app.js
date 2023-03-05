@@ -4,7 +4,6 @@ const usersController = require('../controllers/controller.users')
 const productsController = require('../controllers/controller.products')
 const cartsController = require('../controllers/controller.carts');
 const messagesController = require('../controllers/controller.messages');
-const sessionController = require('../controllers/controller.session');
 
 const router = (app) => {
     app.use('/api', viewsTemplateController)
@@ -13,7 +12,6 @@ const router = (app) => {
     app.use('/api/products', productsController);
     app.use('/api/carts', cartsController);
     app.use('/api/messages', messagesController);
-    app.use('/api/session', sessionController);
 };
 
 module.exports = router;

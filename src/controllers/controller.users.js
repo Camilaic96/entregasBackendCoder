@@ -16,9 +16,9 @@ router.post('/', async (req, res) => {
             role
         }
 
-        const newUser = await User.create(newUserInfo)
+        await User.create(newUserInfo)
 
-        res.status(201).json({ message: newUser })
+        res.redirect('/api/products')
     } catch (error) {
         if(error.code === 11000) return res.status(400).json({ error: 'El usuario ya existe'})
         res.status(500).json({ error: 'Internal server error' })

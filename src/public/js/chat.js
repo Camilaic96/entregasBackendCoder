@@ -41,20 +41,3 @@ socket.on("messageLogs", data => {
 socket.on("newClient", user => {
     console.log(user)
 })
-
-
-/*
-    socket.on('userConnected', user => {
-        Swal.fire({
-            text: `Bienvenido ${user} al chat!`,
-            toast: true,
-            position: "top-right",
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-            icon: "success",
-            background: "#030366",
-            color: "#fff"
-        })
-    })
-*/

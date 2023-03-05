@@ -25,6 +25,7 @@ const mapProducts = (prod) => {
 
 router.get('/', async (req, res) => {
     try {
+        const { user } = req.session
         const limit = parseInt(req.query.limit) || 10
         const page = parseInt(req.query.page) || 1
         let sort = req.query.sort ? req.query.sort.toLowerCase() : '';
@@ -46,7 +47,7 @@ router.get('/', async (req, res) => {
         const productsBd = await Product.find(optionsFind, filter)
         const products = mapProducts(productsBd.docs)
 
-        res.render('home.handlebars', { products })
+        res.render('home.handlebars', { products, user })
     } catch (error) {
         res.status(400).json({ error })
     }

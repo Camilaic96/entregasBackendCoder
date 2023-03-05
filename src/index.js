@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const handlebars = require('express-handlebars');
@@ -25,16 +26,19 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'))
+app.use(cookieParser())
 app.use(session({
     store: MongoStore.create({
         mongoUrl: `mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb.net/Ecommerce-session?retryWrites=true&w=majority`,
-        mongoOptions: { useNewUrlParser: true, useUnifiedTopology:true },
-        ttl: 15,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true }
     }),
     secret: 'LoQueQuiera',
     resave: false,
     saveUninitialized: false
 }))
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views');
+
 
 mongoose.set('strictQuery', false)
 mongoose.connect(`mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb.net/Ecommerce?retryWrites=true&w=majority`, error => {
@@ -43,9 +47,6 @@ mongoose.connect(`mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb
     }
     console.log('db connected')
 })
-
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
 
 router(app)
 
