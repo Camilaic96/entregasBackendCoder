@@ -1,8 +1,11 @@
 const express = require('express');
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
 const handlebars = require('express-handlebars');
 const morgan = require('morgan');
-const router = require('./router/app.js');
 const mongoose = require('mongoose')
+
+const router = require('./router/app.js');
 const { db } = require('./config')
 const { userDb, passDb } = db
 
@@ -20,13 +23,18 @@ global.io = io;
 
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(express.static(__dirname + '/public'))
 app.use(express.urlencoded({ extended: true }));
-
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
-
-router;
+app.use(express.static(__dirname + '/public'))
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: `mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb.net/Ecommerce-session?retryWrites=true&w=majority`,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology:true },
+        ttl: 15,
+    }),
+    secret: 'LoQueQuiera',
+    resave: false,
+    saveUninitialized: false
+}))
 
 mongoose.set('strictQuery', false)
 mongoose.connect(`mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb.net/Ecommerce?retryWrites=true&w=majority`, error => {
@@ -35,6 +43,11 @@ mongoose.connect(`mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb
     }
     console.log('db connected')
 })
+
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views');
+
+router(app)
 
 io.on('connection', socket => {
     console.log(`Client with id: ${socket.id}`)
