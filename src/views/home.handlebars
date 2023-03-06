@@ -1,6 +1,8 @@
 <div>
-    <h2>Bienvenido {{user.first_name}} {{user.last_name}}</h2>
-    <a href="/api/auth/logout">Cerrar sesión</a>
+    {{#if user}}
+        <h2>Bienvenido {{user.first_name}} {{user.last_name}}</h2>
+        <a href="/api/auth/logout">Cerrar sesión</a>
+    {{/if}}
 </div>
 
 <h2>Lista de productos</h2>

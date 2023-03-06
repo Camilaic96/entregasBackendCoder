@@ -1,9 +1,4 @@
-const viewsTemplateController = require('../controllers/controller.viewsTemplate');
-const authController = require('../controllers/controller.auth')
-const usersController = require('../controllers/controller.users')
-const productsController = require('../controllers/controller.products')
-const cartsController = require('../controllers/controller.carts');
-const messagesController = require('../controllers/controller.messages');
+const { viewsTemplateController, authController, usersController, productsController, cartsController, messagesController } = require('../controllers')
 
 const router = (app) => {
     app.use('/api', viewsTemplateController)
