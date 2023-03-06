@@ -1,11 +1,11 @@
 <div>
     {{#if user}}
-        <h2>Bienvenido {{user.first_name}} {{user.last_name}}</h2>
-        <a href="/api/auth/logout">Cerrar sesión</a>
+        <h2>Welcome {{user.first_name}} {{user.last_name}}</h2>
+        <a href="/api/auth/logout">Log out</a>
     {{/if}}
 </div>
 
-<h2>Lista de productos</h2>
+<h2>Products</h2>
 <div class="row">
     {{#each products}}
         <div class="card col-4 mb-3">

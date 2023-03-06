@@ -14,7 +14,7 @@ class UserDao {
     async create(newUser) {
         try {
             await User.create(newUser)
-            return 'Usuario creado'
+            return 'User created'
         } catch (error) {
             return error
         }

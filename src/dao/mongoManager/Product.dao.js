@@ -37,7 +37,7 @@ class ProductDao {
     async create(newProduct) {
         try {
             await Product.create(newProduct)
-            return 'Producto creado'
+            return 'Product created'
         } catch (error) {
             return error
         }
@@ -64,7 +64,7 @@ class ProductDao {
     async deleteMany() {
         try {
             await Product.deleteMany()
-            return 'Productos eliminados'
+            return 'Products deleted'
         } catch (error) {
             return error
         }

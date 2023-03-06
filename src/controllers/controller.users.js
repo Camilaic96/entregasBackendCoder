@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 
         res.redirect('/api/products')
     } catch (error) {
-        if(error.code === 11000) return res.status(400).json({ error: 'El usuario ya existe'})
+        if(error.code === 11000) return res.status(400).json({ error: 'The user already exists'})
         res.status(500).json({ error: 'Internal server error' })
     }
 })
@@ -41,7 +41,7 @@ router.post('/admin', async (req, res) => {
 
         res.json({ message: 'Usuario admin creado'})
     } catch (error) {
-        if(error.code === 11000) return res.status(400).json({ error: 'El usuario ya existe'})
+        if(error.code === 11000) return res.status(400).json({ error: 'The user already exists'})
         res.status(500).json({ error: 'Internal server error' })
     }
 })

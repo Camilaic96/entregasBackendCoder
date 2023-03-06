@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
     res.render('chat.handlebars', {})
 })
 
+//Add all messages from fs to the database
 router.post('/populate', async (req, res) => {
     const messages = await MessageManager.loadItems()
     const response = await Message.insertMany(messages)
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
     try {
         const { user, message } = req.body;
         if (!user || !message) {
-            return res.status(400).json({ error: 'Faltan datos' });
+            return res.status(400).json({ error: 'Incomplete data' });
         }
         const newMessage = {
             user,
@@ -39,7 +40,7 @@ router.post('/', async (req, res) => {
 //Delete all messages bd
 router.delete('/', async (req, res) => {
     await Message.deleteMany()
-    res.json({ message: 'Todos los productos eliminados' })
+    res.json({ message: 'All messages deleted' })
 })
 
 module.exports = router;

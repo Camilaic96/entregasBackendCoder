@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
         
         const user = await User.findOne({ email })
 
-        if(!user || user.password !== password) return res.status(400).json({ error: 'El usuario y la contraseña no coinciden' })
+        if(!user || user.password !== password) return res.status(400).json({ error: 'Username and password do not match' })
 
         req.session.user = {
             first_name: user.first_name,

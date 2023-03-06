@@ -3,11 +3,11 @@ const socket = io()
 const swal = async () => {
     const chatBox = document.getElementById("chatBox")
     const result = await Swal.fire({
-        title: "Identificate",
+        title: "Identify yourself",
         input: "text",
-        text: "Ingresa el usuario para identificarte en el chat",
+        text: "Enter your username to identify yourself in the chat",
         inputValidator: value => {
-            return !value && "Necesitas escribir un nombre de usuario para continuar!"
+            return !value && "Enter your username to continue"
         },
         allowOutsideClick: false
     })

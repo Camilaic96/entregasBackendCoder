@@ -11,7 +11,7 @@ class FilesDao {
             const items = JSON.parse(data);
             return items;
         }
-        return 'El archivo no existe'
+        return 'Not found file'
     }
 }
 

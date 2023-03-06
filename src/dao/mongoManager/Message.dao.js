@@ -26,7 +26,7 @@ class MessageDao {
     async create(newMessage) {
         try {
             await Message.create(newMessage)
-            return 'Mensaje creado'
+            return 'Message created'
         } catch (error) {
             return error
         }
@@ -35,7 +35,7 @@ class MessageDao {
     async deleteMany() {
         try {
             await Message.deleteMany()
-            return 'Mensajes eliminados'
+            return 'Messages deleted'
         } catch (error) {
             return error
         }

@@ -3,7 +3,7 @@ const socket = io()
 const messageProduct = document.getElementById('messageProduct')
 messageProduct.innerHTML = ""
 
-socket.on('mostrarProductos', (data) => {
+socket.on('showProducts', (data) => {
     document.getElementById('preLoadProducts').innerHTML = ''
 
     messageProduct.innerHTML = ""

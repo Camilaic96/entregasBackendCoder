@@ -88,7 +88,7 @@ router.get('/:pid', async (req, res) => {
         const { pid } = req.params;
         const product = await Product.findOne({ _id: pid });
         if (!product) {
-            return res.status(400).json({ error: 'No se encontró ningún producto con el código especificado' });
+            return res.status(400).json({ error: 'Product not found' });
         }
         res.render('productId.handlebars', product )
     } catch (error) {
@@ -106,7 +106,7 @@ router.post('/', uploader.array('files'), async (req, res) => {
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
         if (!title || !description || !code || !price || !stock || !category) {
-            return res.status(400).json({ error: 'Faltan datos' });
+            return res.status(400).json({ error: 'Incomplete data' });
         }
         const newProduct = {
             title,
@@ -135,7 +135,7 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
         if (!title || !description || !code || !price || !status || !stock || !category) {
-            return res.status(400).json({ error: 'Faltan datos' });
+            return res.status(400).json({ error: 'Incomplete data' });
         }
         const newProduct = {
             title,
@@ -157,7 +157,7 @@ router.post('/realtimeproducts', uploader.array('files'), async (req, res) => {
         const productsBd = await Product.find()
         const products = mapProducts(productsBd.docs)
 
-        global.io.emit('mostrarProductos', products);
+        global.io.emit('showProducts', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error })
@@ -169,7 +169,7 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
         const { pid } = req.params;
         const { title, description, code, price, status, stock, category, thumbnails } = req.body;
         if (!title || !description || !code || !price || !status || !stock || !category) {
-            return res.status(400).json({ error: 'Faltan datos' });
+            return res.status(400).json({ error: 'Incomplete data' });
         }
         const newDataProduct = {
             title,
@@ -190,13 +190,13 @@ router.put('/realtimeproducts/:pid', uploader.array('files'), async (req, res) =
 
         const result = await Product.updateOne({ _id: pid }, newDataProduct, { new: true });
         if (result.nModified === 0) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
+            return res.status(404).json({ error: 'Product not found' });
         }
 
         const productsBd = await Product.find()
         const products = mapProducts(productsBd.docs)
 
-        global.io.emit('mostrarProductos', products);
+        global.io.emit('showProducts', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error });
@@ -208,12 +208,12 @@ router.delete('/realtimeproducts/:pid', async (req, res) => {
         const { pid } = req.params;
         const result = await Product.deleteOne({ _id: pid });
         if (result.deletedCount === 0) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
+            return res.status(404).json({ error: 'Product not found' });
         }
         const productsBd = await Product.find()
         const products = mapProducts(productsBd.docs)
 
-        global.io.emit('mostrarProductos', products);
+        global.io.emit('showProducts', products);
         res.render('realTimeProducts.handlebars', {})
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -223,7 +223,7 @@ router.delete('/realtimeproducts/:pid', async (req, res) => {
 //Delete all products bd
 router.delete('/', async (req, res) => {
     await Product.deleteMany()
-    res.json({ message: 'Todos los productos eliminados' })
+    res.json({ message: 'All products deleted' })
 })
 
 module.exports = router;

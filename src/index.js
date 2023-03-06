@@ -32,7 +32,7 @@ app.use(session({
         mongoUrl: `mongodb+srv://${userDb}:${passDb}@coderbackend.0lx0bci.mongodb.net/Ecommerce-session?retryWrites=true&w=majority`,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true }
     }),
-    secret: 'LoQueQuiera',
+    secret: 'Ecommerce',
     resave: false,
     saveUninitialized: false
 }))

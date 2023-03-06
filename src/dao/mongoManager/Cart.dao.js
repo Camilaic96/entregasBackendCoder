@@ -35,7 +35,7 @@ class CartDao {
     async create(newCart) {
         try {
             await Cart.create(newCart)
-            return 'Carrito creado'
+            return 'Cart created'
         } catch (error) {
             return error
         }
@@ -64,7 +64,7 @@ class CartDao {
     async deleteMany() {
         try {
             await Cart.deleteMany()
-            return 'Carritos eliminados'
+            return 'Carts deleted'
         } catch (error) {
             return error
         }
