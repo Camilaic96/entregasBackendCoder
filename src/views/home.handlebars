@@ -1,6 +1,7 @@
 <div>
     {{#if user}}
         <h2>Welcome {{user.first_name}} {{user.last_name}}</h2>
+        <a href="/api">Profile</a>
         <a href="/api/auth/logout">Log out</a>
     {{/if}}
 </div>
@@ -18,6 +19,7 @@
                 <p class="card-text">Stock: {{this.stock}}</p>
                 <p class="card-text">Category: {{this.category}}</p>
             </div>
+            <a href="/api/products/{{this.id}}">See more</a>
         </div>
     {{/each}}
 </div>

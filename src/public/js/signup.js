@@ -20,7 +20,7 @@ form.addEventListener('submit', e => {
         method,
         body
     })
-    .then(response => response.json())
+    .then(response => response.redirected ? window.location.href = response.url : response.json())
     .then(data => console.log(data))
     .catch(error => console.log(error))
 })
