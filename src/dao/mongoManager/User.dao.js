@@ -11,10 +11,28 @@ class UserDao {
         }
     }
 
+    async findById(id) {
+        try {
+            const user = await User.findById(id)
+            return user
+        } catch (error) {
+            return error
+        }
+    }
+
     async create(newUser) {
         try {
             await User.create(newUser)
             return 'User created'
+        } catch (error) {
+            return error
+        }
+    }
+
+    async updateOne(data, newData) {
+        try {
+            const user = await User.updateOne(data, newData)
+            return user
         } catch (error) {
             return error
         }

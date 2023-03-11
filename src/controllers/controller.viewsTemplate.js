@@ -16,4 +16,8 @@ router.get('/signup', publicAccess, (req, res) => {
     res.render('signup.handlebars')
 })
 
+router.get('/forgotPassword', (req, res) => {
+    res.render('forgotPassword.handlebars')
+})
+
 module.exports = router

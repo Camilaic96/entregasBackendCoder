@@ -1,23 +1,23 @@
-const { Router } = require('express')
+const { Router } = require('express');
+const passport = require('passport');
 const UserDao = require('../dao/mongoManager/User.dao');
+const { isValidPasswordMethod, createHash } = require('../utils/cryptPassword');
 const User = new UserDao();
 
 const router = Router()
 
-router.post('/', async (req, res) => {
+router.post('/', passport.authenticate('login', { failureRedirect: 'failLogin' }) , async (req, res) => {
     try {
-        const { email, password } = req.body
-        
-        const user = await User.findOne({ email })
-
-        if(!user || user.password !== password) return res.status(400).json({ error: 'Username and password do not match' })
+        if(!req.user) return res.status(400).json({ error: 'Invalid credentials'})
 
         req.session.user = {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            age: user.age,
-            email: user.email
+            first_name: req.user.first_name,
+            last_name: req.user.last_name,
+            age: req.user.age,
+            email: req.user.email
         }
+
+        console.log(req.user)
 
         res.redirect('/api/products')
     } catch (error) {
@@ -26,12 +26,38 @@ router.post('/', async (req, res) => {
     }
 })
 
+router.get('/failLogin', (req, res) => {
+    console.log('Login failed')
+    res.send({ error: 'Login failed'})
+})
+
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => {})
+
+router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), async (req, res) => {
+    req.session.user = req.user
+    res.redirect('/api')
+})
+
 router.get('/logout', (req, res) => {
     req.session.destroy(error => {
         if (error) return res.json({ error })
 
         res.redirect('/api/login')
     })
+})
+
+router.patch('/forgotPassword', async (req, res) =>{
+    try {
+        const { email, password } = req.body
+
+        const passwordHashed = createHash(password)
+
+        await User.updateOne({ email }, { password: passwordHashed })
+
+        res.json({ message: 'Updated password'})
+    } catch (error) {
+        res.json({ error })
+    }
 })
 
 module.exports = router

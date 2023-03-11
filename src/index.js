@@ -5,18 +5,20 @@ const MongoStore = require('connect-mongo')
 const handlebars = require('express-handlebars');
 const morgan = require('morgan');
 const mongoose = require('mongoose')
+const passport = require('passport')
+const { Server } = require('socket.io');
+const http = require('http');
 
 const router = require('./router/app.js');
 const { db } = require('./config')
-const { userDb, passDb } = db
-
-const http = require('http');
-const { Server } = require('socket.io');
-
-const MessagesDao = require('./dao/mongoManager/Message.dao')
-const Message = new MessagesDao('Messages.json');
+const initializePassport = require('./config/passport.config.js');
+const MessagesDao = require('./dao/mongoManager/Message.dao');
 
 const app = express();
+
+const { userDb, passDb } = db
+
+const Message = new MessagesDao('Messages.json');
 
 const server = http.createServer(app);
 const io = new Server(server)
@@ -38,6 +40,9 @@ app.use(session({
 }))
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 mongoose.set('strictQuery', false)
