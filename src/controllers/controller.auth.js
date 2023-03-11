@@ -1,7 +1,10 @@
+require('dotenv').config();
 const { Router } = require('express');
 const passport = require('passport');
 const UserDao = require('../dao/mongoManager/User.dao');
 const { isValidPasswordMethod, createHash } = require('../utils/cryptPassword');
+const { clientID_github, clientSecret_github } = require('./githubAuth.config');
+
 const User = new UserDao();
 
 const router = Router()
