@@ -1,9 +1,7 @@
-require('dotenv').config();
 const { Router } = require('express');
 const passport = require('passport');
 const UserDao = require('../dao/mongoManager/User.dao');
 const { isValidPasswordMethod, createHash } = require('../utils/cryptPassword');
-const { clientID_github, clientSecret_github } = require('./githubAuth.config');
 
 const User = new UserDao();
 
@@ -37,6 +35,14 @@ router.get('/failLogin', (req, res) => {
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => {})
 
 router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), async (req, res) => {
+    req.session.user = req.user
+    res.redirect('/api')
+})
+
+router.get('/google', passport.authenticate('google', {scope: ['profile'] }), async (req,res) => {}
+)
+
+router.get('/google/callback', passport.authenticate('google', {failureRedirect: '/login'}), async (req,res) => {
     req.session.user = req.user
     res.redirect('/api')
 })

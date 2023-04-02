@@ -1,8 +1,11 @@
 const passport = require('passport')
 const local = require('passport-local')
 const GitHubStrategy = require('passport-github2')
+const GoogleStrategy = require('passport-google-oauth20')
 const UserDao = require('../dao/mongoManager/User.dao');
 const { createHash, isValidPasswordMethod } = require('../utils/cryptPassword')
+const { clientID_github, clientSecret_github } = require('./githubAuth.config');
+const { clientID_google, clientSecret_google } = require('./googleAuth.config');
 
 const User = new UserDao();
 const LocalStrategy = local.Strategy
@@ -61,30 +64,65 @@ const initializePassport = () => {
         }
     }))
 
-    passport.use('github', new GitHubStrategy({
-        clientID: clientID_github,
-        clientSecret: clientSecret_github,
-        callbackURL: 'http://localhost:8080/api/auth/githubcallback'
-    }, async (accessToken, refreshToken, profile, done) => {
-        try {
-            const user = await User.findOne({email: profile._json.email})
-            if(!user) {
-                const newUserInfo = {
-                    first_name: profile._json.name,
-                    last_name: '',
-                    age: 18,
-                    email: profile._json.email,
-                    password: ''
-                }
-                const newUser = await User.create(newUserInfo)
+    passport.use(
+        'github',
+        new GitHubStrategy(
+        {
+            clientID: clientID_github,
+            clientSecret: clientSecret_github,
+            callbackURL: 'http://localhost:8080/api/auth/githubcallback'
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const user = await User.findOne({email: profile._json.email})
+                if(!user) {
+                    const newUserInfo = {
+                        first_name: profile._json.name,
+                        last_name: '',
+                        age: 18,
+                        email: profile._json.email,
+                        password: ''
+                    }
+                    const newUser = await User.create(newUserInfo)
 
-                return done(null, newUser)
+                    return done(null, newUser)
+                }
+                done(null, user)
+            } catch (error) {
+                done(error)
             }
-            done(null, user)
-        } catch (error) {
-            done(error)
+        }))
+
+    passport.use('google', new GoogleStrategy(
+        {
+            clientID: clientID_google,
+            clientSecret: clientSecret_google,
+            callbackURL: 'http://localhost:8080/api/auth/google/callback'
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                console.log(profile)
+                const user = await User.findOne({ googleId: profile._json.sub})
+
+                if(!user) {
+                    const newUserInfo = {
+                        googleId: profile._json.sub,
+                        first_name: profile._json.given_name,
+                        last_name: profile._json.family_name,
+                        age: 18,
+                        email: profile._json.email,
+                        password: '',
+                    }
+                    const newUser = await User.create(newUserInfo)
+                    return done(null, newUser)
+                }
+
+                done(null, user)
+            } catch (error) {
+                done(error)                
+            }
         }
-    }))
+    ))
 }
 
 module.exports = initializePassport
