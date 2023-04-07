@@ -1,7 +1,7 @@
 function privateAccess(req, res, next) {
-    if(!req.session.user) return res.redirect('/api/login')
+	if (!req.session.user) return res.redirect('/api/login');
 
-    next()
+	next();
 }
 
-module.exports = privateAccess
+module.exports = privateAccess;

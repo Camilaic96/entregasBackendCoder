@@ -1,23 +1,23 @@
-const { Router } = require('express')
-const { privateAccess, publicAccess } = require('../middlewares')
+const { Router } = require('express');
+const { privateAccess, publicAccess } = require('../middlewares');
 
-const router = Router()
+const router = Router();
 
 router.get('/', privateAccess, (req, res) => {
-    const { user } = req.session
-    res.render('profile.handlebars', { user })
-})
+	const { user } = req.session;
+	res.render('profile.handlebars', { user });
+});
 
 router.get('/login', publicAccess, (req, res) => {
-    res.render('login.handlebars')
-})
+	res.render('login.handlebars');
+});
 
 router.get('/signup', publicAccess, (req, res) => {
-    res.render('signup.handlebars')
-})
+	res.render('signup.handlebars');
+});
 
 router.get('/forgotPassword', (req, res) => {
-    res.render('forgotPassword.handlebars')
-})
+	res.render('forgotPassword.handlebars');
+});
 
-module.exports = router
+module.exports = router;

@@ -1,22 +1,26 @@
-<h2>Login</h2>
+<div class="col-md-6 offset-3 border mt-5 text-center">
+	<h2>Login</h2>
+	<form action='' id='formLogin'>
+		<label for=''>Username</label>
+		<input type='email' name='email' />
 
-<form action="" id="formLogin">
-    <label for="">Username</label>
-    <input type="email" name="email">
-    
-    <label for="">Password</label>
-    <input type="password" name="password">
+		<br>
+		<label for=''>Password</label>
+		<input type='password' name='password' />
 
-    <button type="submit">Log in</button>
-</form>
+		<br>
+		<button type='submit'>Log in</button>
+	</form>
 
-<br>
-<a href="/api/auth/github">Login with Github</a>
-<br>
-<br>
-<a href="/api/auth/google">Login with Google</a>
-<br>
+	<br />
+	<a href='/api/auth/github'>Login with Github</a>
+	<br />
+	<br />
+	<a href='/api/auth/google'>Login with Google</a>
+	<br />
+	<br />
+	<br />
+	<a href='/api/forgotPassword'>Password reset</a>
+</div>
 
-<a href="/api/forgotPassword">Password reset</a>
-
-<script src="/js/login.js"></script>
+<script src='/js/login.js'></script>

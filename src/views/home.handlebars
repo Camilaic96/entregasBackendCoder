@@ -1,25 +1,25 @@
 <div>
-    {{#if user}}
-        <h2>Welcome {{user.first_name}} {{user.last_name}}</h2>
-        <a href="/api">Profile</a>
-        <a href="/api/auth/logout">Log out</a>
-    {{/if}}
+	{{#if user}}
+		<h2>Welcome {{user.first_name}} {{user.last_name}}</h2>
+		<a href='/api'>Profile</a>
+		<a href='/api/auth/logout'>Log out</a>
+	{{/if}}
 </div>
 
 <h2>Products</h2>
-<div class="row">
-    {{#each products}}
-        <div class="card col-4 mb-3">
-            <div class="card-body">
-                <p class="card-text">Id: {{this.id}}</p>
-                <p class="card-text">Title: {{this.title}}</p>
-                <p class="card-text">Description: {{this.description}}</p>
-                <p class="card-text">Code: {{this.code}}</p>
-                <p class="card-text">Price: {{this.price}}</p>
-                <p class="card-text">Stock: {{this.stock}}</p>
-                <p class="card-text">Category: {{this.category}}</p>
-            </div>
-            <a href="/api/products/{{this.id}}">See more</a>
-        </div>
-    {{/each}}
+<div class='row'>
+	{{#each products}}
+		<div class='card col-4 mb-3'>
+			<div class='card-body'>
+				<p class='card-text'>Id: {{this.id}}</p>
+				<p class='card-text'>Title: {{this.title}}</p>
+				<p class='card-text'>Description: {{this.description}}</p>
+				<p class='card-text'>Code: {{this.code}}</p>
+				<p class='card-text'>Price: {{this.price}}</p>
+				<p class='card-text'>Stock: {{this.stock}}</p>
+				<p class='card-text'>Category: {{this.category}}</p>
+			</div>
+			<a href='/api/products/{{this.id}}'>See more</a>
+		</div>
+	{{/each}}
 </div>

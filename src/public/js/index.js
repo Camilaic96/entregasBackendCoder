@@ -1,14 +1,15 @@
-const socket = io()
+/* eslint-disable no-undef */
+const socket = io();
 
-const messageProduct = document.getElementById('messageProduct')
-messageProduct.innerHTML = ""
+const messageProduct = document.getElementById('messageProduct');
+messageProduct.innerHTML = '';
 
-socket.on('showProducts', (data) => {
-    document.getElementById('preLoadProducts').innerHTML = ''
+socket.on('showProducts', data => {
+	document.getElementById('preLoadProducts').innerHTML = '';
 
-    messageProduct.innerHTML = ""
-    let html = data.map((product) => {
-        let respond = `
+	messageProduct.innerHTML = '';
+	const html = data.map(product => {
+		const respond = `
             <div class="card mb-3 col-md-3">
                 <div class="card-body">
                     <p class="card-text">Id: <b>${product.id}</b></p>
@@ -20,8 +21,8 @@ socket.on('showProducts', (data) => {
                     <p class="card-text">Category: <b>${product.category}</b></p>
                 </div>
             </div>
-            `
-        return respond
-    })
-    messageProduct.innerHTML = html
+            `;
+		return respond;
+	});
+	messageProduct.innerHTML = html;
 });

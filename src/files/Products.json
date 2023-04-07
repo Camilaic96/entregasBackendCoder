@@ -7,7 +7,7 @@
 		"status": true,
 		"stock": 10,
 		"category": "3",
-        "thumbnail": ""
+		"thumbnail": ""
 	},
 	{
 		"title": "Product2",
@@ -17,7 +17,7 @@
 		"status": true,
 		"stock": 9,
 		"category": "3",
-        "thumbnail": ""
+		"thumbnail": ""
 	},
 	{
 		"title": "Product3",
@@ -27,7 +27,7 @@
 		"status": true,
 		"stock": 7,
 		"category": "3",
-        "thumbnail": ""
+		"thumbnail": ""
 	},
 	{
 		"title": "Product4",
