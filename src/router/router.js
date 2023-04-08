@@ -18,7 +18,7 @@ class Route {
 			path,
 			this.handlePolicies(policies),
 			this.generateCustomResponses,
-			this.applyCallback(callbacks)
+			this.applyCallbacks(callbacks)
 		);
 	}
 
@@ -26,7 +26,7 @@ class Route {
 		this.router.post(
 			path,
 			this.generateCustomResponses,
-			this.applyCallback(callbacks)
+			this.applyCallbacks(callbacks)
 		);
 	}
 
@@ -34,7 +34,7 @@ class Route {
 		this.router.put(
 			path,
 			this.generateCustomResponses,
-			this.applyCallback(callbacks)
+			this.applyCallbacks(callbacks)
 		);
 	}
 
@@ -42,7 +42,7 @@ class Route {
 		this.router.patch(
 			path,
 			this.generateCustomResponses,
-			this.applyCallback(callbacks)
+			this.applyCallbacks(callbacks)
 		);
 	}
 
@@ -50,14 +50,14 @@ class Route {
 		this.router.delete(
 			path,
 			this.generateCustomResponses,
-			this.applyCallback(callbacks)
+			this.applyCallbacks(callbacks)
 		);
 	}
 
-	applyCallback(callbacks) {
-		return callbacks.map(callbacks => async (...params) => {
+	applyCallbacks(callbacks) {
+		return callbacks.map(callback => async (...params) => {
 			try {
-				await callbacks.apply(this, params);
+				await callback.apply(this, params);
 			} catch (error) {
 				console.log(error);
 				params[1].status(500).send(error);
@@ -89,7 +89,6 @@ class Route {
 							: 'Something went wrong during validation',
 					});
 				}
-
 				if (user.role !== policies[0]) {
 					return res.status(403).send({
 						error:

@@ -5,6 +5,7 @@ const store = require('../store/users.store');
 const findUsers = async () => {
 	try {
 		const users = await store.findUsers();
+
 		return users;
 	} catch (error) {
 		console.log(error);
@@ -14,6 +15,7 @@ const findUsers = async () => {
 const findUser = async param => {
 	try {
 		const user = await store.findUser(param);
+
 		return user;
 	} catch (error) {
 		console.log(error);
@@ -51,9 +53,14 @@ const createUser = async user => {
 	}
 };
 
-const updateUser = async (user, newUserInfo) => {
+const updateUser = async data => {
 	try {
-		const updateUser = await store.updateOne(user, newUserInfo);
+		const { email, password } = data;
+		const passwordHashed = hashPassword(password);
+		const updateUser = await store.updateUser(
+			{ email },
+			{ password: passwordHashed }
+		);
 		return updateUser;
 	} catch (error) {
 		console.log(error);

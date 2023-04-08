@@ -37,9 +37,9 @@ const createUser = async newUserInfo => {
 	}
 };
 
-const updateUser = async (user, newUserInfo) => {
+const updateUser = async (data, newData) => {
 	try {
-		const updateUser = await User.updateOne(user, newUserInfo);
+		const updateUser = await User.updateOne(data, newData);
 		return updateUser;
 	} catch (error) {
 		console.log(error);
