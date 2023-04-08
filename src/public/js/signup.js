@@ -1,4 +1,5 @@
 const form = document.getElementById('formSignup');
+const inputRoleAdmin = document.getElementById('role-admin');
 
 form.addEventListener('submit', e => {
 	e.preventDefault();
@@ -7,7 +8,8 @@ form.addEventListener('submit', e => {
 	const obj = {};
 
 	data.forEach((value, key) => (obj[key] = value));
-
+	console.log(inputRoleAdmin.checked);
+	obj.role = inputRoleAdmin.checked ? 'ADMIN' : 'USER';
 	const url = '/api/users';
 	const headers = {
 		'Content-Type': 'application/json',

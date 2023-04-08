@@ -13,7 +13,7 @@ router.get('/login', publicAccess, (req, res) => {
 });
 
 router.get('/signup', publicAccess, (req, res) => {
-	res.render('signup.handlebars');
+	res.render('signup.handlebars', { style: 'signup.css' });
 });
 
 router.get('/forgotPassword', (req, res) => {

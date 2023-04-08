@@ -11,7 +11,6 @@ const sessionMongo = require('./config/sessionMongo.config');
 const initializePassport = require('./config/passport.config.js');
 
 const router = require('./router/app.js');
-// const mongoConnect = require('../db');
 const MongoConnect = require('../db');
 
 const app = express();
