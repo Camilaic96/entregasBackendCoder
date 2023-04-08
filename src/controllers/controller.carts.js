@@ -4,7 +4,7 @@ const CartDao = require('../dao/mongoManager/Cart.dao.js');
 const Cart = new CartDao('Carts.json');
 const ProductDao = require('../dao/mongoManager/Product.dao.js');
 const Product = new ProductDao('Products.json');
-const FilesDao = require('../dao/fsManager/Files.dao');
+const FilesDao = require('../dao/fsManager/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
 
 const router = Router();

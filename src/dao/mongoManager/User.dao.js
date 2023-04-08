@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-const User = require('../../models/User.model');
+const User = require('../../models/Users.model');
 
 class UserDao {
 	async find() {

@@ -1,16 +1,18 @@
-<h2>Profile</h2>
+<div class="card">
+    <h1>Profile</h1>
 
-<label for=''>First name</label>
-<p>{{user.first_name}}</p>
+    <label for=''>First name</label>
+    <p class="bold">{{user.first_name}}</p>
 
-<label for=''>Last name</label>
-<p>{{user.last_name}}</p>
+    <label for=''>Last name</label>
+    <p class="bold">{{user.last_name}}</p>
 
-<label for=''>Age</label>
-<p>{{user.age}}</p>
+    <label for=''>Age</label>
+    <p class="bold">{{user.age}}</p>
 
-<label for=''>Email</label>
-<p>{{user.email}}</p>
+    <label for=''>Email</label>
+    <p class="bold">{{user.email}}</p>
 
-<a href='/api/auth/logout'>Log out</a>
-<a href='/api/products'>Back</a>
+    <a href='/api/products' class="btn">Home</a>
+    <a href='/api/auth/logout' class="btn mt-3">Log out</a>
+</div>

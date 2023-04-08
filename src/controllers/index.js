@@ -1,7 +1,8 @@
 module.exports = {
-	viewsTemplateController: require('../controllers/controller.viewsTemplate'),
-	authController: require('../controllers/controller.auth'),
-	productsController: require('../controllers/controller.products'),
-	cartsController: require('../controllers/controller.carts'),
-	messagesController: require('../controllers/controller.messages'),
+	viewsTemplateController: require('./controller.viewsTemplate'),
+	authController: require('./controller.auth'),
+	productsController: require('./controller.products'),
+	cartsController: require('./controller.carts'),
+	messagesController: require('./controller.messages'),
+	usersController: require('./controller.users'),
 };

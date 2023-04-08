@@ -1,26 +1,32 @@
-<div class="col-md-6 offset-3 border mt-5 text-center">
-	<h2>Login</h2>
-	<form action='' id='formLogin'>
-		<label for=''>Username</label>
-		<input type='email' name='email' />
+<div class="container">
+	<h1>Login</h1>
+	<div class="container-login">
+		<form action='' id='formLogin'>
+			<div class="m-3">
+				<label for=''>Username</label>
+				<input type='email' name='email' />
+			</div>
 
-		<br>
-		<label for=''>Password</label>
-		<input type='password' name='password' />
+			<div class="m-3">
+				<label for=''>Password</label>
+				<input type='password' name='password' />
+			</div>
 
-		<br>
-		<button type='submit'>Log in</button>
-	</form>
+			<button type='submit' class="btn">Log in</button>
+		</form>
 
-	<br />
-	<a href='/api/auth/github'>Login with Github</a>
-	<br />
-	<br />
-	<a href='/api/auth/google'>Login with Google</a>
-	<br />
-	<br />
-	<br />
-	<a href='/api/forgotPassword'>Password reset</a>
+		<div>
+			<a href='/api/auth/github' class="btn">Login with Github</a>
+			<a href='/api/auth/google' class="btn">Login with Google</a>
+		</div>
+
+	</div>
+
+	<div>
+		<a href='/api/forgotPassword' class="btn">Password reset</a>
+		<a href='/api/signup' class="btn">Register</a>
+	</div>
+
 </div>
 
 <script src='/js/login.js'></script>

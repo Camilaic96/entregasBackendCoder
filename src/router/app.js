@@ -4,14 +4,12 @@ const {
 	productsController,
 	cartsController,
 	messagesController,
+	usersController,
 } = require('../controllers');
-const UserRouter = require('./users.router');
-
-const userRouter = new UserRouter();
 
 const router = app => {
 	app.use('/api', viewsTemplateController);
-	app.use('/api/users', userRouter.getRouter());
+	app.use('/api/users', usersController);
 	app.use('/api/auth', authController);
 	app.use('/api/products', productsController);
 	app.use('/api/carts', cartsController);

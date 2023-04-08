@@ -1,25 +1,31 @@
-<div>
+<section id="section-welcome" class="m-5 d-flex justify-content-between">
 	{{#if user}}
-		<h2>Welcome {{user.first_name}} {{user.last_name}}</h2>
-		<a href='/api'>Profile</a>
-		<a href='/api/auth/logout'>Log out</a>
-	{{/if}}
-</div>
-
-<h2>Products</h2>
-<div class='row'>
-	{{#each products}}
-		<div class='card col-4 mb-3'>
-			<div class='card-body'>
-				<p class='card-text'>Id: {{this.id}}</p>
-				<p class='card-text'>Title: {{this.title}}</p>
-				<p class='card-text'>Description: {{this.description}}</p>
-				<p class='card-text'>Code: {{this.code}}</p>
-				<p class='card-text'>Price: {{this.price}}</p>
-				<p class='card-text'>Stock: {{this.stock}}</p>
-				<p class='card-text'>Category: {{this.category}}</p>
-			</div>
-			<a href='/api/products/{{this.id}}'>See more</a>
+		<p class="fs-3">Welcome <span class="bold ">{{user.first_name}} {{user.last_name}}</span></p>
+		<div>
+			<a href='/api' class="btn">Profile</a>
+			<a href='' class="btn">See Cart</a> <!--AGREGAR RUTA QUE CONECTE AL USER CON LOS PRODUCTS DE SUS CARTS  (user.carts)-->
+			<a href='/api/auth/logout' class="btn">Log out</a>
 		</div>
-	{{/each}}
-</div>
+	{{/if}}
+</section>
+
+<section id="section-products" class="m-5">
+	<h1 class="text-center">Products</h2>
+	<div class='row d-flex justify-content-evenly'>
+		{{#each products}}
+			<div class='card col-md-3 m-3'>
+				<div class='card-body'>
+					<p class='card-text'>Id: <span class="bold">{{this.id}}</span></p>
+					<p class='card-text'>Title: <span class="bold">{{this.title}}</span></p>
+					<p class='card-text'>Description: <span class="bold">{{this.description}}</span></p>
+					<p class='card-text'>Code: <span class="bold">{{this.code}}</span></p>
+					<p class='card-text'>Price: <span class="bold">{{this.price}}</span></p>
+					<p class='card-text'>Stock: <span class="bold">{{this.stock}}</span></p>
+					<p class='card-text'>Category: <span class="bold">{{this.category}}</span></p>
+				</div>
+				<a href='/api/products/{{this.id}}' class="btn">See more</a>
+			</div>
+		{{/each}}
+	</div>
+
+</section>

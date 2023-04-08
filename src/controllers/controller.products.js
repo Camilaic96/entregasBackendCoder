@@ -4,7 +4,7 @@ const uploader = require('../utils/multer.js');
 
 const ProductDao = require('../dao/mongoManager/Product.dao.js');
 const Product = new ProductDao('Products.json');
-const FilesDao = require('../dao/fsManager/Files.dao');
+const FilesDao = require('../dao/fsManager/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
 const router = Router();
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 		const productsBd = await Product.find(optionsFind, filter);
 		const products = mapProducts(productsBd.docs);
 
-		res.render('home.handlebars', { products, user });
+		res.render('home.handlebars', { products, user, style: 'home.css' });
 	} catch (error) {
 		res.status(400).json({ error });
 	}
@@ -99,7 +99,29 @@ router.get('/:pid', async (req, res) => {
 		if (!product) {
 			return res.status(400).json({ error: 'Product not found' });
 		}
-		res.render('productId.handlebars', product);
+		const {
+			_id,
+			title,
+			description,
+			code,
+			price,
+			stock,
+			category,
+			status,
+			thumbnails,
+		} = product;
+		res.render('productId.handlebars', {
+			_id,
+			title,
+			description,
+			code,
+			price,
+			stock,
+			category,
+			status,
+			thumbnails,
+			style: 'productId.css',
+		});
 	} catch (error) {
 		res.status(400).json({ error });
 	}

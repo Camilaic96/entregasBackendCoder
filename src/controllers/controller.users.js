@@ -1,12 +1,6 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
-const Route = require('./router');
-const UserDao = require('../dao/mongoManager/User.dao');
-const { secretKey } = require('../config/');
-
-const User = new UserDao();
+const Route = require('../router/router');
 
 class UserRouter extends Route {
 	init() {
@@ -15,7 +9,6 @@ class UserRouter extends Route {
 			passport.authenticate('register', { failureRedirect: '/failRegister' }),
 			async (req, res) => {
 				try {
-					console.log('Registered user');
 					res.redirect('/api/products');
 				} catch (error) {
 					if (error.code === 11000)
@@ -30,22 +23,7 @@ class UserRouter extends Route {
 			res.sendServerError('Registration failed');
 		});
 
-		this.post('/user/login', async (req, res) => {
-			try {
-				const { email, password } = req.body;
-				const data = await User.findOne(email);
-
-				const match = await bcrypt.compare(password, data.password);
-				if (!match) return res.sendUserError('Incorrect password');
-
-				const token = jwt.sign({ email, role: data.role }, secretKey);
-
-				res.sendSuccess({ token });
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
-			}
-		});
-
+		/*
 		this.get('/user/public', ['PUBLIC'], (req, res) => {
 			res.sendSuccess('Respuesta exitosa. Ruta pública');
 		});
@@ -65,6 +43,11 @@ class UserRouter extends Route {
 		this.get('/', (req, res) => {
 			res.sendSuccess('Respuesta exitosa');
 		});
+		*/
 	}
 }
-module.exports = UserRouter;
+
+const userRouter = new UserRouter();
+const usersController = userRouter.getRouter();
+
+module.exports = usersController;

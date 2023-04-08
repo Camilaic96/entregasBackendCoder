@@ -1,11 +1,23 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+const { Command } = require('commander');
+
+const command = new Command();
+
+command.option('--mode <mode>', 'Environment').parse();
+
+const { mode } = command.opts();
+
+dotenv.config({
+	path: `././.env.${mode}`,
+});
 
 const config = {
 	port: process.env.PORT || 8080,
 	db: {
-		databaseDb: process.env.DATABASE_DB || '',
-		userDb: process.env.USER_DB || 'admin',
-		passDb: process.env.PASS_DB || 'admin',
+		dbHost: process.env.DB_HOST,
+		dbName: process.env.DB_NAME || '',
+		dbAdmin: process.env.DB_ADMIN || 'admin',
+		dbPassword: process.env.DB_PASSWORD || 'admin',
 	},
 	github: {
 		clientID_github: process.env.CLIENT_ID_GITHUB,

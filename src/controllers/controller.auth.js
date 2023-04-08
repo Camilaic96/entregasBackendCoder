@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const passport = require('passport');
+
 const UserDao = require('../dao/mongoManager/User.dao');
-const { createHash } = require('../utils/cryptPassword');
+const { hashPassword } = require('../utils/bcrypt.utils');
 const { generateToken } = require('../utils/jwt.utils');
 
 const User = new UserDao();
@@ -82,11 +83,11 @@ router.patch('/forgotPassword', async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
-		const passwordHashed = createHash(password);
+		const passwordHashed = hashPassword(password);
 
 		await User.updateOne({ email }, { password: passwordHashed });
 
-		res.json({ message: 'Updated password' });
+		res.redirect('/api/login');
 	} catch (error) {
 		res.json({ error });
 	}

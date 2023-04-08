@@ -5,15 +5,17 @@ const GitHubStrategy = require('passport-github2');
 const GoogleStrategy = require('passport-google-oauth20');
 const jwt = require('passport-jwt');
 
-const UserDao = require('../dao/mongoManager/User.dao');
-const { isValidPasswordMethod } = require('../utils/cryptPassword');
-const { github, google, jwtToken } = require('./');
+const Users = require('../services/users.service');
+
+const { comparePassword } = require('../utils/bcrypt.utils');
 const cookieExtractor = require('../utils/cookieExtractor.utils');
+
+const { github, google, jwtToken } = require('./');
 
 const { clientID_github, clientSecret_github } = github;
 const { clientID_google, clientSecret_google } = google;
 const { secretKey } = jwtToken;
-const User = new UserDao();
+
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
@@ -25,23 +27,13 @@ const initializePassport = () => {
 			{ passReqToCallback: true, usernameField: 'email' },
 			async (req, username, password, done) => {
 				try {
-					const user = await User.findOne({ email: username });
+					const user = await Users.findUser({ email: username });
 					if (user) {
 						console.log('User already exists');
 						return done(null, false);
 					}
 
-					const newUserInfo = {
-						first_name: req.body.first_name,
-						last_name: req.body.last_name,
-						age: req.body.age,
-						email: req.body.email,
-						password: req.body.password,
-						role: req.body.role,
-						carts: req.body.carts,
-					};
-
-					const newUser = await User.create(newUserInfo);
+					const newUser = await Users.createUser(req.body);
 					return done(null, newUser);
 				} catch (error) {
 					return done(error);
@@ -55,7 +47,7 @@ const initializePassport = () => {
 	});
 
 	passport.deserializeUser(async (id, done) => {
-		const user = await User.findById(id);
+		const user = await Users.findUserById(id);
 		done(null, user);
 	});
 
@@ -65,14 +57,14 @@ const initializePassport = () => {
 			{ usernameField: 'email' },
 			async (username, password, done) => {
 				try {
-					const user = await User.findOne({ email: username });
+					const user = await Users.findUser({ email: username });
 
 					if (!user) {
 						console.log('User not found');
 						return done(null, false);
 					}
 
-					if (!isValidPasswordMethod(password, user)) return done(null, false);
+					if (!comparePassword(password, user)) return done(null, false);
 
 					return done(null, user);
 				} catch (error) {
@@ -92,7 +84,7 @@ const initializePassport = () => {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
-					const user = await User.findOne({ email: profile._json.email });
+					const user = await Users.findUser({ email: profile._json.email });
 					if (!user) {
 						const newUserInfo = {
 							first_name: profile._json.name,
@@ -103,7 +95,7 @@ const initializePassport = () => {
 							role: 'USER',
 							carts: [],
 						};
-						const newUser = await User.create(newUserInfo);
+						const newUser = await Users.createUser(newUserInfo);
 
 						return done(null, newUser);
 					}
@@ -125,8 +117,7 @@ const initializePassport = () => {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
-					console.log(profile);
-					const user = await User.findOne({ googleId: profile._json.sub });
+					const user = await Users.findUser({ googleId: profile._json.sub });
 
 					if (!user) {
 						const newUserInfo = {
@@ -140,7 +131,7 @@ const initializePassport = () => {
 							carts: [],
 						};
 
-						const newUser = await User.create(newUserInfo);
+						const newUser = await Users.createUser(newUserInfo);
 						return done(null, newUser);
 					}
 
