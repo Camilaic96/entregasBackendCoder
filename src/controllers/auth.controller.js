@@ -2,6 +2,7 @@ const passport = require('passport');
 
 const Route = require('../router/router');
 const Users = require('../services/users.service');
+const UserDTO = require('../DTOs/User.dto');
 
 class AuthRouter extends Route {
 	init() {
@@ -13,13 +14,7 @@ class AuthRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
-					req.session.user = {
-						first_name: req.user.first_name,
-						last_name: req.user.last_name,
-						age: req.user.age,
-						email: req.user.email,
-						role: req.user.role,
-					};
+					req.session.user = new UserDTO(req.user);
 
 					res.redirect('/api/products');
 				} catch (error) {
@@ -46,7 +41,7 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('github', { failureRedirect: '/login' }),
 			async (req, res) => {
-				req.session.user = req.user;
+				req.session.user = new UserDTO(req.user);
 				res.redirect('/api');
 			}
 		);
@@ -63,7 +58,7 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('google', { failureRedirect: '/login' }),
 			async (req, res) => {
-				req.session.user = req.user;
+				req.session.user = new UserDTO(req.user);
 				res.redirect('/api');
 			}
 		);
@@ -79,13 +74,7 @@ class AuthRouter extends Route {
 		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {
 				await Users.updateOne(req.body);
-				req.session.user = {
-					first_name: req.user.first_name,
-					last_name: req.user.last_name,
-					age: req.user.age,
-					email: req.user.email,
-					role: req.user.role,
-				};
+				req.session.user = new UserDTO(req.user);
 
 				res.redirect('/api/products');
 			} catch (error) {
@@ -96,6 +85,6 @@ class AuthRouter extends Route {
 }
 
 const authRouter = new AuthRouter();
-const authsController = authRouter.getRouter();
+const authController = authRouter.getRouter();
 
-module.exports = authsController;
+module.exports = authController;

@@ -1,5 +1,6 @@
 const passport = require('passport');
 
+const UserDTO = require('../DTOs/User.dto');
 const Route = require('../router/router');
 
 class UserRouter extends Route {
@@ -12,14 +13,7 @@ class UserRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
-					req.session.user = {
-						first_name: req.user.first_name,
-						last_name: req.user.last_name,
-						age: req.user.age,
-						email: req.user.email,
-						role: req.user.role,
-					};
-
+					req.session.user = new UserDTO(req.user);
 					res.redirect('/api/products');
 				} catch (error) {
 					if (error.code === 11000)

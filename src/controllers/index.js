@@ -1,10 +1,10 @@
 module.exports = {
-	viewsTemplateController: require('./controller.viewsTemplate'),
-	authController: require('./controller.auth'),
-	productsController: require('./controller.products'),
-	cartsController: require('./controller.carts'),
-	messagesController: require('./controller.messages'),
-	usersController: require('./controller.users'),
-	emailsController: require('./controller.emails'),
-	smsController: require('./controller.sms'),
+	viewsTemplateController: require('./viewsTemplate.controller'),
+	authController: require('./auth.controller'),
+	productsController: require('./products.controller'),
+	cartsController: require('./carts.controller'),
+	messagesController: require('./messages.controller'),
+	usersController: require('./users.controller'),
+	emailsController: require('./emails.controller'),
+	smsController: require('./sms.controller'),
 };

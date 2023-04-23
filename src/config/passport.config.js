@@ -5,13 +5,11 @@ const GitHubStrategy = require('passport-github2');
 const GoogleStrategy = require('passport-google-oauth20');
 const jwt = require('passport-jwt');
 
-const Users = require('../services/users.service');
-
 const { comparePassword } = require('../utils/bcrypt.utils');
 const cookieExtractor = require('../utils/cookieExtractor.utils');
+const Users = require('../services/users.service');
 
 const { github, google, jwtToken } = require('./');
-
 const { clientID_github, clientSecret_github } = github;
 const { clientID_google, clientSecret_google } = google;
 const { secretKey } = jwtToken;
@@ -125,7 +123,7 @@ const initializePassport = () => {
 							first_name: profile._json.given_name,
 							last_name: profile._json.family_name,
 							age: 18,
-							email: profile._json.email || 'error@gmail.com', // Arreglar esto
+							email: profile._json.email,
 							password: ' ',
 							role: 'USER',
 							carts: [],
