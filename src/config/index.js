@@ -31,6 +31,17 @@ const config = {
 		secretKey: process.env.SECRET_KEY,
 	},
 	persistence: process.env.PERSISTENCE || 'memory',
+	email: {
+		emailService: process.env.EMAIL_SERVICE,
+		emailPort: process.env.EMAIL_PORT,
+		emailUser: process.env.EMAIL_USER,
+		emailPass: process.env.EMAIL_PASS,
+	},
+	sms: {
+		smsAccountSID: process.env.SMS_ACCOUNT_SID,
+		smsAuthToken: process.env.SMS_AUTH_TOKEN,
+		smsPhoneNumber: process.env.SMS_PHONE_NUMBER,
+	},
 };
 
 module.exports = config;
