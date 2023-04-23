@@ -1,76 +1,69 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 const { hashPassword } = require('../utils/bcrypt.utils');
-const store = require('../store/users.store');
+const UserDTO = require('../DTOs/User.dto');
+const { usersRepository } = require('../repositories');
+const Users = usersRepository;
 
-const findUsers = async () => {
+const find = async () => {
 	try {
-		const users = await store.findUsers();
+		const users = await Users.find();
 
 		return users;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
-const findUser = async param => {
+const findOne = async param => {
 	try {
-		const user = await store.findUser(param);
+		const user = await Users.findOne(param);
 
 		return user;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
-const findUserById = async param => {
+const findById = async param => {
 	try {
-		const user = await store.findUserById(param);
+		const user = await Users.findById(param);
 		return user;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
-const createUser = async user => {
+const create = async user => {
 	try {
-		const { first_name, last_name, age, email, password, role, carts } = user;
+		const newUserInfo = new UserDTO(user);
 
-		const newUserInfo = {
-			first_name,
-			last_name,
-			age,
-			email,
-			password: hashPassword(password),
-			role,
-			carts,
-		};
-
-		const newUser = await store.createUser(newUserInfo);
+		const newUser = await Users.create(newUserInfo);
 
 		return newUser;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
-const updateUser = async data => {
+const updateOne = async data => {
 	try {
 		const { email, password } = data;
 		const passwordHashed = hashPassword(password);
-		const updateUser = await store.updateUser(
+		const updateUser = await Users.updateOne(
 			{ email },
 			{ password: passwordHashed }
 		);
 		return updateUser;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
 module.exports = {
-	createUser,
-	findUser,
-	findUsers,
-	updateUser,
-	findUserById,
+	find,
+	findOne,
+	findById,
+	create,
+	updateOne,
 };

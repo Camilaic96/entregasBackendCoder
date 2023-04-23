@@ -14,13 +14,6 @@ const productSchema = new mongoose.Schema({
 	},
 	stock: Number,
 	category: String,
-	/*
-    category: {
-        type: String,
-        enum: ['1', '2', '3'],
-        default: '1'
-    },
-    */
 	thumbnail: String,
 });
 

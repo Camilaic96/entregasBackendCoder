@@ -1,4 +1,4 @@
-const Message = require('../../models/Messages.model');
+const Message = require('../models/Messages.model');
 
 class MessageDao {
 	constructor(file) {

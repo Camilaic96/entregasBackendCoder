@@ -1,4 +1,4 @@
-const Cart = require('../../models/Carts.model');
+const Cart = require('../models/Carts.model');
 
 class CartDao {
 	constructor(file) {

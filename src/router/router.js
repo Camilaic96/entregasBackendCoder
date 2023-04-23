@@ -22,9 +22,10 @@ class Route {
 		);
 	}
 
-	post(path, ...callbacks) {
+	post(path, policies, ...callbacks) {
 		this.router.post(
 			path,
+			this.handlePolicies(policies),
 			this.generateCustomResponses,
 			this.applyCallbacks(callbacks)
 		);

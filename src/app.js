@@ -11,7 +11,6 @@ const sessionMongo = require('./config/sessionMongo.config');
 const initializePassport = require('./config/passport.config.js');
 
 const router = require('./router/app.js');
-const MongoConnect = require('../db');
 
 const app = express();
 
@@ -28,7 +27,5 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 router(app);
-
-MongoConnect.getInstance();
 
 module.exports = { app };

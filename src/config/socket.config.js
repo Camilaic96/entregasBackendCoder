@@ -1,7 +1,7 @@
 const { Server } = require('socket.io');
 const http = require('http');
 
-const MessagesDao = require('../dao/mongoManager/Message.dao');
+const MessagesDao = require('../dao/mongo/mongoManager/Message.dao');
 const app = require('../app');
 
 const Message = new MessagesDao('Messages.json');

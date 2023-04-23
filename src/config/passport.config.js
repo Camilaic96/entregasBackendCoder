@@ -27,13 +27,13 @@ const initializePassport = () => {
 			{ passReqToCallback: true, usernameField: 'email' },
 			async (req, username, password, done) => {
 				try {
-					const user = await Users.findUser({ email: username });
+					const user = await Users.findOne({ email: username });
 					if (user) {
 						console.log('User already exists');
 						return done(null, false);
 					}
-
-					const newUser = await Users.createUser(req.body);
+					const newUserInfo = req.body;
+					const newUser = await Users.create(newUserInfo);
 					return done(null, newUser);
 				} catch (error) {
 					return done(error);
@@ -47,7 +47,7 @@ const initializePassport = () => {
 	});
 
 	passport.deserializeUser(async (id, done) => {
-		const user = await Users.findUserById(id);
+		const user = await Users.findById(id);
 		done(null, user);
 	});
 
@@ -57,7 +57,7 @@ const initializePassport = () => {
 			{ usernameField: 'email' },
 			async (username, password, done) => {
 				try {
-					const user = await Users.findUser({ email: username });
+					const user = await Users.findOne({ email: username });
 
 					if (!user) {
 						console.log('User not found');
@@ -84,7 +84,7 @@ const initializePassport = () => {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
-					const user = await Users.findUser({ email: profile._json.email });
+					const user = await Users.findOne({ email: profile._json.email });
 					if (!user) {
 						const newUserInfo = {
 							first_name: profile._json.name,
@@ -95,7 +95,7 @@ const initializePassport = () => {
 							role: 'USER',
 							carts: [],
 						};
-						const newUser = await Users.createUser(newUserInfo);
+						const newUser = await Users.create(newUserInfo);
 
 						return done(null, newUser);
 					}
@@ -117,7 +117,7 @@ const initializePassport = () => {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
-					const user = await Users.findUser({ googleId: profile._json.sub });
+					const user = await Users.findOne({ googleId: profile._json.sub });
 
 					if (!user) {
 						const newUserInfo = {
@@ -131,7 +131,7 @@ const initializePassport = () => {
 							carts: [],
 						};
 
-						const newUser = await Users.createUser(newUserInfo);
+						const newUser = await Users.create(newUserInfo);
 						return done(null, newUser);
 					}
 

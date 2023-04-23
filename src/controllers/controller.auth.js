@@ -1,13 +1,16 @@
 const passport = require('passport');
 
 const Route = require('../router/router');
-const User = require('../services/users.service');
+const Users = require('../services/users.service');
 
 class AuthRouter extends Route {
 	init() {
 		this.post(
 			'/',
-			passport.authenticate('login', { failureRedirect: 'failLogin' }),
+			['PUBLIC'],
+			passport.authenticate('login', {
+				failureRedirect: '/api/auth/failLogin',
+			}),
 			async (req, res) => {
 				try {
 					req.session.user = {
@@ -15,6 +18,7 @@ class AuthRouter extends Route {
 						last_name: req.user.last_name,
 						age: req.user.age,
 						email: req.user.email,
+						role: req.user.role,
 					};
 
 					res.redirect('/api/products');
@@ -72,14 +76,15 @@ class AuthRouter extends Route {
 			});
 		});
 
-		this.patch('/forgotPassword', async (req, res) => {
+		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {
-				await User.updateUser(req.body);
+				await Users.updateOne(req.body);
 				req.session.user = {
 					first_name: req.user.first_name,
 					last_name: req.user.last_name,
 					age: req.user.age,
 					email: req.user.email,
+					role: req.user.role,
 				};
 
 				res.redirect('/api/products');

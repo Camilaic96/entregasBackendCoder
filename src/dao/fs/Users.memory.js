@@ -1,20 +1,22 @@
 /* eslint-disable no-useless-catch */
-const User = require('../../models/Users.model');
 
-class UserDao {
+class UsersMemoryDAO {
+	constructor() {
+		this.data = [];
+	}
+
 	async find() {
 		try {
-			const users = await User.find();
-			return users;
+			return this.data;
 		} catch (error) {
 			throw error;
 		}
 	}
 
+	/*
 	async findOne(param) {
 		try {
-			const user = await User.findOne(param);
-			return user;
+
 		} catch (error) {
 			throw error;
 		}
@@ -22,30 +24,28 @@ class UserDao {
 
 	async findById(id) {
 		try {
-			const user = await User.findById(id);
-			return user;
+
 		} catch (error) {
 			throw error;
 		}
 	}
-
+*/
 	async create(newUser) {
 		try {
-			const user = await User.create(newUser);
-			return user;
+			this.push.data(newUser);
+			return newUser;
 		} catch (error) {
 			throw error;
 		}
 	}
-
+	/*
 	async updateOne(data, newData) {
 		try {
-			const user = await User.updateOne(data, newData);
-			return user;
+
 		} catch (error) {
 			throw error;
 		}
-	}
+	} */
 }
 
-module.exports = UserDao;
+module.exports = UsersMemoryDAO;

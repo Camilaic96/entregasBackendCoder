@@ -30,6 +30,7 @@ const config = {
 	jwtToken: {
 		secretKey: process.env.SECRET_KEY,
 	},
+	persistence: process.env.PERSISTENCE || 'memory',
 };
 
 module.exports = config;
