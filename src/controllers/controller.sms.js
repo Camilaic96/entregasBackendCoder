@@ -23,26 +23,10 @@ class SmsRouter extends Route {
 				res.sendServerError('Login failed');
 			}
 		});
-
-		/*
-		this.post('/', async (req, res) => {
-			try {
-			} catch (error) {
-				console.log(error);
-				res.sendServerError('Login failed');
-			}
-		});
-
-		this.patch('/', ['PUBLIC'], async (req, res) => {
-			try {
-			} catch (error) {
-				res.json({ error });
-			}
-		}); */
 	}
 }
 
 const smsRouter = new SmsRouter();
-const smssController = smsRouter.getRouter();
+const smsController = smsRouter.getRouter();
 
-module.exports = smssController;
+module.exports = smsController;
