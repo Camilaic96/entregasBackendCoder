@@ -9,36 +9,9 @@ const Product = require('../services/products.service.js');
 const FilesDao = require('../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
-const mapProducts = prod => {
-	const products = prod.map(
-		({
-			_id,
-			title,
-			description,
-			code,
-			price,
-			stock,
-			status,
-			category,
-			thumbnails,
-		}) => ({
-			id: _id,
-			title,
-			description,
-			code,
-			price,
-			stock,
-			status,
-			category,
-			thumbnails,
-		})
-	);
-	return products;
-};
-
 class ProductRouter extends Route {
 	init() {
-		this.get('/', async (req, res) => {
+		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
 				const limit = parseInt(req.query.limit) || 10;
@@ -58,7 +31,7 @@ class ProductRouter extends Route {
 				};
 
 				const productsBd = await Product.find(optionsFind, filter);
-				const products = mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd.docs);
 
 				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
@@ -68,7 +41,7 @@ class ProductRouter extends Route {
 			}
 		});
 
-		this.get('/realtimeproducts', async (req, res) => {
+		this.get('/realtimeproducts', ['PUBLIC'], async (req, res) => {
 			try {
 				const limit = parseInt(req.query.limit) || 10;
 				const page = parseInt(req.query.page) || 1;
@@ -87,7 +60,7 @@ class ProductRouter extends Route {
 				};
 
 				const productsBd = await Product.find(optionsFind, filter);
-				const products = mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd.docs);
 
 				global.io.emit('mostrarProductos', products);
 				res.render('realTimeProducts.handlebars', { products });
@@ -98,7 +71,7 @@ class ProductRouter extends Route {
 			}
 		});
 
-		this.get('/:pid', async (req, res) => {
+		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { pid } = req.params;
 				const product = await Product.findOne({ _id: pid });
@@ -135,13 +108,18 @@ class ProductRouter extends Route {
 			}
 		});
 
-		this.post('/populate', uploader.array('files'), async (req, res) => {
-			const products = await FilesManager.loadItems();
-			const response = await Product.insertMany(products);
-			res.json({ message: response });
-		});
+		this.post(
+			'/populate',
+			['PUBLIC'],
+			uploader.array('files'),
+			async (req, res) => {
+				const products = await FilesManager.loadItems();
+				const response = await Product.insertMany(products);
+				res.json({ message: response });
+			}
+		);
 
-		this.post('/', uploader.array('files'), async (req, res) => {
+		this.post('/', ['ADMIN'], uploader.array('files'), async (req, res) => {
 			try {
 				const {
 					title,
@@ -181,6 +159,7 @@ class ProductRouter extends Route {
 
 		this.post(
 			'/realtimeproducts',
+			['ADMIN'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {
@@ -221,7 +200,7 @@ class ProductRouter extends Route {
 					await Product.create(newProduct);
 
 					const productsBd = await Product.find();
-					const products = mapProducts(productsBd.docs);
+					const products = this.mapProducts(productsBd.docs);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -235,6 +214,7 @@ class ProductRouter extends Route {
 
 		this.put(
 			'/realtimeproducts/:pid',
+			['ADMIN'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {
@@ -283,7 +263,7 @@ class ProductRouter extends Route {
 					}
 
 					const productsBd = await Product.find();
-					const products = mapProducts(productsBd.docs);
+					const products = this.mapProducts(productsBd.docs);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -295,7 +275,7 @@ class ProductRouter extends Route {
 			}
 		);
 
-		this.delete('/realtimeproducts/:pid', async (req, res) => {
+		this.delete('/realtimeproducts/:pid', ['ADMIN'], async (req, res) => {
 			try {
 				const { pid } = req.params;
 				const result = await Product.deleteOne({ _id: pid });
@@ -303,7 +283,7 @@ class ProductRouter extends Route {
 					return res.status(404).json({ error: 'Product not found' });
 				}
 				const productsBd = await Product.find();
-				const products = mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd.docs);
 
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {});
@@ -315,11 +295,38 @@ class ProductRouter extends Route {
 		});
 
 		// Delete all products bd
-		this.delete('/', async (req, res) => {
+		this.delete('/', ['ADMIN'], async (req, res) => {
 			await Product.deleteMany();
 			res.json({ message: 'All products deleted' });
 		});
 	}
+
+	mapProducts = prod => {
+		const products = prod.map(
+			({
+				_id,
+				title,
+				description,
+				code,
+				price,
+				stock,
+				status,
+				category,
+				thumbnails,
+			}) => ({
+				id: _id,
+				title,
+				description,
+				code,
+				price,
+				stock,
+				status,
+				category,
+				thumbnails,
+			})
+		);
+		return products;
+	};
 }
 
 const productRouter = new ProductRouter();

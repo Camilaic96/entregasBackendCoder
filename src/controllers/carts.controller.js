@@ -7,7 +7,7 @@ const CartManager = new FilesDao('Carts.json');
 
 class CartRouter extends Route {
 	init() {
-		this.get('/', async (req, res) => {
+		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const carts = await Cart.find();
 				res.json({ response: carts });
@@ -18,7 +18,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.get('/:cid', async (req, res) => {
+		this.get('/:cid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { cid } = req.params;
 				const cartById = await Cart.findOne({ _id: cid });
@@ -49,13 +49,13 @@ class CartRouter extends Route {
 		});
 
 		// Add all carts from fs to the database
-		this.post('/populate', async (req, res) => {
+		this.post('/populate', ['ADMIN'], async (req, res) => {
 			const carts = await CartManager.loadItems();
 			const response = await Cart.insertMany(carts);
 			res.json({ message: response });
 		});
 
-		this.post('/', async (req, res) => {
+		this.post('/', ['USER'], async (req, res) => {
 			try {
 				const { products, newCart } = req.body;
 				for (let i = 0; i < products.length; i++) {
@@ -73,7 +73,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.post('/:cid/products/:pid', async (req, res) => {
+		this.post('/:cid/products/:pid', ['USER'], async (req, res) => {
 			try {
 				const { cid, pid } = req.params;
 				const { quantity } = req.body;
@@ -92,7 +92,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.put('/:cid', async (req, res) => {
+		this.put('/:cid', ['USER'], async (req, res) => {
 			try {
 				const { cid } = req.params;
 				const { products } = req.body;
@@ -107,7 +107,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.put('/:cid/products/:pid', async (req, res) => {
+		this.put('/:cid/products/:pid', ['USER'], async (req, res) => {
 			try {
 				const { cid, pid } = req.params;
 				const { quantity } = req.body;
@@ -127,7 +127,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.delete('/:cid/products/:pid', async (req, res) => {
+		this.delete('/:cid/products/:pid', ['USER'], async (req, res) => {
 			try {
 				const { cid, pid } = req.params;
 				const cart = await Cart.findOne({ _id: cid });
@@ -143,7 +143,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.delete('/:cid', async (req, res) => {
+		this.delete('/:cid', ['USER'], async (req, res) => {
 			try {
 				const { cid } = req.params;
 				await Cart.deleteOne({ _id: cid });
@@ -156,12 +156,12 @@ class CartRouter extends Route {
 		});
 
 		// Delete all carts bd
-		this.delete('/', async (req, res) => {
+		this.delete('/', ['ADMIN'], async (req, res) => {
 			await Cart.deleteMany();
 			res.json({ message: 'All carts deleted' });
 		});
 
-		this.get('/:cid/purchase', async (req, res) => {
+		this.get('/:cid/purchase', ['USER'], async (req, res) => {
 			/*
 			Corroborar stock
 				- Si el producto tiene suficiente stock para la cantidad indicada en el producto del carrito, entonces restarlo del stock del producto y continuar.

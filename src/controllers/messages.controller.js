@@ -7,18 +7,18 @@ const MessageManager = new FilesDao('Messages.json');
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', ['USER'], (req, res) => {
 	res.render('chat.handlebars', {});
 });
 
 // Add all messages from fs to the database
-router.post('/populate', async (req, res) => {
+router.post('/populate', ['USER'], async (req, res) => {
 	const messages = await MessageManager.loadItems();
 	const response = await Message.insertMany(messages);
 	res.json({ message: response });
 });
 
-router.post('/', async (req, res) => {
+router.post('/', ['USER'], async (req, res) => {
 	try {
 		const { user, message } = req.body;
 		if (!user || !message) {
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 });
 
 // Delete all messages bd
-router.delete('/', async (req, res) => {
+router.delete('/', ['ADMIN'], async (req, res) => {
 	await Message.deleteMany();
 	res.json({ message: 'All messages deleted' });
 });
