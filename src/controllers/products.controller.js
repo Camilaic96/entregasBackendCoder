@@ -31,7 +31,7 @@ class ProductRouter extends Route {
 				};
 
 				const productsBd = await Product.find(optionsFind, filter);
-				const products = this.mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd);
 
 				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
@@ -60,7 +60,7 @@ class ProductRouter extends Route {
 				};
 
 				const productsBd = await Product.find(optionsFind, filter);
-				const products = this.mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd);
 
 				global.io.emit('mostrarProductos', products);
 				res.render('realTimeProducts.handlebars', { products });
@@ -200,7 +200,7 @@ class ProductRouter extends Route {
 					await Product.create(newProduct);
 
 					const productsBd = await Product.find();
-					const products = this.mapProducts(productsBd.docs);
+					const products = this.mapProducts(productsBd);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -263,7 +263,7 @@ class ProductRouter extends Route {
 					}
 
 					const productsBd = await Product.find();
-					const products = this.mapProducts(productsBd.docs);
+					const products = this.mapProducts(productsBd);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -283,7 +283,7 @@ class ProductRouter extends Route {
 					return res.status(404).json({ error: 'Product not found' });
 				}
 				const productsBd = await Product.find();
-				const products = this.mapProducts(productsBd.docs);
+				const products = this.mapProducts(productsBd);
 
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {});

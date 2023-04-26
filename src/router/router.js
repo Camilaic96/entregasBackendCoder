@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const passport = require('passport');
+// const passport = require('passport');
 
 class Route {
 	constructor() {
@@ -77,6 +77,22 @@ class Route {
 	};
 
 	handlePolicies = policies => {
+		return async (req, res, next) => {
+			if (policies[0] === 'PUBLIC') {
+				return next();
+			}
+
+			if (!req.session.user) {
+				return res.status(200).redirect('/login');
+			}
+
+			if (req.session.user.role !== 'ADMIN') {
+				return next();
+			}
+
+			next();
+		};
+		/*
 		if (policies[0] === 'PUBLIC') {
 			return (req, res, next) => {
 				next();
@@ -104,6 +120,7 @@ class Route {
 				next();
 			})(req, res, next);
 		};
+		*/
 	};
 }
 
