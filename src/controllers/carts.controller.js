@@ -162,17 +162,24 @@ class CartRouter extends Route {
 		});
 
 		this.get('/:cid/purchase', ['USER'], async (req, res) => {
-			/*
-			Corroborar stock
-				- Si el producto tiene suficiente stock para la cantidad indicada en el producto del carrito, entonces restarlo del stock del producto y continuar.
-				- Si el producto no tiene suficiente stock para la cantidad indicada en el producto del carrito, entonces no agregar el producto al proceso de compra.
-			
-			Al final, utilizar el servicio de Tickets para poder generar un ticket con los datos de la compra.
-			
-			En caso de existir una compra no completada, devolver el arreglo con los ids de los productos que no pudieron procesarse.
-
-			Una vez finalizada la compra, el carrito asociado al usuario que compró deberá contener sólo los productos que no pudieron comprarse. Es decir, se filtran los que sí se compraron y se quedan aquellos que no tenían disponibilidad.
-			*/
+			try {
+				const { products } = req.body; // products array de productos que llegan con id y quantity
+				const productsOutOfStock = [];
+				products.forEach(async product => {
+					const productBD = await Cart.findOne(product._id);
+					if (product.quantity > productBD.stock) {
+						productsOutOfStock.push(product);
+					} else {
+						await Cart.updateOne(productBD, productBD.stock - product.quantity);
+					}
+					if (productsOutOfStock.length > 0) {
+						return res.sendSuccess(productsOutOfStock);
+					}
+					return res.sendSuccess('Successful purchase');
+				});
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
 		});
 	}
 }

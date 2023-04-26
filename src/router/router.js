@@ -31,25 +31,28 @@ class Route {
 		);
 	}
 
-	put(path, ...callbacks) {
+	put(path, policies, ...callbacks) {
 		this.router.put(
 			path,
+			this.handlePolicies(policies),
 			this.generateCustomResponses,
 			this.applyCallbacks(callbacks)
 		);
 	}
 
-	patch(path, ...callbacks) {
+	patch(path, policies, ...callbacks) {
 		this.router.patch(
 			path,
+			this.handlePolicies(policies),
 			this.generateCustomResponses,
 			this.applyCallbacks(callbacks)
 		);
 	}
 
-	delete(path, ...callbacks) {
+	delete(path, policies, ...callbacks) {
 		this.router.delete(
 			path,
+			this.handlePolicies(policies),
 			this.generateCustomResponses,
 			this.applyCallbacks(callbacks)
 		);

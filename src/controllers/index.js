@@ -7,5 +7,5 @@ module.exports = {
 	usersController: require('./users.controller'),
 	emailsController: require('./emails.controller'),
 	smsController: require('./sms.controller'),
-	sessionCotroller: require('./session.controller'),
+	sessionController: require('./session.controller'),
 };

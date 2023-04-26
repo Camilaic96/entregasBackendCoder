@@ -3,10 +3,10 @@ const {
 	authController,
 	productsController,
 	cartsController,
-	// messagesController,
+	messagesController,
 	usersController,
-	// emailsController,
-	// smsController,
+	emailsController,
+	smsController,
 	sessionController,
 } = require('../controllers');
 
@@ -17,9 +17,9 @@ const router = app => {
 	app.use('/api/products', productsController);
 	app.use('/api/carts', cartsController);
 	app.use('/api/session', sessionController);
-	// app.use('/api/messages', messagesController);
-	// app.use('/api/emails', emailsController);
-	// app.use('/api/sms', smsController);
+	app.use('/api/messages', messagesController);
+	app.use('/api/emails', emailsController);
+	app.use('/api/sms', smsController);
 };
 
 module.exports = router;

@@ -11,7 +11,7 @@ require('./config/socket.config');
 const sessionMongo = require('./config/sessionMongo.config');
 const initializePassport = require('./config/passport.config.js');
 
-const router = require('./router/app.js');
+const router = require('./router/app');
 
 const app = express();
 

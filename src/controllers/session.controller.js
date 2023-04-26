@@ -8,7 +8,7 @@ class SessionRouter extends Route {
 			try {
 				if (!req.session.user) return res.sendSuccess('User not logged in');
 				const user = new SessionDTO(req.session.user);
-				return res.sendSuccess(user);
+				res.sendSuccess(user);
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}

@@ -2,7 +2,7 @@ const Route = require('../router/router');
 
 class ViewRouter extends Route {
 	init() {
-		this.get('/', ['PUBLIC'], (req, res) => {
+		this.get('/', ['USER'], (req, res) => {
 			const { user } = req.session;
 			res.render('profile.handlebars', { user, style: 'profile.css' });
 		});

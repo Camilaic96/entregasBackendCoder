@@ -63,7 +63,7 @@ class AuthRouter extends Route {
 			}
 		);
 
-		this.get('/logout', ['PUBLIC'], (req, res) => {
+		this.get('/logout', ['USER'], (req, res) => {
 			req.session.destroy(error => {
 				if (error) return res.json({ error });
 
