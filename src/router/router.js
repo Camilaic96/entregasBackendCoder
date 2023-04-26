@@ -83,7 +83,7 @@ class Route {
 			}
 
 			if (!req.session.user) {
-				return res.status(200).redirect('/login');
+				return res.status(200).redirect('/api/login');
 			}
 
 			if (req.session.user.role !== 'ADMIN') {
