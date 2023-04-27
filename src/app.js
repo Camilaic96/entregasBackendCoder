@@ -10,6 +10,7 @@ const cors = require('cors');
 require('./config/socket.config');
 const sessionMongo = require('./config/sessionMongo.config');
 const initializePassport = require('./config/passport.config.js');
+const errorHandler = require('./middlewares/handler.errors');
 
 const router = require('./router/app');
 
@@ -29,5 +30,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 router(app);
+
+app.use(errorHandler);
 
 module.exports = { app };

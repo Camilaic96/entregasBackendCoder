@@ -8,4 +8,5 @@ module.exports = {
 	emailsController: require('./emails.controller'),
 	smsController: require('./sms.controller'),
 	sessionController: require('./session.controller'),
+	mockingProductsController: require('./mockingProducts.controller'),
 };

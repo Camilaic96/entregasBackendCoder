@@ -1,4 +1,3 @@
-// agregar DTO para filtrar los datos que no deben ser mostrados
 const Route = require('../router/router');
 const SessionDTO = require('../DTOs/Session.dto');
 
