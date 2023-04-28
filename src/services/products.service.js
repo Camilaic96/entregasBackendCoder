@@ -2,6 +2,13 @@
 const { productsRepository } = require('../repositories');
 const Products = productsRepository;
 
+const CustomErrors = require('../utils/errors/Custom.errors');
+const {
+	generateProductErrorInfo,
+	notFoundProduct,
+} = require('../utils/errors/info.errors');
+const EnumErrors = require('../utils/errors/Enum.errors');
+
 const mapProducts = prod => {
 	const products = prod.map(
 		({
@@ -72,27 +79,126 @@ const insertMany = async newProducts => {
 	}
 };
 
-const create = async product => {
+const create = async (body, files) => {
 	try {
-		const newProduct = await Products.create(product);
-		return newProduct;
+		const { title, description, code, price, status, stock, category } = body;
+		if (
+			!title ||
+			!description ||
+			!code ||
+			!price ||
+			!status ||
+			!stock ||
+			!category
+		) {
+			CustomErrors.createError({
+				name: 'Product creation error',
+				cause: generateProductErrorInfo({
+					title,
+					description,
+					code,
+					price,
+					stock,
+					category,
+				}),
+				message: 'Error trying to create product',
+				code: EnumErrors.INVALID_TYPES_ERROR,
+			});
+		}
+		const newProduct = {
+			title,
+			description,
+			code,
+			price,
+			status,
+			stock,
+			category,
+		};
+		newProduct.thumbnails = [];
+		if (files) {
+			files.map(file => newProduct.thumbnails.push(file.path));
+		}
+		const product = await Products.create(newProduct);
+		return product;
 	} catch (error) {
 		throw error;
 	}
 };
 
-const updateOne = async (data, newData) => {
+const updateOne = async (params, body, files) => {
 	try {
-		const updateProduct = await Products.updateOne(data, newData);
+		const { pid } = params;
+		const { title, description, code, price, status, stock, category } = body;
+		if (
+			!title ||
+			!description ||
+			!code ||
+			!price ||
+			!status ||
+			!stock ||
+			!category
+		) {
+			CustomErrors.createError({
+				name: 'Product updating error',
+				cause: generateProductErrorInfo({
+					title,
+					description,
+					code,
+					price,
+					stock,
+					category,
+				}),
+				message: 'Error trying to update product',
+				code: EnumErrors.INVALID_TYPES_ERROR,
+			});
+		}
+		const newDataProduct = {
+			title,
+			description,
+			code,
+			price,
+			status,
+			stock,
+			category,
+			thumbnails: [],
+		};
+		if (files) {
+			files.map(file => newDataProduct.thumbnails.push(file.path));
+		}
+
+		const updateProduct = await Products.updateOne(
+			{ _id: pid },
+			newDataProduct,
+			{
+				new: true,
+			}
+		);
+		if (updateProduct.nModified === 0) {
+			CustomErrors.createError({
+				name: 'Product not found in database',
+				cause: notFoundProduct(pid),
+				message: 'Error trying to find product',
+				code: EnumErrors.NOT_FOUND,
+			});
+		}
 		return updateProduct;
 	} catch (error) {
 		throw error;
 	}
 };
 
-const deleteOne = async product => {
+const deleteOne = async params => {
 	try {
-		const deleteProduct = await Products.deleteOne(product);
+		const { pid } = params;
+		const deleteProduct = await Products.deleteOne({ _id: pid });
+		if (deleteProduct.deletedCount === 0) {
+			CustomErrors.createError({
+				name: 'Product not found in database',
+				cause: notFoundProduct(pid),
+				message: 'Error trying to find product',
+				code: EnumErrors.NOT_FOUND,
+			});
+		}
 		return deleteProduct;
 	} catch (error) {
 		throw error;

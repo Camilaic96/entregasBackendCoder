@@ -8,4 +8,26 @@ const generateUserErrorInfo = user => {
     `;
 };
 
-module.exports = generateUserErrorInfo;
+const generateProductErrorInfo = product => {
+	return `
+        One or more properties were incomplete or not validate.
+        List of required properties:
+        * title       : Needs to be a string, received ${product.title}
+        * description : Needs to be a string, received ${product.description}
+        * code        : Needs to be a string, received ${product.code}
+        * price       : Needs to be a string, received ${product.price}
+        * stock       : Needs to be a string, received ${product.stock}
+        * category    : Needs to be a string, received ${product.category}
+    `;
+};
+
+const notFoundProduct = id => {
+	return `
+    The product with id ${id} was not found in the database.`;
+};
+
+module.exports = {
+	generateUserErrorInfo,
+	generateProductErrorInfo,
+	notFoundProduct,
+};

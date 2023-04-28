@@ -15,8 +15,6 @@ class ProductRouter extends Route {
 				const products = await Products.find(req.query);
 				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
-				if (error.code === 11000)
-					return res.sendUserError('The user already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
@@ -27,24 +25,18 @@ class ProductRouter extends Route {
 				global.io.emit('mostrarProductos', products);
 				res.render('realTimeProducts.handlebars', { products });
 			} catch (error) {
-				if (error.code === 11000)
-					return res.sendUserError('The user already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
 
+		// Modificar para usar el customizador de errores
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { pid } = req.params;
 				const productBd = await Products.findOne({ _id: pid });
-				if (!productBd) {
-					return res.status(400).json({ error: 'Products not found' });
-				}
 				const product = new ProductDTO(productBd);
 				res.render('productId.handlebars', { product, style: 'productId.css' });
 			} catch (error) {
-				if (error.code === 11000)
-					return res.sendUserError('The user already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
@@ -62,38 +54,12 @@ class ProductRouter extends Route {
 
 		this.post('/', ['ADMIN'], uploader.array('files'), async (req, res) => {
 			try {
-				const {
-					title,
-					description,
-					code,
-					price,
-					status,
-					stock,
-					category,
-					thumbnails,
-				} = req.body;
-				if (!title || !description || !code || !price || !stock || !category) {
-					return res.status(400).json({ error: 'Incomplete data' });
-				}
-				const newProduct = {
-					title,
-					description,
-					code,
-					price,
-					status,
-					stock,
-					category,
-				};
-				newProduct.thumbnails = [];
-				if (req.files) {
-					req.files.map(file => newProduct.thumbnails.push(file.path));
-				}
-				const response = await Products.create(newProduct);
-
-				res.json({ message: response });
+				await Products.create(req.body, req.files);
+				const products = await Products.find(req.query);
+				res.json({ message: products });
 			} catch (error) {
 				if (error.code === 11000)
-					return res.sendUserError('The user already exists');
+					return res.sendUserError('The product already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
@@ -104,49 +70,13 @@ class ProductRouter extends Route {
 			uploader.array('files'),
 			async (req, res) => {
 				try {
-					const {
-						title,
-						description,
-						code,
-						price,
-						status,
-						stock,
-						category,
-						thumbnails,
-					} = req.body;
-					if (
-						!title ||
-						!description ||
-						!code ||
-						!price ||
-						!status ||
-						!stock ||
-						!category
-					) {
-						return res.status(400).json({ error: 'Incomplete data' });
-					}
-					const newProduct = {
-						title,
-						description,
-						code,
-						price,
-						status,
-						stock,
-						category,
-					};
-					newProduct.thumbnails = [];
-					if (req.files) {
-						req.files.map(file => newProduct.thumbnails.push(file.path));
-					}
-					await Products.create(newProduct);
-
+					await Products.create(req.body, req.files);
 					const products = await Products.find(req.query);
-
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
 				} catch (error) {
 					if (error.code === 11000)
-						return res.sendUserError('The user already exists');
+						return res.sendUserError('The product already exists');
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
 			}
@@ -158,61 +88,11 @@ class ProductRouter extends Route {
 			uploader.array('files'),
 			async (req, res) => {
 				try {
-					const { pid } = req.params;
-					const {
-						title,
-						description,
-						code,
-						price,
-						status,
-						stock,
-						category,
-						thumbnails,
-					} = req.body;
-					if (
-						!title ||
-						!description ||
-						!code ||
-						!price ||
-						!status ||
-						!stock ||
-						!category
-					) {
-						return res.status(400).json({ error: 'Incomplete data' });
-					}
-					const newDataProduct = {
-						title,
-						description,
-						code,
-						price,
-						status,
-						stock,
-						category,
-					};
-
-					newDataProduct.thumbnails = [];
-					if (req.files) {
-						req.files.map(file => newDataProduct.thumbnails.push(file.path));
-					}
-
-					const result = await Products.updateOne(
-						{ _id: pid },
-						newDataProduct,
-						{
-							new: true,
-						}
-					);
-					if (result.nModified === 0) {
-						return res.status(404).json({ error: 'Products not found' });
-					}
-
+					await Products.updateOne(req.params, req.body, req.files);
 					const products = await Products.find(req.query);
-
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
 				} catch (error) {
-					if (error.code === 11000)
-						return res.sendUserError('The user already exists');
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
 			}
@@ -220,18 +100,12 @@ class ProductRouter extends Route {
 
 		this.delete('/realtimeproducts/:pid', ['ADMIN'], async (req, res) => {
 			try {
-				const { pid } = req.params;
-				const result = await Products.deleteOne({ _id: pid });
-				if (result.deletedCount === 0) {
-					return res.status(404).json({ error: 'Products not found' });
-				}
+				await Products.deleteOne(req.params);
 				const products = await Products.find(req.query);
 
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {});
 			} catch (error) {
-				if (error.code === 11000)
-					return res.sendUserError('The user already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
