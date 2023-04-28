@@ -2,9 +2,52 @@
 const { productsRepository } = require('../repositories');
 const Products = productsRepository;
 
-const find = async () => {
+const mapProducts = prod => {
+	const products = prod.map(
+		({
+			_id,
+			title,
+			description,
+			code,
+			price,
+			stock,
+			status,
+			category,
+			thumbnails,
+		}) => ({
+			id: _id,
+			title,
+			description,
+			code,
+			price,
+			stock,
+			status,
+			category,
+			thumbnails,
+		})
+	);
+	return products;
+};
+
+const find = async query => {
 	try {
-		const products = await Products.find();
+		const limit = parseInt(query.limit) || 10;
+		const page = parseInt(query.page) || 1;
+		let sort = query.sort ? query.sort.toLowerCase() : '';
+		sort = sort === 'asc' ? 1 : sort === 'desc' ? -1 : undefined;
+		const optionsFind = {
+			page,
+			limit,
+			sort: { price: sort },
+		};
+		const category = query.category;
+		const stock = query.stock;
+		const filter = {
+			...(category && { category }),
+			...(stock && { stock: parseInt(stock) }),
+		};
+		const productsBD = await Products.find(optionsFind, filter);
+		const products = mapProducts(productsBD);
 		return products;
 	} catch (error) {
 		throw error;

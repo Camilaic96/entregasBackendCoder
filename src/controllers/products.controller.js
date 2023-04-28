@@ -2,10 +2,8 @@
 const uploader = require('../utils/multer.js');
 const Route = require('../router/router.js');
 
-const Product = require('../services/products.service.js');
-
-// const ProductDao = require('../dao/mongo/mongoManager/Product.dao.js');
-// const Product = new ProductDao('Products.json');
+const Products = require('../services/products.service.js');
+const ProductDTO = require('../DTOs/Product.dto.js');
 const FilesDao = require('../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
@@ -14,25 +12,7 @@ class ProductRouter extends Route {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
-				const limit = parseInt(req.query.limit) || 10;
-				const page = parseInt(req.query.page) || 1;
-				let sort = req.query.sort ? req.query.sort.toLowerCase() : '';
-				sort = sort === 'asc' ? 1 : sort === 'desc' ? -1 : undefined;
-				const optionsFind = {
-					page,
-					limit,
-					sort: { price: sort },
-				};
-				const category = req.query.category;
-				const stock = req.query.stock;
-				const filter = {
-					...(category && { category }),
-					...(stock && { stock: parseInt(stock) }),
-				};
-
-				const productsBd = await Product.find(optionsFind, filter);
-				const products = this.mapProducts(productsBd);
-
+				const products = await Products.find(req.query);
 				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
 				if (error.code === 11000)
@@ -43,25 +23,7 @@ class ProductRouter extends Route {
 
 		this.get('/realtimeproducts', ['PUBLIC'], async (req, res) => {
 			try {
-				const limit = parseInt(req.query.limit) || 10;
-				const page = parseInt(req.query.page) || 1;
-				let sort = req.query.sort ? req.query.sort.toLowerCase() : '';
-				sort = sort === 'asc' ? 1 : sort === 'desc' ? -1 : undefined;
-				const optionsFind = {
-					page,
-					limit,
-					sort: { price: sort },
-				};
-				const category = req.query.category;
-				const stock = req.query.stock;
-				const filter = {
-					...(category && { category }),
-					...(stock && { stock: parseInt(stock) }),
-				};
-
-				const productsBd = await Product.find(optionsFind, filter);
-				const products = this.mapProducts(productsBd);
-
+				const products = await Products.find(req.query);
 				global.io.emit('mostrarProductos', products);
 				res.render('realTimeProducts.handlebars', { products });
 			} catch (error) {
@@ -74,33 +36,12 @@ class ProductRouter extends Route {
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { pid } = req.params;
-				const product = await Product.findOne({ _id: pid });
-				if (!product) {
-					return res.status(400).json({ error: 'Product not found' });
+				const productBd = await Products.findOne({ _id: pid });
+				if (!productBd) {
+					return res.status(400).json({ error: 'Products not found' });
 				}
-				const {
-					_id,
-					title,
-					description,
-					code,
-					price,
-					stock,
-					category,
-					status,
-					thumbnails,
-				} = product;
-				res.render('productId.handlebars', {
-					_id,
-					title,
-					description,
-					code,
-					price,
-					stock,
-					category,
-					status,
-					thumbnails,
-					style: 'productId.css',
-				});
+				const product = new ProductDTO(productBd);
+				res.render('productId.handlebars', { product, style: 'productId.css' });
 			} catch (error) {
 				if (error.code === 11000)
 					return res.sendUserError('The user already exists');
@@ -114,7 +55,7 @@ class ProductRouter extends Route {
 			uploader.array('files'),
 			async (req, res) => {
 				const products = await FilesManager.loadItems();
-				const response = await Product.insertMany(products);
+				const response = await Products.insertMany(products);
 				res.json({ message: response });
 			}
 		);
@@ -147,7 +88,7 @@ class ProductRouter extends Route {
 				if (req.files) {
 					req.files.map(file => newProduct.thumbnails.push(file.path));
 				}
-				const response = await Product.create(newProduct);
+				const response = await Products.create(newProduct);
 
 				res.json({ message: response });
 			} catch (error) {
@@ -197,10 +138,9 @@ class ProductRouter extends Route {
 					if (req.files) {
 						req.files.map(file => newProduct.thumbnails.push(file.path));
 					}
-					await Product.create(newProduct);
+					await Products.create(newProduct);
 
-					const productsBd = await Product.find();
-					const products = this.mapProducts(productsBd);
+					const products = await Products.find(req.query);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -255,15 +195,18 @@ class ProductRouter extends Route {
 						req.files.map(file => newDataProduct.thumbnails.push(file.path));
 					}
 
-					const result = await Product.updateOne({ _id: pid }, newDataProduct, {
-						new: true,
-					});
+					const result = await Products.updateOne(
+						{ _id: pid },
+						newDataProduct,
+						{
+							new: true,
+						}
+					);
 					if (result.nModified === 0) {
-						return res.status(404).json({ error: 'Product not found' });
+						return res.status(404).json({ error: 'Products not found' });
 					}
 
-					const productsBd = await Product.find();
-					const products = this.mapProducts(productsBd);
+					const products = await Products.find(req.query);
 
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {});
@@ -278,12 +221,11 @@ class ProductRouter extends Route {
 		this.delete('/realtimeproducts/:pid', ['ADMIN'], async (req, res) => {
 			try {
 				const { pid } = req.params;
-				const result = await Product.deleteOne({ _id: pid });
+				const result = await Products.deleteOne({ _id: pid });
 				if (result.deletedCount === 0) {
-					return res.status(404).json({ error: 'Product not found' });
+					return res.status(404).json({ error: 'Products not found' });
 				}
-				const productsBd = await Product.find();
-				const products = this.mapProducts(productsBd);
+				const products = await Products.find(req.query);
 
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {});
@@ -296,37 +238,10 @@ class ProductRouter extends Route {
 
 		// Delete all products bd
 		this.delete('/', ['ADMIN'], async (req, res) => {
-			await Product.deleteMany();
+			await Products.deleteMany();
 			res.json({ message: 'All products deleted' });
 		});
 	}
-
-	mapProducts = prod => {
-		const products = prod.map(
-			({
-				_id,
-				title,
-				description,
-				code,
-				price,
-				stock,
-				status,
-				category,
-				thumbnails,
-			}) => ({
-				id: _id,
-				title,
-				description,
-				code,
-				price,
-				stock,
-				status,
-				category,
-				thumbnails,
-			})
-		);
-		return products;
-	};
 }
 
 const productRouter = new ProductRouter();
