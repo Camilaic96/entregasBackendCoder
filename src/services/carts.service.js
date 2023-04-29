@@ -1,6 +1,9 @@
 /* eslint-disable no-useless-catch */
 const { cartsRepository } = require('../repositories');
 const Carts = cartsRepository;
+const CustomErrors = require('../utils/errors/Custom.errors');
+const { notFoundCartErrorInfo } = require('../utils/errors/info.errors');
+const EnumErrors = require('../utils/errors/Enum.errors');
 
 const find = async () => {
 	try {
@@ -11,9 +14,18 @@ const find = async () => {
 	}
 };
 
-const findOne = async param => {
+const findOne = async params => {
 	try {
-		const cart = await Carts.findOne(param);
+		const { cid } = params;
+		const cart = await Carts.findOne({ _id: cid });
+		if (!cart) {
+			CustomErrors.createError({
+				name: 'Cart not found in database',
+				cause: notFoundCartErrorInfo(cid),
+				message: 'Error trying to find cart',
+				code: EnumErrors.NOT_FOUND,
+			});
+		}
 		return cart;
 	} catch (error) {
 		throw error;
@@ -29,28 +41,38 @@ const insertMany = async newCarts => {
 	}
 };
 
-const create = async cart => {
+const create = async () => {
 	try {
-		const newProduct = await Carts.create(cart);
+		const newProduct = await Carts.create();
 		return newProduct;
 	} catch (error) {
 		throw error;
 	}
 };
 
-const updateOne = async (data, newData) => {
+const updateOne = async (params, products) => {
 	try {
-		const updateProduct = await Carts.updateOne(data, newData);
+		const { cid } = params;
+		const updateProduct = await Carts.updateOne(cid, products);
 		return updateProduct;
 	} catch (error) {
 		throw error;
 	}
 };
 
-const deleteOne = async cart => {
+const deleteOne = async params => {
 	try {
-		const deleteProduct = await Carts.deleteOne(cart);
-		return deleteProduct;
+		const { cid } = params;
+		const deleteCart = await Carts.deleteOne({ _id: cid });
+		if (!deleteCart) {
+			CustomErrors.createError({
+				name: 'Cart not found in database',
+				cause: notFoundCartErrorInfo(cid),
+				message: 'Error trying to delete cart',
+				code: EnumErrors.NOT_FOUND,
+			});
+		}
+		return deleteCart;
 	} catch (error) {
 		throw error;
 	}

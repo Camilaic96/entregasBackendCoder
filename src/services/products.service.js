@@ -1,11 +1,11 @@
 /* eslint-disable no-useless-catch */
 const { productsRepository } = require('../repositories');
 const Products = productsRepository;
-
+const ProductDTO = require('../DTOs/Product.dto.js');
 const CustomErrors = require('../utils/errors/Custom.errors');
 const {
 	generateProductErrorInfo,
-	notFoundProduct,
+	notFoundProductErrorInfo,
 } = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');
 
@@ -61,9 +61,19 @@ const find = async query => {
 	}
 };
 
-const findOne = async param => {
+const findOne = async params => {
 	try {
-		const product = await Products.findOne(param);
+		const { pid } = params;
+		const productBd = await Products.findOne({ _id: pid });
+		if (!productBd) {
+			CustomErrors.createError({
+				name: 'Product not found in database',
+				cause: notFoundProductErrorInfo(pid),
+				message: 'Error trying to find product',
+				code: EnumErrors.NOT_FOUND,
+			});
+		}
+		const product = new ProductDTO(productBd);
 		return product;
 	} catch (error) {
 		throw error;
@@ -176,7 +186,7 @@ const updateOne = async (params, body, files) => {
 		if (updateProduct.nModified === 0) {
 			CustomErrors.createError({
 				name: 'Product not found in database',
-				cause: notFoundProduct(pid),
+				cause: notFoundProductErrorInfo(pid),
 				message: 'Error trying to find product',
 				code: EnumErrors.NOT_FOUND,
 			});
@@ -194,7 +204,7 @@ const deleteOne = async params => {
 		if (deleteProduct.deletedCount === 0) {
 			CustomErrors.createError({
 				name: 'Product not found in database',
-				cause: notFoundProduct(pid),
+				cause: notFoundProductErrorInfo(pid),
 				message: 'Error trying to find product',
 				code: EnumErrors.NOT_FOUND,
 			});

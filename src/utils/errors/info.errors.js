@@ -21,13 +21,19 @@ const generateProductErrorInfo = product => {
     `;
 };
 
-const notFoundProduct = id => {
+const notFoundProductErrorInfo = id => {
 	return `
-    The product with id ${id} was not found in the database.`;
+    The product with id ${id} was not found.`;
+};
+
+const notFoundCartErrorInfo = id => {
+	return `
+    The cart with id ${id} was not found.`;
 };
 
 module.exports = {
 	generateUserErrorInfo,
 	generateProductErrorInfo,
-	notFoundProduct,
+	notFoundProductErrorInfo,
+	notFoundCartErrorInfo,
 };

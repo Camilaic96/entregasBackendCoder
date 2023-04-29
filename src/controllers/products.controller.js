@@ -3,7 +3,7 @@ const uploader = require('../utils/multer.js');
 const Route = require('../router/router.js');
 
 const Products = require('../services/products.service.js');
-const ProductDTO = require('../DTOs/Product.dto.js');
+
 const FilesDao = require('../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
@@ -29,12 +29,9 @@ class ProductRouter extends Route {
 			}
 		});
 
-		// Modificar para usar el customizador de errores
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
-				const { pid } = req.params;
-				const productBd = await Products.findOne({ _id: pid });
-				const product = new ProductDTO(productBd);
+				const product = await Products.findOne(req.params);
 				res.render('productId.handlebars', { product, style: 'productId.css' });
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -42,8 +39,8 @@ class ProductRouter extends Route {
 		});
 
 		this.post(
-			'/populate',
-			['PUBLIC'],
+			'/loadintodb',
+			['ADMIN'],
 			uploader.array('files'),
 			async (req, res) => {
 				const products = await FilesManager.loadItems();
@@ -102,7 +99,6 @@ class ProductRouter extends Route {
 			try {
 				await Products.deleteOne(req.params);
 				const products = await Products.find(req.query);
-
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {});
 			} catch (error) {
