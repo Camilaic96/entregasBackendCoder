@@ -41,11 +41,9 @@ class CartDao {
 		}
 	}
 
-	async updateOne(cartId, newProducts) {
+	async updateOne(cartId, newCart) {
 		try {
-			const cart = await Cart.findOne({ id: cartId });
-			cart.products = newProducts;
-			const response = Cart.updateOne({ id: cartId }, cart);
+			const response = Cart.updateOne({ _id: cartId }, newCart);
 			return response;
 		} catch (error) {
 			return error;

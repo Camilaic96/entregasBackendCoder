@@ -62,10 +62,23 @@ class CartRouter extends Route {
 
 		this.post('/:cid/products/:pid', ['USER'], async (req, res) => {
 			try {
+				const { pid } = req.params;
 				const product = await Products.findOne(req.params);
 				const cart = await Carts.findOne(req.params);
-				cart.products = [...product];
-				await Carts.updateOne(req.params, cart.products);
+				const { quantity } = req.body;
+				const index = cart.products.findIndex(
+					element => element.product._id.toString() === pid
+				);
+				if (index !== -1) {
+					cart.products[index].quantity += quantity;
+				} else {
+					const newProduct = {
+						product: product._id,
+						quantity,
+					};
+					cart.products.push(newProduct);
+				}
+				await Carts.updateOne(req.params, cart);
 				res.sendSuccess('Product added to the cart successfully');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -75,7 +88,11 @@ class CartRouter extends Route {
 		this.put('/:cid', ['USER'], async (req, res) => {
 			try {
 				const { products } = req.body;
-				await Carts.updateOne(req.params, products);
+				const cart = await Carts.findOne(req.params);
+				products.forEach(product => {
+					cart.products.push(product);
+				});
+				await Carts.updateOne(req.params, cart);
 				res.sendSuccess('Cart updated successfully');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -85,9 +102,11 @@ class CartRouter extends Route {
 		this.put('/:cid/products/:pid', ['USER'], async (req, res) => {
 			try {
 				const { pid } = req.params;
-				const quantity = req.body;
+				const { quantity } = req.body;
 				const cart = await Carts.findOne(req.params);
-				const index = cart.products.findIndex(product => product._id === pid);
+				const index = cart.products.findIndex(
+					element => element.product._id.toString() === pid
+				);
 				if (index === -1) {
 					CustomErrors.createError({
 						name: 'Product not found in cart',
@@ -97,7 +116,7 @@ class CartRouter extends Route {
 					});
 				}
 				cart.products[index].quantity = quantity;
-				await Carts.updateOne(req.params, cart.products);
+				await Carts.updateOne(req.params, cart);
 				res.sendSuccess('Quantity updated successfully');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -108,8 +127,10 @@ class CartRouter extends Route {
 			try {
 				const { pid } = req.params;
 				const cart = await Carts.findOne(req.params);
-				const products = cart.products.filter(product => product._id !== pid);
-				if (products.length < 1) {
+				const index = cart.products.findIndex(
+					element => element.product._id.toString() === pid
+				);
+				if (index === -1) {
 					CustomErrors.createError({
 						name: 'Product not found in cart',
 						cause: notFoundProductErrorInfo(pid),
@@ -117,7 +138,8 @@ class CartRouter extends Route {
 						code: EnumErrors.NOT_FOUND,
 					});
 				}
-				await Carts.updateOne(req.params, products);
+				cart.products.splice(index, 1);
+				await Carts.updateOne(req.params, cart);
 				res.sendSuccess('Product deleted successfully');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);

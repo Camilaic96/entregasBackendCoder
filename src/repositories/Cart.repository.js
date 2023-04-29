@@ -36,9 +36,9 @@ class CartsRepository {
 		}
 	}
 
-	async updateOne(data, newData) {
+	async updateOne(id, newCart) {
 		try {
-			return await this.dao.updateOne(data, newData);
+			return await this.dao.updateOne(id, newCart);
 		} catch (error) {
 			throw error;
 		}

@@ -50,10 +50,10 @@ const create = async () => {
 	}
 };
 
-const updateOne = async (params, products) => {
+const updateOne = async (params, cart) => {
 	try {
 		const { cid } = params;
-		const updateProduct = await Carts.updateOne(cid, products);
+		const updateProduct = await Carts.updateOne(cid, cart);
 		return updateProduct;
 	} catch (error) {
 		throw error;
