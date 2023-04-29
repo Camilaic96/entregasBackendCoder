@@ -2,9 +2,9 @@
 const Product = require('../models/Products.model');
 
 class ProductsMongoDAO {
-	async find() {
+	async find(filter, optionsFind) {
 		try {
-			const products = await Product.find();
+			const products = await Product.paginate(filter, optionsFind);
 			return products;
 		} catch (error) {
 			throw error;

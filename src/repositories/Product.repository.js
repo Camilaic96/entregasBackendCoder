@@ -4,9 +4,9 @@ class ProductsRepository {
 		this.dao = dao;
 	}
 
-	async find() {
+	async find(filter, optionsFind) {
 		try {
-			return await this.dao.find();
+			return await this.dao.find(filter, optionsFind);
 		} catch (error) {
 			throw error;
 		}

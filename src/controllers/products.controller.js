@@ -22,8 +22,11 @@ class ProductRouter extends Route {
 		this.get('/realtimeproducts', ['PUBLIC'], async (req, res) => {
 			try {
 				const products = await Products.find(req.query);
-				global.io.emit('mostrarProductos', products);
-				res.render('realTimeProducts.handlebars', { products });
+				global.io.emit('showProducts', products);
+				res.render('realTimeProducts.handlebars', {
+					products,
+					style: 'home.css',
+				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -51,12 +54,11 @@ class ProductRouter extends Route {
 
 		this.post('/', ['ADMIN'], uploader.array('files'), async (req, res) => {
 			try {
+				const { user } = req.session;
 				await Products.create(req.body, req.files);
 				const products = await Products.find(req.query);
-				res.json({ message: products });
+				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
-				if (error.code === 11000)
-					return res.sendUserError('The product already exists');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
@@ -70,10 +72,11 @@ class ProductRouter extends Route {
 					await Products.create(req.body, req.files);
 					const products = await Products.find(req.query);
 					global.io.emit('showProducts', products);
-					res.render('realTimeProducts.handlebars', {});
+					res.render('realTimeProducts.handlebars', {
+						products,
+						style: 'home.css',
+					});
 				} catch (error) {
-					if (error.code === 11000)
-						return res.sendUserError('The product already exists');
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
 			}
@@ -88,7 +91,10 @@ class ProductRouter extends Route {
 					await Products.updateOne(req.params, req.body, req.files);
 					const products = await Products.find(req.query);
 					global.io.emit('showProducts', products);
-					res.render('realTimeProducts.handlebars', {});
+					res.render('realTimeProducts.handlebars', {
+						products,
+						style: 'home.css',
+					});
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
@@ -100,7 +106,10 @@ class ProductRouter extends Route {
 				await Products.deleteOne(req.params);
 				const products = await Products.find(req.query);
 				global.io.emit('showProducts', products);
-				res.render('realTimeProducts.handlebars', {});
+				res.render('realTimeProducts.handlebars', {
+					products,
+					style: 'home.css',
+				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}

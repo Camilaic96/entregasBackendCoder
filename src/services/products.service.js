@@ -45,16 +45,18 @@ const find = async query => {
 		const optionsFind = {
 			page,
 			limit,
-			sort: { price: sort },
 		};
+		if (sort) {
+			optionsFind.sort = { price: sort };
+		}
 		const category = query.category;
 		const stock = query.stock;
 		const filter = {
 			...(category && { category }),
 			...(stock && { stock: parseInt(stock) }),
 		};
-		const productsBD = await Products.find(optionsFind, filter);
-		const products = mapProducts(productsBD);
+		const productsDB = await Products.find(filter, optionsFind);
+		const products = mapProducts(productsDB.docs);
 		return products;
 	} catch (error) {
 		throw error;
