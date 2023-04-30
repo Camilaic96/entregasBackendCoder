@@ -66,8 +66,8 @@ const find = async query => {
 const findOne = async params => {
 	try {
 		const { pid } = params;
-		const productBd = await Products.findOne({ _id: pid });
-		if (!productBd) {
+		const productDB = await Products.findOne({ _id: pid });
+		if (!productDB._id) {
 			CustomErrors.createError({
 				name: 'Product not found in database',
 				cause: notFoundProductErrorInfo(pid),
@@ -75,7 +75,7 @@ const findOne = async params => {
 				code: EnumErrors.NOT_FOUND,
 			});
 		}
-		const product = new ProductDTO(productBd);
+		const product = new ProductDTO(productDB);
 		return product;
 	} catch (error) {
 		throw error;

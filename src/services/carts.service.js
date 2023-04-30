@@ -18,7 +18,7 @@ const findOne = async params => {
 	try {
 		const { cid } = params;
 		const cart = await Carts.findOne({ _id: cid });
-		if (!cart) {
+		if (!cart._id) {
 			CustomErrors.createError({
 				name: 'Cart not found in database',
 				cause: notFoundCartErrorInfo(cid),
@@ -64,7 +64,7 @@ const deleteOne = async params => {
 	try {
 		const { cid } = params;
 		const deleteCart = await Carts.deleteOne({ _id: cid });
-		if (!deleteCart) {
+		if (!deleteCart._id) {
 			CustomErrors.createError({
 				name: 'Cart not found in database',
 				cause: notFoundCartErrorInfo(cid),
