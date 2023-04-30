@@ -13,9 +13,11 @@ class ProductsMongoDAO {
 
 	async findOne(param) {
 		try {
+			console.log('entra a dao');
 			const product = await Product.findOne(param);
 			return product;
 		} catch (error) {
+			console.log('entra a error de dao');
 			throw error;
 		}
 	}
