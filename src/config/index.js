@@ -12,6 +12,7 @@ dotenv.config({
 });
 
 const config = {
+	mode,
 	port: process.env.PORT || 8080,
 	db: {
 		dbHost: process.env.DB_HOST,
