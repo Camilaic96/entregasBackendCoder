@@ -8,7 +8,6 @@ form.addEventListener('submit', e => {
 	const obj = {};
 
 	data.forEach((value, key) => (obj[key] = value));
-	console.log(inputRoleAdmin.checked);
 	obj.role = inputRoleAdmin.checked ? 'ADMIN' : 'USER';
 	const url = '/api/users';
 	const headers = {

@@ -27,7 +27,7 @@ const initializePassport = () => {
 				try {
 					const user = await Users.findOne({ email: username });
 					if (user) {
-						console.log('User already exists');
+						req.logger.error('User already exists');
 						return done(null, false);
 					}
 					const newUserInfo = req.body;
@@ -53,12 +53,12 @@ const initializePassport = () => {
 		'login',
 		new LocalStrategy(
 			{ usernameField: 'email' },
-			async (username, password, done) => {
+			async (req, username, password, done) => {
 				try {
 					const user = await Users.findOne({ email: username });
 
 					if (!user) {
-						console.log('User not found');
+						req.logger.error('User not found');
 						return done(null, false);
 					}
 

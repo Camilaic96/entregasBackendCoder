@@ -3,7 +3,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const handlebars = require('express-handlebars');
-// const morgan = require('morgan');
+const morgan = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
 
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(loggerMiddleware);
-// app.use(morgan('dev'));
+app.use(morgan('combined'));
 app.use(cookieParser());
 app.use(session(sessionMongo));
 app.engine('handlebars', handlebars.engine());

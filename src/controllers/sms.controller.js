@@ -18,8 +18,7 @@ class SmsRouter extends Route {
 				const result = await client.messages.create(smsOptions);
 				res.json({ message: result });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('Login failed');
+				res.sendServerError(`Login failed. Error: ${error}`);
 			}
 		});
 	}

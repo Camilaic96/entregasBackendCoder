@@ -6,9 +6,7 @@ class MockingProductsRouter extends Route {
 		this.get('/', ['PUBLIC'], (req, res) => {
 			try {
 				const products = generateProducts(100);
-				console.log(products);
 				res.json({ message: products });
-				// res.sendSuccess('');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}

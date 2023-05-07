@@ -18,14 +18,14 @@ class AuthRouter extends Route {
 
 					res.redirect('/api/products');
 				} catch (error) {
-					console.log(error);
+					req.logger.error(error);
 					res.sendServerError('Login failed');
 				}
 			}
 		);
 
 		this.get('/failLogin', ['PUBLIC'], (req, res) => {
-			console.log('Login failed');
+			req.logger.error('Login failed');
 			res.sendServerError('Login failed');
 		});
 

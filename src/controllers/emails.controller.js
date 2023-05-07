@@ -23,7 +23,7 @@ class EmailRouter extends Route {
 				const result = await transport.sendMail(mailOptions);
 				res.json({ message: result });
 			} catch (error) {
-				console.log(error);
+				req.logger.error(error);
 				res.sendServerError('Login failed');
 			}
 		});

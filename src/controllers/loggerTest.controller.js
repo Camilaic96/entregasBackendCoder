@@ -7,8 +7,7 @@ class LoggerTestRouter extends Route {
 				req.logger.fatal('fatal level test');
 				res.json({ message: 'fatal level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('fatal level test failed');
+				res.sendServerError(`fatal level test failed. Error: ${error}`);
 			}
 		});
 		this.get('/error', ['PUBLIC'], async (req, res) => {
@@ -16,8 +15,7 @@ class LoggerTestRouter extends Route {
 				req.logger.error('error level test');
 				res.json({ message: 'error level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('error level test failed');
+				res.sendServerError(`error level test failed. Error: ${error}`);
 			}
 		});
 		this.get('/warning', ['PUBLIC'], async (req, res) => {
@@ -25,8 +23,7 @@ class LoggerTestRouter extends Route {
 				req.logger.warning('warning level test');
 				res.json({ message: 'warning level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('warning level test failed');
+				res.sendServerError(`warning level test failed. Error: ${error}`);
 			}
 		});
 		this.get('/info', ['PUBLIC'], async (req, res) => {
@@ -34,8 +31,7 @@ class LoggerTestRouter extends Route {
 				req.logger.info('info level test');
 				res.json({ message: 'info level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('info level test failed');
+				res.sendServerError(`info level test failed. Error: ${error}`);
 			}
 		});
 		this.get('/http', ['PUBLIC'], async (req, res) => {
@@ -43,8 +39,7 @@ class LoggerTestRouter extends Route {
 				req.logger.http('http level test');
 				res.json({ message: 'http level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('http level test failed');
+				res.sendServerError(`http level test failed. Error: ${error}`);
 			}
 		});
 		this.get('/debug', ['PUBLIC'], async (req, res) => {
@@ -52,8 +47,7 @@ class LoggerTestRouter extends Route {
 				req.logger.debug('debug level test');
 				res.json({ message: 'debug level test' });
 			} catch (error) {
-				console.log(error);
-				res.sendServerError('debug level test failed');
+				res.sendServerError(`debug level test failed. Error: ${error}`);
 			}
 		});
 	}

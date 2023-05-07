@@ -13,10 +13,8 @@ class ProductRouter extends Route {
 			try {
 				const { user } = req.session;
 				const products = await Products.find(req.query);
-				console.log('entra a controller');
 				res.render('home.handlebars', { products, user, style: 'home.css' });
 			} catch (error) {
-				console.log('entra a error controller');
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});

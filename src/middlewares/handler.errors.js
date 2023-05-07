@@ -1,7 +1,7 @@
 const EnumErrors = require('../utils/errors/Enum.errors');
 
 module.exports = (error, req, res, next) => {
-	console.log(error.cause);
+	req.logger.error(error.cause);
 	switch (error.code) {
 		case EnumErrors.INVALID_TYPES_ERROR:
 			res.json({ status: 'error', error: error.name });

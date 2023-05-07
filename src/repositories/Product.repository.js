@@ -14,10 +14,8 @@ class ProductsRepository {
 
 	async findOne(param) {
 		try {
-			console.log('entra a repository');
 			return await this.dao.findOne(param);
 		} catch (error) {
-			console.log('entra a error de repository');
 			throw error;
 		}
 	}

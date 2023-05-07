@@ -7,18 +7,16 @@ class ProductsMongoDAO {
 			const products = await Product.paginate(filter, optionsFind);
 			return products;
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 
 	async findOne(param) {
 		try {
-			console.log('entra a dao');
 			const product = await Product.findOne(param);
 			return product;
 		} catch (error) {
-			console.log('entra a error de dao');
-			throw error;
+			return error;
 		}
 	}
 
@@ -27,7 +25,7 @@ class ProductsMongoDAO {
 			const products = await Product.insertMany(newProducts);
 			return products;
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 
@@ -36,7 +34,7 @@ class ProductsMongoDAO {
 			const product = await Product.create(newProduct);
 			return product;
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 
@@ -45,7 +43,7 @@ class ProductsMongoDAO {
 			const product = await Product.updateOne(data, newData);
 			return product;
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 
@@ -54,7 +52,7 @@ class ProductsMongoDAO {
 			const product = await Product.deleteOne(param);
 			return product;
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 
@@ -63,7 +61,7 @@ class ProductsMongoDAO {
 			await Product.deleteMany();
 			return 'Products deleted';
 		} catch (error) {
-			throw error;
+			return error;
 		}
 	}
 }

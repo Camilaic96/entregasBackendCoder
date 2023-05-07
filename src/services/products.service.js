@@ -65,11 +65,8 @@ const find = async query => {
 
 const findOne = async params => {
 	try {
-		console.log('entra a service antes de pedir el product a repository');
 		const { pid } = params;
 		const productDB = await Products.findOne({ _id: pid });
-		console.log('entra a service después de pedir el product a repository');
-		console.log(productDB);
 		if (!productDB._id) {
 			CustomErrors.createError({
 				name: 'Product not found in database',
@@ -81,7 +78,6 @@ const findOne = async params => {
 		const product = new ProductDTO(productDB);
 		return product;
 	} catch (error) {
-		console.log('entra a error service');
 		throw error;
 	}
 };
