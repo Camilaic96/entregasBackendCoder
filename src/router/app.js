@@ -9,6 +9,7 @@ const {
 	smsController,
 	sessionController,
 	mockingProductsController,
+	loggerTestController,
 } = require('../controllers');
 
 const router = app => {
@@ -22,6 +23,7 @@ const router = app => {
 	app.use('/api/emails', emailsController);
 	app.use('/api/sms', smsController);
 	app.use('/api/mockingproducts', mockingProductsController);
+	app.use('/api/loggerTest', loggerTestController);
 };
 
 module.exports = router;

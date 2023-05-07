@@ -4,7 +4,6 @@ const { sms } = require('../config');
 
 const { smsAccountSID, smsAuthToken, smsPhoneNumber } = sms;
 const client = twilio(smsAccountSID, smsAuthToken);
-// const Emails = require('../services/emails.service');
 
 class SmsRouter extends Route {
 	init() {
