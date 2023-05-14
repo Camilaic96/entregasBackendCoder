@@ -7,7 +7,8 @@
 		"status": true,
 		"stock": 10,
 		"category": "3",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product2",
@@ -17,7 +18,8 @@
 		"status": true,
 		"stock": 9,
 		"category": "3",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product3",
@@ -27,7 +29,8 @@
 		"status": true,
 		"stock": 7,
 		"category": "3",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product4",
@@ -37,7 +40,8 @@
 		"status": true,
 		"stock": 5,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product5",
@@ -47,7 +51,8 @@
 		"status": true,
 		"stock": 6,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product6",
@@ -57,7 +62,8 @@
 		"status": true,
 		"stock": 15,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product7",
@@ -67,7 +73,8 @@
 		"status": true,
 		"stock": 5,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product8",
@@ -77,7 +84,8 @@
 		"status": true,
 		"stock": 12,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product9",
@@ -87,7 +95,8 @@
 		"status": true,
 		"stock": 5,
 		"category": "2",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	},
 	{
 		"title": "Product10",
@@ -97,6 +106,7 @@
 		"status": true,
 		"stock": 11,
 		"category": "3",
-		"thumbnail": ""
+		"thumbnail": "",
+		"owner": "admin"
 	}
 ]

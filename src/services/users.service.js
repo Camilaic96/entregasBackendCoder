@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-const { hashPassword } = require('../utils/bcrypt.utils');
 const UserDTO = require('../DTOs/User.dto');
 const { usersRepository } = require('../repositories');
 const Users = usersRepository;
@@ -46,14 +45,18 @@ const create = async user => {
 	}
 };
 
-const updateOne = async data => {
+const updateOne = async (params, body) => {
 	try {
-		const { email, password } = data;
-		const passwordHashed = hashPassword(password);
-		const updateUser = await Users.updateOne(
-			{ email },
-			{ password: passwordHashed }
-		);
+		const { uid } = params;
+		const { email, password, role } = body;
+		const data = uid ? { _id: uid } : { email };
+		const user = await Users.findOne(data);
+		user.password = password || user.password;
+		user.role = role.toUpperCase() || user.role;
+		const newUserInfo = new UserDTO(user);
+		const updateUser = await Users.updateOne(data, newUserInfo, {
+			new: true,
+		});
 		return updateUser;
 	} catch (error) {
 		throw error;

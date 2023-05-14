@@ -53,15 +53,13 @@ const initializePassport = () => {
 		'login',
 		new LocalStrategy(
 			{ usernameField: 'email' },
-			async (req, username, password, done) => {
+			async (username, password, done) => {
 				try {
 					const user = await Users.findOne({ email: username });
-
 					if (!user) {
-						req.logger.error('User not found');
+						console.log('User not found');
 						return done(null, false);
 					}
-
 					if (!comparePassword(password, user)) return done(null, false);
 
 					return done(null, user);

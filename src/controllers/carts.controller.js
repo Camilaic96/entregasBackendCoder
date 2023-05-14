@@ -1,7 +1,7 @@
 const Route = require('../router/router.js');
 
 const Carts = require('../services/carts.service.js');
-const Products = require('../services/products.service.js');
+// const Products = require('../services/products.service.js');
 
 const FilesDao = require('../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
@@ -51,7 +51,7 @@ class CartRouter extends Route {
 			res.json({ message: response });
 		});
 
-		this.post('/', ['USER'], async (req, res) => {
+		this.post('/', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
 				await Carts.create();
 				res.sendSuccess('Cart created successfully');
@@ -60,32 +60,17 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.post('/:cid/products/:pid', ['USER'], async (req, res) => {
+		this.post('/:cid/products/:pid', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
-				const { pid } = req.params;
-				const product = await Products.findOne(req.params);
-				const cart = await Carts.findOne(req.params);
-				const { quantity } = req.body;
-				const index = cart.products.findIndex(
-					element => element.product._id.toString() === pid
-				);
-				if (index !== -1) {
-					cart.products[index].quantity += quantity;
-				} else {
-					const newProduct = {
-						product: product._id,
-						quantity,
-					};
-					cart.products.push(newProduct);
-				}
-				await Carts.updateOne(req.params, cart);
+				const { user } = req.session;
+				await Carts.createProductInCart(req.params, req.body, user);
 				res.sendSuccess('Product added to the cart successfully');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
 
-		this.put('/:cid', ['USER'], async (req, res) => {
+		this.put('/:cid', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
 				const { products } = req.body;
 				const cart = await Carts.findOne(req.params);
@@ -99,7 +84,7 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.put('/:cid/products/:pid', ['USER'], async (req, res) => {
+		this.put('/:cid/products/:pid', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
 				const { pid } = req.params;
 				const { quantity } = req.body;
@@ -123,30 +108,34 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.delete('/:cid/products/:pid', ['USER'], async (req, res) => {
-			try {
-				const { pid } = req.params;
-				const cart = await Carts.findOne(req.params);
-				const index = cart.products.findIndex(
-					element => element.product._id.toString() === pid
-				);
-				if (index === -1) {
-					CustomErrors.createError({
-						name: 'Product not found in cart',
-						cause: notFoundProductErrorInfo(pid),
-						message: 'Error trying to delete product',
-						code: EnumErrors.NOT_FOUND,
-					});
+		this.delete(
+			'/:cid/products/:pid',
+			['USER', 'PREMIUM'],
+			async (req, res) => {
+				try {
+					const { pid } = req.params;
+					const cart = await Carts.findOne(req.params);
+					const index = cart.products.findIndex(
+						element => element.product._id.toString() === pid
+					);
+					if (index === -1) {
+						CustomErrors.createError({
+							name: 'Product not found in cart',
+							cause: notFoundProductErrorInfo(pid),
+							message: 'Error trying to delete product',
+							code: EnumErrors.NOT_FOUND,
+						});
+					}
+					cart.products.splice(index, 1);
+					await Carts.updateOne(req.params, cart);
+					res.sendSuccess('Product deleted successfully');
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
 				}
-				cart.products.splice(index, 1);
-				await Carts.updateOne(req.params, cart);
-				res.sendSuccess('Product deleted successfully');
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
 			}
-		});
+		);
 
-		this.delete('/:cid', ['USER'], async (req, res) => {
+		this.delete('/:cid', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
 				await Carts.deleteOne(req.params);
 				res.sendSuccess('Cart deleted successfully');
@@ -161,7 +150,7 @@ class CartRouter extends Route {
 			res.json({ message: 'All carts deleted' });
 		});
 
-		this.get('/:cid/purchase', ['USER'], async (req, res) => {
+		this.get('/:cid/purchase', ['USER', 'PREMIUM'], async (req, res) => {
 			try {
 				const { products } = req.body; // products array de productos que llegan con id y quantity
 				const productsOutOfStock = [];

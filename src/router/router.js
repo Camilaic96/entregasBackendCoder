@@ -78,49 +78,25 @@ class Route {
 
 	handlePolicies = policies => {
 		return async (req, res, next) => {
+			const user = req.session.user;
 			if (policies[0] === 'PUBLIC') {
 				return next();
 			}
 
-			if (!req.session.user) {
-				return res.status(200).redirect('/api/login');
+			if (!user) {
+				return res.status(401).send('Something went wrong during validation');
 			}
 
-			if (req.session.user.role !== 'ADMIN') {
-				return next();
+			if (!policies.includes(user.role)) {
+				return res
+					.status(403)
+					.send(
+						'Forbidden. You do not have sufficient permissions to access the path'
+					);
 			}
 
 			next();
 		};
-		/*
-		if (policies[0] === 'PUBLIC') {
-			return (req, res, next) => {
-				next();
-			};
-		}
-		return async (req, res, next) => {
-			passport.authenticate('jwt', function (err, user, info) {
-				if (err) return next(err);
-
-				if (!user) {
-					return res.status(401).send({
-						error: info.messages
-							? info.messages
-							: 'Something went wrong during validation',
-					});
-				}
-				if (user.role !== policies[0]) {
-					return res.status(403).send({
-						error:
-							'Forbidden. You do not have sufficient permissions to access the path',
-					});
-				}
-
-				req.user = user;
-				next();
-			})(req, res, next);
-		};
-		*/
 	};
 }
 

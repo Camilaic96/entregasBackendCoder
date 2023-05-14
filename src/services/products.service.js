@@ -21,6 +21,7 @@ const mapProducts = prod => {
 			status,
 			category,
 			thumbnails,
+			owner,
 		}) => ({
 			id: _id,
 			title,
@@ -31,6 +32,7 @@ const mapProducts = prod => {
 			status,
 			category,
 			thumbnails,
+			owner,
 		})
 	);
 	return products;
@@ -91,7 +93,7 @@ const insertMany = async newProducts => {
 	}
 };
 
-const create = async (body, files) => {
+const create = async (body, files, user) => {
 	try {
 		const { title, description, code, price, status, stock, category } = body;
 		if (
@@ -125,6 +127,7 @@ const create = async (body, files) => {
 			status,
 			stock,
 			category,
+			owner: user.email || 'admin',
 		};
 		newProduct.thumbnails = [];
 		if (files) {
@@ -137,10 +140,17 @@ const create = async (body, files) => {
 	}
 };
 
-const updateOne = async (params, body, files) => {
+const updateOne = async (params, body, files, user) => {
 	try {
 		const { pid } = params;
-		const { title, description, code, price, status, stock, category } = body;
+		const { title, description, code, price, status, stock, category, owner } =
+			body;
+		if (user.role === 'PREMIUM' && user.email !== owner) {
+			console.log(
+				'You are not authorized to modify products that are not your own'
+			);
+			return 'You are not authorized to modify products that are not your own';
+		}
 		if (
 			!title ||
 			!description ||
@@ -148,7 +158,8 @@ const updateOne = async (params, body, files) => {
 			!price ||
 			!status ||
 			!stock ||
-			!category
+			!category ||
+			!owner
 		) {
 			CustomErrors.createError({
 				name: 'Product updating error',
@@ -159,6 +170,7 @@ const updateOne = async (params, body, files) => {
 					price,
 					stock,
 					category,
+					owner,
 				}),
 				message: 'Error trying to update product',
 				code: EnumErrors.INVALID_TYPES_ERROR,
@@ -173,6 +185,7 @@ const updateOne = async (params, body, files) => {
 			stock,
 			category,
 			thumbnails: [],
+			owner,
 		};
 		if (files) {
 			files.map(file => newDataProduct.thumbnails.push(file.path));
@@ -199,9 +212,17 @@ const updateOne = async (params, body, files) => {
 	}
 };
 
-const deleteOne = async params => {
+const deleteOne = async (params, user) => {
 	try {
 		const { pid } = params;
+		const product = await Products.findOne({ _id: pid });
+		if (user.role === 'PREMIUM' && user.email !== product.owner) {
+			console.log(
+				'You are not authorized to remove products that are not your own'
+			);
+			return 'You are not authorized to remove products that are not your own';
+		}
+
 		const deleteProduct = await Products.deleteOne({ _id: pid });
 		if (deleteProduct.deletedCount === 0) {
 			CustomErrors.createError({

@@ -15,7 +15,6 @@ class AuthRouter extends Route {
 			async (req, res) => {
 				try {
 					req.session.user = new UserDTO(req.user);
-
 					res.redirect('/api/products');
 				} catch (error) {
 					req.logger.error(error);
@@ -63,7 +62,7 @@ class AuthRouter extends Route {
 			}
 		);
 
-		this.get('/logout', ['USER'], (req, res) => {
+		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], (req, res) => {
 			req.session.destroy(error => {
 				if (error) return res.json({ error });
 

@@ -9,6 +9,7 @@ class ProductDTO {
 		this.status = product.status;
 		this.category = product.category;
 		this.thumbnails = product.thumbnails;
+		this.owner = product.owner;
 		if (product.quantity) {
 			this.quantity = product.quantity;
 		}

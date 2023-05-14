@@ -4,6 +4,7 @@ const Carts = cartsRepository;
 const CustomErrors = require('../utils/errors/Custom.errors');
 const { notFoundCartErrorInfo } = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');
+const Products = require('./products.service');
 
 const find = async () => {
 	try {
@@ -50,6 +51,32 @@ const create = async () => {
 	}
 };
 
+const createProductInCart = async (params, body, user) => {
+	try {
+		const { pid, cid } = params;
+		const product = await Products.findOne(params);
+		if (user.role === 'PREMIUM' && user.email === product.owner) {
+			return 'You are not authorized to add a product of your authorship to the cart';
+		}
+		const cart = await Carts.findOne({ _id: cid });
+		const { quantity } = body;
+		const index = cart.products.findIndex(
+			element => element.product._id.toString() === pid
+		);
+		if (index !== -1) {
+			cart.products[index].quantity += quantity;
+		} else {
+			const newProduct = {
+				product: product._id,
+				quantity,
+			};
+			cart.products.push(newProduct);
+		}
+		const updateCart = await Carts.updateOne(cid, cart);
+		return updateCart;
+	} catch (error) {}
+};
+
 const updateOne = async (params, cart) => {
 	try {
 		const { cid } = params;
@@ -92,6 +119,7 @@ module.exports = {
 	findOne,
 	insertMany,
 	create,
+	createProductInCart,
 	updateOne,
 	deleteOne,
 	deleteMany,

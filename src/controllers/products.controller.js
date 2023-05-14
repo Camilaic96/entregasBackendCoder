@@ -52,24 +52,30 @@ class ProductRouter extends Route {
 			}
 		);
 
-		this.post('/', ['ADMIN'], uploader.array('files'), async (req, res) => {
-			try {
-				const { user } = req.session;
-				await Products.create(req.body, req.files);
-				const products = await Products.find(req.query);
-				res.render('home.handlebars', { products, user, style: 'home.css' });
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
-			}
-		});
-
 		this.post(
-			'/realtimeproducts',
-			['ADMIN'],
+			'/',
+			['ADMIN', 'PREMIUM'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {
-					await Products.create(req.body, req.files);
+					const { user } = req.session;
+					await Products.create(req.body, req.files, user);
+					const products = await Products.find(req.query);
+					res.render('home.handlebars', { products, user, style: 'home.css' });
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
+				}
+			}
+		);
+
+		this.post(
+			'/realtimeproducts',
+			['ADMIN', 'PREMIUM'],
+			uploader.array('files'),
+			async (req, res) => {
+				try {
+					const { user } = req.session;
+					await Products.create(req.body, req.files, user);
 					const products = await Products.find(req.query);
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {
@@ -84,11 +90,12 @@ class ProductRouter extends Route {
 
 		this.put(
 			'/realtimeproducts/:pid',
-			['ADMIN'],
+			['ADMIN', 'PREMIUM'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {
-					await Products.updateOne(req.params, req.body, req.files);
+					const { user } = req.session;
+					await Products.updateOne(req.params, req.body, req.files, user);
 					const products = await Products.find(req.query);
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {
@@ -101,19 +108,24 @@ class ProductRouter extends Route {
 			}
 		);
 
-		this.delete('/realtimeproducts/:pid', ['ADMIN'], async (req, res) => {
-			try {
-				await Products.deleteOne(req.params);
-				const products = await Products.find(req.query);
-				global.io.emit('showProducts', products);
-				res.render('realTimeProducts.handlebars', {
-					products,
-					style: 'home.css',
-				});
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
+		this.delete(
+			'/realtimeproducts/:pid',
+			['ADMIN', 'PREMIUM'],
+			async (req, res) => {
+				try {
+					const { user } = req.session;
+					await Products.deleteOne(req.params, user);
+					const products = await Products.find(req.query);
+					global.io.emit('showProducts', products);
+					res.render('realTimeProducts.handlebars', {
+						products,
+						style: 'home.css',
+					});
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
+				}
 			}
-		});
+		);
 
 		// Delete all products bd
 		this.delete('/', ['ADMIN'], async (req, res) => {

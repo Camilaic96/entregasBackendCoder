@@ -1,5 +1,6 @@
 const passport = require('passport');
 
+const Users = require('../services/users.service');
 const UserDTO = require('../DTOs/User.dto');
 const Route = require('../router/router');
 
@@ -26,6 +27,15 @@ class UserRouter extends Route {
 		this.get('/failRegister', ['PUBLIC'], (req, res) => {
 			req.logger.error('Registration failed');
 			res.sendServerError('Registration failed');
+		});
+
+		this.put('/premium/:uid', ['PUBLIC'], async (req, res) => {
+			try {
+				await Users.updateOne(req.params, req.body);
+				res.sendSuccess('updated role');
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
 		});
 	}
 }
