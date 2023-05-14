@@ -3,6 +3,7 @@
 const UserDTO = require('../DTOs/User.dto');
 const { usersRepository } = require('../repositories');
 const Users = usersRepository;
+const { comparePassword } = require('../utils/bcrypt.utils');
 
 const find = async () => {
 	try {
@@ -51,6 +52,9 @@ const updateOne = async (params, body) => {
 		const { email, password, role } = body;
 		const data = uid ? { _id: uid } : { email };
 		const user = await Users.findOne(data);
+		if (comparePassword(password, user)) {
+			return null;
+		}
 		user.password = password || user.password;
 		user.role = role.toUpperCase() || user.role;
 		const newUserInfo = new UserDTO(user);

@@ -72,7 +72,11 @@ class AuthRouter extends Route {
 
 		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {
-				await Users.updateOne(req.body);
+				const newUser = await Users.updateOne(req.body);
+				if (!newUser) {
+					console.log('The password cannot be the same as the previous one');
+					res.redirect('/forgotPassword');
+				}
 				req.session.user = new UserDTO(req.user);
 
 				res.redirect('/api/products');
