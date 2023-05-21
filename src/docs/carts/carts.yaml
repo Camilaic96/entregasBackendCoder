@@ -1,0 +1,313 @@
+openapi: '3.1.0'
+info:
+  title: API Carts
+  version: '1.0'
+
+paths:
+  /api/carts/:
+    get:
+      summary: Obtiene todos los carritos
+      tags:
+        - Carts
+      responses:
+        '200':
+          description: Todos los carritos fueron obtenidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+    
+    post:
+      summary: Crea un carrito vacío
+      tags:
+        - Carts
+      responses:
+        '200':
+          description: Carrito vacío creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un solo carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Carrito encontrado
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+    put:
+      summary: Agrega un array de productos al carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              $ref: '#/components/schemas/CartProduct'
+      responses:
+        '200':
+          description: Carrito modificado con éxito
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+    delete:
+      summary: Elimina un carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Carrito eliminado con éxito
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agrega una cantidad determinada de un producto al carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que buscas
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: number
+              $ref: '#/components/schemas/CartQuantity'
+      responses:
+        '200':
+          description: Cantidad agregada con éxito
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+    put:
+      summary: Modifica la cantidad de un determinado producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que buscas
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: number
+              $ref: '#/components/schemas/CartQuantity'
+      responses:
+        '200':
+          description: Cantidad modificada con éxito
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+    delete:
+      summary: Elimina un producto de un carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que buscas
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado con éxito
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+
+  /api/carts/{cid}/purchase:
+    get:
+      summary: Finaliza la compra de un carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que buscas
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CartProduct'
+      responses:
+        '200':
+          description: Compra finalizada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        '400':
+          description: Hiciste mal la petición
+        '401':
+          description: No te pudiste autenticar
+        '403':
+          description: No tienes permisos para esa operación
+        '500':
+          description: Error del server
+      
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id de mongo
+        products:
+          type: array
+          description: Productos del carrito
+          items:
+            $ref: '#/components/schemas/CartProduct'
+      example:
+        _id: ObjectId("dsa546a8sd7asddsa")
+        products:
+          - product: dsa5464f56afdas46dd56a4
+            quantity: 8
+          - product: 87ht6r1hey21r0qe4r5y6ec
+            quantity: 6
+    CartProduct:
+      type: object
+      properties:
+        product:
+          type: string
+          description: Id del producto
+        quantity:
+          type: number
+          description: Cantidad del producto
+        _id:
+          type: string
+          description: id autogenerado por mongo
+      example:
+        - product: dsa5464f56afdas46dd56a4
+          quantity: 2
+        - product: 87ht6r1hey21r0qe4r5y6ec
+          quantity: 3
+    CartQuantity:
+      type: number
+      properties:
+        quantity:
+          type: number
+          description: cantidad de un producto
+      example:
+        quantity: 5
+

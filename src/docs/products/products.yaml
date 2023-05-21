@@ -122,13 +122,13 @@ paths:
         '500':
           description: Error del server
 
-  /api/products/{uid}:
+  /api/products/{pid}:
     get:
       summary: Obtiene un solo producto
       tags:
         - Products
       parameters:
-        - name: uid
+        - name: pid
           in: path
           required: true
           description: Id del producto que buscas
@@ -150,13 +150,13 @@ paths:
         '500':
           description: Error del server
 
-  /api/products/realtimeproducts/{uid}:
+  /api/products/realtimeproducts/{pid}:
     put:
       summary: Modifica un solo producto y muestra todos los productos en tiempo real
       tags:
         - Products
       parameters:
-        - name: uid
+        - name: pid
           in: path
           required: true
           description: Id del producto a modificar
@@ -200,7 +200,7 @@ paths:
       tags:
         - Products
       parameters:
-        - name: uid
+        - name: pid
           in: path
           required: true
           description: Id del producto a eliminar
