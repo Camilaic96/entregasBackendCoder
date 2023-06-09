@@ -71,6 +71,7 @@ class Route {
 
 	generateCustomResponses = (req, res, next) => {
 		res.sendSuccess = payload => res.send({ status: 200, payload });
+		res.sendSuccessCreated = payload => res.send({ status: 201, payload });
 		res.sendServerError = error => res.send({ status: 500, error });
 		res.sendUserError = error => res.send({ status: 400, error });
 		next();

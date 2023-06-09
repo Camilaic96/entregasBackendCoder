@@ -4,7 +4,7 @@
 	"main": "app.js",
 	"type": "commonjs",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "mocha",
 		"start:local": "node src/index.js --mode local",
 		"start:dev": "nodemon src/index.js --mode development",
 		"start:prod": "nodemon src/index.js --mode production",
@@ -55,12 +55,15 @@
 	},
 	"description": "",
 	"devDependencies": {
+		"chai": "^4.3.7",
 		"eslint": "^8.37.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-n": "^15.7.0",
 		"eslint-plugin-promise": "^6.1.1",
-		"prettier": "^2.8.7"
+		"mocha": "^10.2.0",
+		"prettier": "^2.8.7",
+		"supertest": "^6.3.3"
 	}
 }
