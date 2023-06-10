@@ -66,14 +66,12 @@ describe('Testing Ecommerce Backend Coder', () => {
 			expect(_body).to.have.property('status');
 			expect(_body.status).is.equal(400);
 		});
-
 		/*
 		it('El endpoint PUT /api/products debe poder actualizar correctamente a un producto determinada comparando el valor previo con el nuevo valor de la base de datos', async () => {});
 
 		it('El endpoint DELETE /api/product', async () => {});
 		*/
 	});
-
 	describe('Test de carts', () => {
 		it('El endpoint GET /api/carts debe devolver el status code y un payload con todos los carritos. Además, payload debe ser de tipo arreglo', async () => {
 			const { _body } = await requester.get('/api/carts');
@@ -104,7 +102,6 @@ describe('Testing Ecommerce Backend Coder', () => {
 			expect(_body.payload).to.have.property('products');
 			expect(_body.payload.products).to.be.an('array').that.is.empty;
 		});
-
 		/*
 		it('El endpoint POST /api/carts/:cid/products/:pid ', async () => {});
 
@@ -117,6 +114,52 @@ describe('Testing Ecommerce Backend Coder', () => {
 		it('El endpoint DELETE /api/carts/:cid ', async () => {});
 
 		it('El endpoint GET /api/carts/:cid/purchase ', async () => {});
-		*/
+	*/
+	});
+
+	describe('Test de session', () => {
+		const cookie = {};
+		it('Debe registrar correctamente a un usuario', async () => {
+			const mockUser = {
+				first_name: 'Nombre mock test',
+				last_name: 'Apellido mock test',
+				email: 'mockUser@test.com',
+				age: 26,
+				password: 'mockUser123',
+				carts: [],
+				role: 'admin',
+			};
+
+			const { _body } = await requester.post('/api/users').send(mockUser);
+
+			expect(_body.payload).to.be.ok;
+			expect(_body.status).is.equal(201);
+		});
+
+		it('Debe logear correctamente al usuario y devolver una cookie', async () => {
+			const mockUser = {
+				email: 'mockUser@test.com',
+				password: 'mockUser123',
+			};
+
+			const { headers } = await requester.post('/api/auth').send(mockUser);
+
+			const cookieResult = headers['set-cookie'][0];
+			expect(cookieResult).to.be.ok;
+
+			cookie.name = cookieResult.split('=')[0];
+			cookie.value = cookieResult.split('=')[1];
+
+			expect(cookie.name).to.be.ok.and.equal('connect.sid');
+			expect(cookie.value).to.be.ok;
+		});
+
+		it('Debe enviar la cookie que contiene el usuario y destructurarlo correctamente', async () => {
+			const { _body } = await requester
+				.get('/api/session/current')
+				.set('Cookie', [`${cookie.name}=${cookie.value}`]);
+
+			expect(_body.payload.email).to.be.equal('mockUser@test.com');
+		});
 	});
 });

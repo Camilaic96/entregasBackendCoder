@@ -15,7 +15,8 @@ class UserRouter extends Route {
 			async (req, res) => {
 				try {
 					req.session.user = new UserDTO(req.user);
-					res.redirect('/api/products');
+					// res.redirect('/api/products');
+					res.sendSuccessCreated(req.session.user);
 				} catch (error) {
 					if (error.code === 11000)
 						return res.sendUserError('The user already exists');
