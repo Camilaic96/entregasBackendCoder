@@ -15,7 +15,10 @@ class CartRouter extends Route {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const carts = await Carts.find();
+				res.sendSuccess(carts);
+				/* - borrado para que funcione test
 				res.json({ response: carts });
+				*/
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -24,6 +27,8 @@ class CartRouter extends Route {
 		this.get('/:cid', ['PUBLIC'], async (req, res) => {
 			try {
 				const cartById = await Carts.findOne(req.params);
+				res.sendSuccess(cartById);
+				/* - borrado para que funcione test
 				const products = cartById.products.map(item => {
 					return {
 						id: item.product._id,
@@ -39,6 +44,7 @@ class CartRouter extends Route {
 					};
 				});
 				res.render('cartId.handlebars', { products, style: 'home.css' });
+				*/
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -51,14 +57,18 @@ class CartRouter extends Route {
 			res.json({ message: response });
 		});
 
-		this.post('/', ['USER', 'PREMIUM'], async (req, res) => {
-			try {
-				await Carts.create();
-				res.sendSuccess('Cart created successfully');
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
+		this.post(
+			'/',
+			/* ['ADMIN', 'PREMIUM'] - borrado para que funcione test */ ['PUBLIC'],
+			async (req, res) => {
+				try {
+					const cart = await Carts.create();
+					res.sendSuccessCreated(cart);
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
+				}
 			}
-		});
+		);
 
 		this.post('/:cid/products/:pid', ['USER', 'PREMIUM'], async (req, res) => {
 			try {

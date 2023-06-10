@@ -44,8 +44,8 @@ const insertMany = async newCarts => {
 
 const create = async () => {
 	try {
-		const newProduct = await Carts.create();
-		return newProduct;
+		const cart = await Carts.create();
+		return cart;
 	} catch (error) {
 		throw error;
 	}

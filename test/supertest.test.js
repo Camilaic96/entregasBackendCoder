@@ -68,11 +68,55 @@ describe('Testing Ecommerce Backend Coder', () => {
 		});
 
 		/*
-		it('El endpoint PUT /api/products debe poder actualizar correctamente a un producto determinada comparando el valor previo con el nuevo valor de la base de datos', async () => {
+		it('El endpoint PUT /api/products debe poder actualizar correctamente a un producto determinada comparando el valor previo con el nuevo valor de la base de datos', async () => {});
+
+		it('El endpoint DELETE /api/product', async () => {});
+		*/
+	});
+
+	describe('Test de carts', () => {
+		it('El endpoint GET /api/carts debe devolver el status code y un payload con todos los carritos. Además, payload debe ser de tipo arreglo', async () => {
+			const { _body } = await requester.get('/api/carts');
+
+			expect(_body).to.have.property('status');
+			expect(_body).to.have.property('payload');
+			expect(_body.payload).to.be.an('array');
 		});
-		
-		it('El endpoint DELETE /api/product', async () => {
+
+		it('El endpoint GET /api/carts/:cid debe devolver el status code y un payload con la información del carrito especificado', async () => {
+			const cid = '6400af2b5dddbf4afb235bda';
+			const { _body } = await requester.get(`/api/carts/${cid}`);
+
+			expect(_body).to.have.property('status');
+			expect(_body).to.have.property('payload');
+			expect(_body.payload).to.have.property('_id');
+			expect(_body.status).is.equal(200);
 		});
+
+		it('El endpoint POST /api/carts debe crear un carrito vacío correctamente', async () => {
+			const { _body } = await requester.post('/api/carts').send();
+
+			expect(_body).to.have.property('payload');
+			expect(_body.payload).to.have.property('_id');
+
+			expect(_body).to.have.property('status');
+			expect(_body.status).is.equal(201);
+			expect(_body.payload).to.have.property('products');
+			expect(_body.payload.products).to.be.an('array').that.is.empty;
+		});
+
+		/*
+		it('El endpoint POST /api/carts/:cid/products/:pid ', async () => {});
+
+		it('El endpoint PUT /api/carts/:cid ', async () => {});
+
+		it('El endpoint PUT /api/carts/:cid/products/:pid ', async () => {});
+
+		it('El endpoint DELETE /api/carts/:cid/products/:pid ', async () => {});
+
+		it('El endpoint DELETE /api/carts/:cid ', async () => {});
+
+		it('El endpoint GET /api/carts/:cid/purchase ', async () => {});
 		*/
 	});
 });

@@ -34,8 +34,8 @@ class CartDao {
 
 	async create(newCart) {
 		try {
-			await Cart.create(newCart);
-			return 'Cart created';
+			const cart = await Cart.create(newCart);
+			return cart;
 		} catch (error) {
 			return error;
 		}
