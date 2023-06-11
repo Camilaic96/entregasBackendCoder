@@ -1,0 +1,11 @@
+Además, agregar una propiedad al usuario llamada “last_connection”, la cual deberá modificarse cada vez que el usuario realice un proceso de login y logout
+
+FALTA PARA ENTREGA FINAL
+- Manejo de errores
+
+- dao fs y memory
+
+- Hacer un DTO de usuarios para mostrar
+
+PREGUNTAS PARA AGUS
+- En src/controllers, por ejemplo, ¿tiene sentido tener carpetas que tengan un solo archivo? Porque visualmente lo siento más ordenado

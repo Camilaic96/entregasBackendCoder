@@ -1,8 +1,8 @@
-const Route = require('../router/router');
-const transport = require('../utils/email.utils');
-const { email } = require('../config');
+const Route = require('../../router/router');
+const transport = require('../../utils/email.utils');
+const { email } = require('../../config');
 const { emailUser } = email;
-const Users = require('../services/users.service');
+const Users = require('../../services/users.service');
 // const Emails = require('../services/emails.service');
 
 class EmailRouter extends Route {

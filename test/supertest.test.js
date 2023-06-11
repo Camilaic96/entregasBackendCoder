@@ -72,6 +72,7 @@ describe('Testing Ecommerce Backend Coder', () => {
 		it('El endpoint DELETE /api/product', async () => {});
 		*/
 	});
+
 	describe('Test de carts', () => {
 		it('El endpoint GET /api/carts debe devolver el status code y un payload con todos los carritos. Además, payload debe ser de tipo arreglo', async () => {
 			const { _body } = await requester.get('/api/carts');
@@ -128,6 +129,10 @@ describe('Testing Ecommerce Backend Coder', () => {
 				password: 'mockUser123',
 				carts: [],
 				role: 'admin',
+				documents: [],
+				last_connection: {
+					date: Date.now(),
+				},
 			};
 
 			const { _body } = await requester.post('/api/users').send(mockUser);

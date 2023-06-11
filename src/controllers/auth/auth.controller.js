@@ -1,8 +1,9 @@
 const passport = require('passport');
 
-const Route = require('../router/router');
-const Users = require('../services/users.service');
-const UserDTO = require('../DTOs/User.dto');
+const Route = require('../../router/router');
+
+const Users = require('../../services/users.service');
+const UserDTO = require('../../DTOs/User.dto');
 
 class AuthRouter extends Route {
 	init() {
@@ -14,17 +15,20 @@ class AuthRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
-					req.session.user = new UserDTO(req.user);
-					res.redirect('/api/products');
+					// req.session.destroy  	- ES NECESARIO?
+					const user = new UserDTO(req.user);
+					req.session.user = user;
+					res.sendSuccess(user);
+					// res.redirect('/api/products');
 				} catch (error) {
-					req.logger.error(error);
+					// req.logger.error(error);
 					res.sendServerError('Login failed');
 				}
 			}
 		);
 
 		this.get('/failLogin', ['PUBLIC'], (req, res) => {
-			req.logger.error('Login failed');
+			// req.logger.error('Login failed');
 			res.sendServerError('Login failed');
 		});
 
@@ -32,7 +36,9 @@ class AuthRouter extends Route {
 			'/github',
 			['PUBLIC'],
 			passport.authenticate('github', { scope: ['user:email'] }),
-			async (req, res) => {}
+			async (req, res) => {
+				// modificar last_connection en DB
+			}
 		);
 
 		this.get(
@@ -49,7 +55,9 @@ class AuthRouter extends Route {
 			'/google',
 			['PUBLIC'],
 			passport.authenticate('google', { scope: ['profile'] }),
-			async (req, res) => {}
+			async (req, res) => {
+				// modificar last_connection en DB
+			}
 		);
 
 		this.get(
@@ -63,6 +71,7 @@ class AuthRouter extends Route {
 		);
 
 		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], (req, res) => {
+			// modificar last_connection en DB
 			req.session.destroy(error => {
 				if (error) return res.json({ error });
 

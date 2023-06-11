@@ -1,5 +1,5 @@
 const MongoStore = require('connect-mongo');
-const { db } = require('./');
+const { db } = require('.');
 const { dbHost, dbName, dbAdmin, dbPassword } = db;
 
 const sessionMongo = {

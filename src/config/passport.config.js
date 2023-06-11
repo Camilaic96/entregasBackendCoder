@@ -8,8 +8,9 @@ const jwt = require('passport-jwt');
 const { comparePassword } = require('../utils/bcrypt.utils');
 const cookieExtractor = require('../utils/cookieExtractor.utils');
 const Users = require('../services/users.service');
+const UserDTO = require('../DTOs/User.dto');
 
-const { github, google, jwtToken } = require('./');
+const { github, google, jwtToken } = require('.');
 const { clientID_github, clientSecret_github } = github;
 const { clientID_google, clientSecret_google } = google;
 const { secretKey } = jwtToken;
@@ -30,7 +31,7 @@ const initializePassport = () => {
 						req.logger.error('User already exists');
 						return done(null, false);
 					}
-					const newUserInfo = req.body;
+					const newUserInfo = new UserDTO(req.body);
 					const newUser = await Users.create(newUserInfo);
 					return done(null, newUser);
 				} catch (error) {
@@ -56,13 +57,16 @@ const initializePassport = () => {
 			async (username, password, done) => {
 				try {
 					const user = await Users.findOne({ email: username });
+					console.log(user);
 					if (!user) {
 						console.log('User not found');
 						return done(null, false);
 					}
+					console.log(comparePassword(password, user));
 					if (!comparePassword(password, user)) return done(null, false);
-
-					return done(null, user);
+					user.last_connection.login_date = Date();
+					const userLog = await Users.updateOne(user._id, user);
+					return done(null, userLog);
 				} catch (error) {
 					return done(error);
 				}

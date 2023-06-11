@@ -11,6 +11,8 @@ class UserDTO {
 		this.password = hashPassword(user.password);
 		this.carts = user.carts;
 		this.role = user.role;
+		this.documents = user.documents;
+		this.last_connection = user.last_connection;
 	}
 }
 

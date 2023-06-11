@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
-const uploader = require('../utils/multer.js');
-const Route = require('../router/router.js');
+const uploader = require('../../utils/multer.js');
+const Route = require('../../router/router.js');
 
-const Products = require('../services/products.service.js');
+const Products = require('../../services/products.service.js');
 
-const FilesDao = require('../dao/memory/Files.dao.js');
+const FilesDao = require('../../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
 class ProductRouter extends Route {

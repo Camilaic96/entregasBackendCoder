@@ -1,5 +1,5 @@
-const Route = require('../router/router');
-const SessionDTO = require('../DTOs/Session.dto');
+const Route = require('../../router/router');
+const SessionDTO = require('../../DTOs/Session.dto');
 
 class SessionRouter extends Route {
 	init() {

@@ -1,4 +1,4 @@
-const Route = require('../router/router');
+const Route = require('../../router/router');
 
 class LoggerTestRouter extends Route {
 	init() {

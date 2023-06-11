@@ -1,5 +1,5 @@
-const Route = require('../router/router');
-const { generateProducts } = require('../utils/mocks/Products.mock');
+const Route = require('../../router/router');
+const { generateProducts } = require('../../utils/mocks/Products.mock');
 
 class MockingProductsRouter extends Route {
 	init() {

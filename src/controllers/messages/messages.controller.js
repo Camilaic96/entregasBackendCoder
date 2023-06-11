@@ -1,8 +1,8 @@
-const Route = require('../router/router');
+const Route = require('../../router/router');
 
-const MessageDao = require('../dao/mongo/mongoManager/Message.dao');
+const MessageDao = require('../../dao/mongo/mongoManager/Message.dao');
 const Message = new MessageDao('Messages.json');
-const FilesDao = require('../dao/memory/Files.dao');
+const FilesDao = require('../../dao/memory/Files.dao');
 const MessageManager = new FilesDao('Messages.json');
 
 class MessageRouter extends Route {

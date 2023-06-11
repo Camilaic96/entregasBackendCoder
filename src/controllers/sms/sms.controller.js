@@ -1,6 +1,6 @@
 const twilio = require('twilio');
-const Route = require('../router/router');
-const { sms } = require('../config');
+const Route = require('../../router/router');
+const { sms } = require('../../config');
 
 const { smsAccountSID, smsAuthToken, smsPhoneNumber } = sms;
 const client = twilio(smsAccountSID, smsAuthToken);
