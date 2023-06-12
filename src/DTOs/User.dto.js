@@ -1,4 +1,3 @@
-const { hashPassword } = require('../utils/bcrypt.utils');
 const { v4: uuidV4 } = require('uuid');
 
 class UserDTO {
@@ -8,7 +7,7 @@ class UserDTO {
 		this.last_name = user.last_name;
 		this.email = user.email || uuidV4() + 'error@email';
 		this.age = user.age;
-		this.password = hashPassword(user.password);
+		this.password = user.password;
 		this.carts = user.carts;
 		this.role = user.role;
 		this.documents = user.documents;

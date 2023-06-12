@@ -4,10 +4,12 @@ const UserDTO = require('../DTOs/User.dto');
 const { usersRepository } = require('../repositories');
 const Users = usersRepository;
 // const { comparePassword } = require('../utils/bcrypt.utils');
+// const { hashPassword } = require('../utils/bcrypt.utils');
 
 const CustomErrors = require('../utils/errors/Custom.errors');
 const { notFoundProductErrorInfo } = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');
+const { hashPassword } = require('../utils/bcrypt.utils');
 
 const find = async () => {
 	try {
@@ -40,37 +42,21 @@ const findById = async param => {
 const create = async user => {
 	try {
 		const newUserInfo = new UserDTO(user);
+		newUserInfo.password = hashPassword(newUserInfo.password);
 		const newUser = await Users.create(newUserInfo);
+
 		return newUser;
 	} catch (error) {
 		throw error;
 	}
 };
-
+/* ARREGLAR */
 const updateOne = async (param, body) => {
 	try {
-		/*
-		const { uid } = params;
-		const { email, password } = body;
-		const data = { _id: uid } || { email };
-		const user = await Users.findOne(data);
-		if (comparePassword(password, user)) {
-			// cambiar error por uno de credenciales inválidas
-			CustomErrors.createError({
-				name: 'Product not found in database',
-				cause: notFoundProductErrorInfo(uid),
-				message: 'Error trying to find product',
-				code: EnumErrors.NOT_FOUND,
-			});
-		}
-		user.password = password || user.password;
-		const newUserInfo = new UserDTO(user);
-		*/
-		const { uid } = param;
-		console.log(uid);
+		// const { uid } = param;
+		// console.log(uid);
 		const user = new UserDTO(body);
-		console.log(user);
-		const updateUser = await Users.updateOne({ _id: uid }, user, {
+		const updateUser = await Users.updateOne({ _id: param }, user, {
 			new: true,
 		});
 		return updateUser;
@@ -92,7 +78,6 @@ const updatePremium = async params => {
 			user.documents.some(doc => doc.name === document)
 		);
 		if (!hasAllDocuments) {
-			console.log('faltan documentos');
 			return 'faltan doc';
 			/*
 			En caso de llamar al endpoint, si no se ha terminado de cargar la documentación, devolver un error indicando que el usuario no ha terminado de procesar su documentación. (Sólo si quiere pasar de user a premium, no al revés)
@@ -105,7 +90,6 @@ const updatePremium = async params => {
 			});
 			*/
 		}
-		console.log('tiene todos los documentos');
 		user.role = 'PREMIUM';
 		const newUserInfo = new UserDTO(user);
 		const updateUser = await Users.updateOne({ _id: uid }, newUserInfo, {
@@ -117,8 +101,9 @@ const updatePremium = async params => {
 	}
 };
 
+/* ARREGLAR */
 // permita subir uno o múltiples archivos. Utilizar el middleware de Multer para poder recibir los documentos que se carguen y actualizar en el usuario su status para hacer saber que ya subió algún documento en particular.
-const updateOneDocuments = async (params, body, documents) => {
+const updateDocuments = async (params, body, documents) => {
 	try {
 		const { uid } = params;
 		const user = await Users.findOne(uid);
@@ -150,5 +135,5 @@ module.exports = {
 	create,
 	updateOne,
 	updatePremium,
-	updateOneDocuments,
+	updateDocuments,
 };

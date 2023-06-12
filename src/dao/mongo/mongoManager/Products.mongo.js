@@ -5,6 +5,7 @@ class ProductsMongoDAO {
 	async find(filter, optionsFind) {
 		try {
 			const products = await Product.paginate(filter, optionsFind);
+			console.log(products);
 			return products;
 		} catch (error) {
 			return error;

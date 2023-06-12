@@ -16,7 +16,8 @@ class AuthRouter extends Route {
 			async (req, res) => {
 				try {
 					// req.session.destroy  	- ES NECESARIO?
-					const user = new UserDTO(req.user);
+					req.user.last_connection.login_date = Date();
+					const user = await Users.updateOne(req.user._id, req.user);
 					req.session.user = user;
 					res.sendSuccess(user);
 					// res.redirect('/api/products');
@@ -70,11 +71,13 @@ class AuthRouter extends Route {
 			}
 		);
 
-		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], (req, res) => {
+		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
 			// modificar last_connection en DB
+			const user = await Users.findOne(req.user._id);
+			user.last_connection.logout_date = Date();
+			await Users.updateOne(user._id, user);
 			req.session.destroy(error => {
 				if (error) return res.json({ error });
-
 				res.redirect('/api/login');
 			});
 		});

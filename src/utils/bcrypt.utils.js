@@ -1,14 +1,14 @@
-const bcrytp = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const hashPassword = password => {
-	const salt = bcrytp.genSaltSync(10);
-	const passwordHashed = bcrytp.hashSync(password, salt);
+	const salt = bcrypt.genSaltSync(10);
+	const passwordHashed = bcrypt.hashSync(password, salt);
 
 	return passwordHashed;
 };
 
 const comparePassword = (password, user) => {
-	const isValid = bcrytp.compareSync(password, user.password);
+	const isValid = bcrypt.compareSync(password, user.password);
 
 	return isValid;
 };

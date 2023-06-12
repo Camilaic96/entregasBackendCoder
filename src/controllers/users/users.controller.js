@@ -27,7 +27,7 @@ class UserRouter extends Route {
 		);
 
 		this.get('/failRegister', ['PUBLIC'], (req, res) => {
-			req.logger.error('Registration failed');
+			// req.logger.error('Registration failed');
 			res.sendServerError('Registration failed');
 		});
 

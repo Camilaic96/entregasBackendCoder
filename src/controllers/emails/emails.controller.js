@@ -31,7 +31,7 @@ class EmailRouter extends Route {
 					res.redirect('/api/resetPassword');
 				}
 			} catch (error) {
-				req.logger.error(error);
+				// req.logger.error(error);
 				res.sendServerError('Login failed');
 			}
 		});

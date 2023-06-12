@@ -11,7 +11,7 @@ class ProductRouter extends Route {
 	init() {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
-				const { user } = req.session;
+				// const { user } = req.session;
 				const products = await Products.find(req.query);
 				res.sendSuccess(products);
 				/* - borrado para que funcione test
