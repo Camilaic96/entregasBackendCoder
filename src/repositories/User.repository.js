@@ -43,6 +43,14 @@ class UsersRepository {
 			throw error;
 		}
 	}
+
+	async findOneAndUpdate(data, newData) {
+		try {
+			return await this.dao.findOneAndUpdate(data, newData, { new: true });
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 module.exports = UsersRepository;

@@ -27,7 +27,7 @@ class UserRouter extends Route {
 		);
 
 		this.get('/failRegister', ['PUBLIC'], (req, res) => {
-			// req.logger.error('Registration failed');
+			req.logger.error('Registration failed');
 			res.sendServerError('Registration failed');
 		});
 
@@ -57,33 +57,6 @@ class UserRouter extends Route {
 				}
 			}
 		);
-		/*
-		updatePassword = async(email, newPassword) => {
-        try {
-            const response = await userModel.findOneAndUpdate({ email }, { password: newPassword })
-            return response;
-        } catch (error) {
-            throw new Error(error)
-        }
-    }
-
-    updateRole = async(email, newRole) => {
-        try {
-            const response = await userModel.findOneAndUpdate({ email }, { role: newRole })
-            return response;
-        } catch (error) {
-            throw new Error(error)
-        }
-    }
-    updateConnection = async(email, new_connection) => {
-        try {
-            const response = await userModel.findOneAndUpdate({ email }, { last_connection: new_connection })
-            return response;
-        } catch (error) {
-            throw new Error(error)
-        }
-    }
-		*/
 	}
 }
 

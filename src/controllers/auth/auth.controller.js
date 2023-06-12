@@ -15,21 +15,21 @@ class AuthRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
-					// req.session.destroy  	- ES NECESARIO?
-					req.user.last_connection.login_date = Date();
+					req.session.destroy();
+					req.user.last_connection.login_date = Date.now();
 					const user = await Users.updateOne(req.user._id, req.user);
 					req.session.user = user;
 					res.sendSuccess(user);
 					// res.redirect('/api/products');
 				} catch (error) {
-					// req.logger.error(error);
+					req.logger.error(error);
 					res.sendServerError('Login failed');
 				}
 			}
 		);
 
 		this.get('/failLogin', ['PUBLIC'], (req, res) => {
-			// req.logger.error('Login failed');
+			req.logger.error('Login failed');
 			res.sendServerError('Login failed');
 		});
 
@@ -37,9 +37,7 @@ class AuthRouter extends Route {
 			'/github',
 			['PUBLIC'],
 			passport.authenticate('github', { scope: ['user:email'] }),
-			async (req, res) => {
-				// modificar last_connection en DB
-			}
+			async (req, res) => {}
 		);
 
 		this.get(
@@ -47,7 +45,9 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('github', { failureRedirect: '/login' }),
 			async (req, res) => {
-				req.session.user = new UserDTO(req.user);
+				req.user.last_connection.login_date = Date.now();
+				const user = await Users.updateOne(req.user._id, req.user);
+				req.session.user = new UserDTO(user);
 				res.redirect('/api');
 			}
 		);
@@ -56,9 +56,7 @@ class AuthRouter extends Route {
 			'/google',
 			['PUBLIC'],
 			passport.authenticate('google', { scope: ['profile'] }),
-			async (req, res) => {
-				// modificar last_connection en DB
-			}
+			async (req, res) => {}
 		);
 
 		this.get(
@@ -66,15 +64,16 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('google', { failureRedirect: '/login' }),
 			async (req, res) => {
-				req.session.user = new UserDTO(req.user);
+				req.user.last_connection.login_date = Date.now();
+				const user = await Users.updateOne(req.user._id, req.user);
+				req.session.user = new UserDTO(user);
 				res.redirect('/api');
 			}
 		);
 
 		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
-			// modificar last_connection en DB
 			const user = await Users.findOne(req.user._id);
-			user.last_connection.logout_date = Date();
+			user.last_connection.logout_date = Date.now();
 			await Users.updateOne(user._id, user);
 			req.session.destroy(error => {
 				if (error) return res.json({ error });

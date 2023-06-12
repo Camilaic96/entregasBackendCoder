@@ -5,6 +5,7 @@ const EnumErrors = {
 	// DATABASE_ERROR: 3,
 	INVALID_PARAM: 4,
 	NOT_FOUND: 5,
+	INCOMPLETE_DATA: 6,
 };
 
 module.exports = EnumErrors;

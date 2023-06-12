@@ -46,6 +46,15 @@ class UsersMongoDAO {
 			throw error;
 		}
 	}
+
+	async findOneAndUpdate(data, newData) {
+		try {
+			const user = await User.findOneAndUpdate(data, newData, { new: true });
+			return user;
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 module.exports = UsersMongoDAO;

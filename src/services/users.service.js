@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-catch */
-/* eslint-disable camelcase */
+
 const UserDTO = require('../DTOs/User.dto');
 const { usersRepository } = require('../repositories');
 const Users = usersRepository;
-// const { comparePassword } = require('../utils/bcrypt.utils');
-// const { hashPassword } = require('../utils/bcrypt.utils');
 
 const CustomErrors = require('../utils/errors/Custom.errors');
-const { notFoundProductErrorInfo } = require('../utils/errors/info.errors');
+const {
+	generateDocumentationErrorInfo,
+} = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');
 const { hashPassword } = require('../utils/bcrypt.utils');
 
@@ -53,12 +53,11 @@ const create = async user => {
 /* ARREGLAR */
 const updateOne = async (param, body) => {
 	try {
-		// const { uid } = param;
-		// console.log(uid);
 		const user = new UserDTO(body);
-		const updateUser = await Users.updateOne({ _id: param }, user, {
+		await Users.updateOne({ _id: param }, user, {
 			new: true,
 		});
+		const updateUser = await Users.findOne({ _id: param });
 		return updateUser;
 	} catch (error) {
 		throw error;
@@ -78,21 +77,17 @@ const updatePremium = async params => {
 			user.documents.some(doc => doc.name === document)
 		);
 		if (!hasAllDocuments) {
-			return 'faltan doc';
-			/*
-			En caso de llamar al endpoint, si no se ha terminado de cargar la documentación, devolver un error indicando que el usuario no ha terminado de procesar su documentación. (Sólo si quiere pasar de user a premium, no al revés)
-			cambiar error por uno de faltan datos (documentos)
 			CustomErrors.createError({
-				name: 'Product not found in database',
-				cause: notFoundProductErrorInfo(uid),
-				message: 'Error trying to find product',
-				code: EnumErrors.NOT_FOUND,
+				name: 'Incomplete documentation',
+				cause: generateDocumentationErrorInfo(),
+				message:
+					'Error trying to modify the role of user due to lack of documentation',
+				code: EnumErrors.INCOMPLETE_DATA,
 			});
-			*/
 		}
 		user.role = 'PREMIUM';
 		const newUserInfo = new UserDTO(user);
-		const updateUser = await Users.updateOne({ _id: uid }, newUserInfo, {
+		const updateUser = await Users.findOneAndUpdate({ _id: uid }, newUserInfo, {
 			new: true,
 		});
 		return updateUser;
@@ -106,23 +101,7 @@ const updatePremium = async params => {
 const updateDocuments = async (params, body, documents) => {
 	try {
 		const { uid } = params;
-		const user = await Users.findOne(uid);
-		/* NO -> controlar que tenga cargado los siguientes documentos: Identificación, Comprobante de domicilio, Comprobante de estado de cuenta */
-		if (user === 'a') {
-			// cambiar error por uno de faltan datos (documentos)
-			CustomErrors.createError({
-				name: 'Product not found in database',
-				cause: notFoundProductErrorInfo(uid),
-				message: 'Error trying to find product',
-				code: EnumErrors.NOT_FOUND,
-			});
-		}
-		user.documents = 'PREMIUM';
-		const newUserInfo = new UserDTO(user);
-		const updateUser = await Users.updateOne({ _id: uid }, newUserInfo, {
-			new: true,
-		});
-		return updateUser;
+		await Users.findOne({ _id: uid });
 	} catch (error) {
 		throw error;
 	}

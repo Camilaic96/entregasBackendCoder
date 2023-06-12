@@ -1,11 +1,39 @@
-Además, agregar una propiedad al usuario llamada “last_connection”, la cual deberá modificarse cada vez que el usuario realice un proceso de login y logout
+Chequear /src:
+- services: users/documentation
 
-FALTA PARA ENTREGA FINAL
-- Manejo de errores
+- utils: multer
 
-- dao fs y memory
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        
+        const possibleDest = {
+            profile: "profiles",
+            product: "products",
+            documento: "documents",
+            comprobanteDomicilio: "documents",
+            comprobanteCuenta: "documents"
+        }
 
-- Hacer un DTO de usuarios para mostrar
+        const {email} = req.user;
+        
+        const destFolder = possibleDest[file.fieldname];
+        
+        const path = `${process.cwd()}/src/files/${destFolder}`
+        
+        if(!fs.existsSync(path)){
+            fs.mkdirSync(path)
+        }
+        
+        if(!fs.existsSync(`${path}/${email}`)){
+            fs.mkdirSync(`${path}/${email}`)
+        }
 
-PREGUNTAS PARA AGUS
-- En src/controllers, por ejemplo, ¿tiene sentido tener carpetas que tengan un solo archivo? Porque visualmente lo siento más ordenado
+        cb(null, `${path}/${email}`)
+    },
+    filename: (req, file, cb) => {
+        
+        const type = file.originalname.split(".")[1]
+
+        cb(null, `${file.fieldname}.${type}`)
+    }
+})

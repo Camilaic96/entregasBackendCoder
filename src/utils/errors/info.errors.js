@@ -8,6 +8,15 @@ const generateUserErrorInfo = user => {
     `;
 };
 
+const generateDocumentationErrorInfo = () => {
+	return `
+        One or more required documents were not uploaded.
+        List of required documents:
+        * Identificación
+        * Comprobante de domicilio
+        * Comprobante de estado de cuenta `;
+};
+
 const generateProductErrorInfo = product => {
 	return `
         One or more properties were incomplete or not validate.
@@ -36,4 +45,5 @@ module.exports = {
 	generateProductErrorInfo,
 	notFoundProductErrorInfo,
 	notFoundCartErrorInfo,
+	generateDocumentationErrorInfo,
 };

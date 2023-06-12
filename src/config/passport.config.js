@@ -27,7 +27,7 @@ const initializePassport = () => {
 				try {
 					const user = await Users.findOne({ email: username });
 					if (user) {
-						// req.logger.error('User already exists');
+						req.logger.error('User already exists');
 						return done(null, false);
 					}
 					const newUser = await Users.create(req.body);

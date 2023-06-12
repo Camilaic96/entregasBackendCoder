@@ -122,7 +122,7 @@ class CartRouter extends Route {
 
 		this.delete(
 			'/:cid/products/:pid',
-			['PUBLIC'] /* ['USER', 'PREMIUM'] */,
+			['PUBLIC'] /* ['USER', 'PREMIUM'] - borrado para que funcione test */,
 			async (req, res) => {
 				try {
 					const { pid } = req.params;

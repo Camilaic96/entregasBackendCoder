@@ -5,7 +5,7 @@ class SessionRouter extends Route {
 	init() {
 		this.get('/current', ['PUBLIC'], (req, res) => {
 			try {
-				if (!req.session.user) return res.sendSuccess('User not logged in');
+				if (!req.session.user) return res.sendUserError('User not logged in');
 				const user = new SessionDTO(req.session.user);
 				res.sendSuccess(user);
 			} catch (error) {
