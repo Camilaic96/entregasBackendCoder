@@ -105,12 +105,28 @@ const updatePremium = async params => {
 	}
 };
 
-/* ARREGLAR */
-// permita subir uno o múltiples archivos. Utilizar el middleware de Multer para poder recibir los documentos que se carguen y actualizar en el usuario su status para hacer saber que ya subió algún documento en particular.
-const updateDocuments = async (params, body, documents) => {
+const updateDocuments = async (params, documents) => {
 	try {
 		const { uid } = params;
-		await Users.findOne({ _id: uid });
+		const user = await Users.findOne({ _id: uid });
+		if (user.role === 'PREMIUM') {
+			return 'You are already a premium user';
+		}
+		documents.forEach(document => {
+			const existingDocument = user.documents.find(
+				doc => doc.name === document.name
+			);
+
+			if (existingDocument) {
+				existingDocument.reference = document.reference;
+			} else {
+				user.documents.push(document);
+			}
+		});
+		const updateUser = await Users.findOneAndUpdate({ _id: uid }, user, {
+			new: true,
+		});
+		return updateUser;
 	} catch (error) {
 		throw error;
 	}

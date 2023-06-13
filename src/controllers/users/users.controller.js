@@ -48,10 +48,20 @@ class UserRouter extends Route {
 				try {
 					const user = await Users.updateOneDocuments(
 						req.params,
-						req.body,
 						req.documents
 					);
 					res.sendSuccess(user);
+
+					const currentUser = req.user;
+
+					if (currentUser.role === 'PREMIUM') {
+						return res.sendSuccess('Ya eres Premium');
+					}
+					const files = req.files;
+
+					res.sendSuccess(
+						`Tus archivos ${files[0].filename} se cargaron correctamente`
+					);
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
