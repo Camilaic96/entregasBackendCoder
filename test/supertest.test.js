@@ -128,11 +128,7 @@ describe('Testing Ecommerce Backend Coder', () => {
 				age: 26,
 				password: 'mockUser123',
 				carts: [],
-				role: 'admin',
-				documents: [],
-				last_connection: {
-					date: Date.now(),
-				},
+				role: 'ADMIN',
 			};
 
 			const { _body } = await requester.post('/api/users').send(mockUser);
@@ -162,8 +158,7 @@ describe('Testing Ecommerce Backend Coder', () => {
 		it('Debe enviar la cookie que contiene el usuario y destructurarlo correctamente', async () => {
 			const { _body } = await requester
 				.get('/api/session/current')
-				.set('Cookie', [`${cookie.name}=${cookie.value}`]);
-
+				.set('connect.sid', [`${cookie.name}=${cookie.value}`]);
 			expect(_body.payload.email).to.be.equal('mockUser@test.com');
 		});
 	});

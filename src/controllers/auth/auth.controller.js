@@ -15,7 +15,6 @@ class AuthRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
-					req.session.destroy();
 					req.user.last_connection.login_date = Date.now();
 					const user = await Users.updateOne(req.user._id, req.user);
 					req.session.user = user;

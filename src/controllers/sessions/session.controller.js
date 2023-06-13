@@ -1,14 +1,15 @@
 const Route = require('../../router/router');
-const SessionDTO = require('../../DTOs/Session.dto');
+// const SessionDTO = require('../../DTOs/Session.dto');
 
 class SessionRouter extends Route {
 	init() {
-		this.get('/current', ['PUBLIC'], (req, res) => {
+		this.get('/current', ['PUBLIC'], async (req, res) => {
 			try {
 				if (!req.session.user) return res.sendUserError('User not logged in');
-				const user = new SessionDTO(req.session.user);
+				const user = req.session.user;
 				res.sendSuccess(user);
 			} catch (error) {
+				console.log(error);
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});

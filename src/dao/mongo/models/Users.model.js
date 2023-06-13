@@ -55,9 +55,9 @@ const userSchema = new mongoose.Schema({
 			logout_date: Date,
 		},
 		default: {
-			register_date: Date.now(),
-			login_date: Date.now(),
-			logout_date: Date.now(),
+			register_date: Date(),
+			login_date: Date(),
+			logout_date: Date(),
 		},
 	},
 });

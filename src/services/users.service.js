@@ -44,13 +44,12 @@ const create = async user => {
 		const newUserInfo = new UserDTO(user);
 		newUserInfo.password = hashPassword(newUserInfo.password);
 		const newUser = await Users.create(newUserInfo);
-
 		return newUser;
 	} catch (error) {
 		throw error;
 	}
 };
-/* ARREGLAR */
+
 const updateOne = async (param, body) => {
 	try {
 		const user = new UserDTO(body);
@@ -58,6 +57,16 @@ const updateOne = async (param, body) => {
 			new: true,
 		});
 		const updateUser = await Users.findOne({ _id: param });
+		return updateUser;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const findOneAndUpdate = async (param, body) => {
+	try {
+		const user = new UserDTO(body);
+		const updateUser = await Users.updateOne({ _id: param }, user);
 		return updateUser;
 	} catch (error) {
 		throw error;
@@ -113,6 +122,7 @@ module.exports = {
 	findById,
 	create,
 	updateOne,
+	findOneAndUpdate,
 	updatePremium,
 	updateDocuments,
 };
