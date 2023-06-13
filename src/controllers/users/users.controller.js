@@ -52,11 +52,6 @@ class UserRouter extends Route {
 					);
 					res.sendSuccess(user);
 
-					const currentUser = req.user;
-
-					if (currentUser.role === 'PREMIUM') {
-						return res.sendSuccess('Ya eres Premium');
-					}
 					const files = req.files;
 
 					res.sendSuccess(
