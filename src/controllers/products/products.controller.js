@@ -11,14 +11,14 @@ class ProductRouter extends Route {
 	init() {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
-				// const { user } = req.session;
+				const { user } = req.session;
 				const products = await Products.find(req.query);
 				res.sendSuccess(products);
-				/* - borrado para que funcione test
-				res.render('home.handlebars', {
+				/*
+				res.render('homeProducts.handlebars', {
 					products,
 					user,
-					style: 'home.css',
+					style: 'products.css',
 				});
 				*/
 			} catch (error) {
@@ -32,7 +32,7 @@ class ProductRouter extends Route {
 				global.io.emit('showProducts', products);
 				res.render('realTimeProducts.handlebars', {
 					products,
-					style: 'home.css',
+					style: 'products.css',
 				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -71,7 +71,7 @@ class ProductRouter extends Route {
 					/* - borrado para que funcione test
 					await Products.create(req.body, req.files, user);
 					const products = await Products.find(req.query); 
-					res.render('home.handlebars', { products, user, style: 'home.css' });
+					res.render('homeProducts.handlebars', { products, user, style: 'products.css' });
 					*/
 				} catch (error) {
 					if (error.code === 2) {
@@ -95,7 +95,7 @@ class ProductRouter extends Route {
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {
 						products,
-						style: 'home.css',
+						style: 'products.css',
 					});
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -115,7 +115,7 @@ class ProductRouter extends Route {
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {
 						products,
-						style: 'home.css',
+						style: 'products.css',
 					});
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -134,7 +134,7 @@ class ProductRouter extends Route {
 					global.io.emit('showProducts', products);
 					res.render('realTimeProducts.handlebars', {
 						products,
-						style: 'home.css',
+						style: 'products.css',
 					});
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);

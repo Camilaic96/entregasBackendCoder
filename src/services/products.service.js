@@ -61,6 +61,7 @@ const find = async query => {
 		const products = mapProducts(productsDB.docs);
 		return products;
 	} catch (error) {
+		console.log('error', error);
 		throw error;
 	}
 };

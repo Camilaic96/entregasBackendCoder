@@ -3,10 +3,23 @@ const passport = require('passport');
 const uploader = require('../../utils/multer.js');
 const Users = require('../../services/users.service.js');
 const UserDTO = require('../../DTOs/User.dto.js');
+const UserPrincipalDataDTO = require('../../DTOs/User.principalData.dto.js');
 const Route = require('../../router/router.js');
 
 class UserRouter extends Route {
 	init() {
+		this.get('/', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+			try {
+				const users = await Users.find();
+				const usersPrincipalData = users.map(user => ({
+					user: new UserPrincipalDataDTO(user),
+				}));
+				res.sendSuccess(usersPrincipalData);
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
+
 		this.post(
 			'/',
 			['PUBLIC'],
@@ -42,7 +55,7 @@ class UserRouter extends Route {
 
 		this.post(
 			'/:uid/documents',
-			['PUBLIC'],
+			['PUBLIC'] /* ['USER', 'PREMIUM'] */,
 			uploader.array('documents'),
 			async (req, res) => {
 				try {
@@ -62,6 +75,15 @@ class UserRouter extends Route {
 				}
 			}
 		);
+
+		// deberá limpiar a todos los usuarios que no hayan tenido 	conexión en los últimos 2 días. (puedes hacer pruebas con los 	últimos 30 minutos, por ejemplo). Deberá enviarse un correo indicando al usuario que su cuenta ha sido eliminada por inactividad
+		this.delete('/', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+			// eslint-disable-next-line no-empty
+			try {
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
 	}
 }
 

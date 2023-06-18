@@ -8,8 +8,8 @@ class ProductDTO {
 		this.stock = product.stock;
 		this.status = product.status;
 		this.category = product.category;
-		this.thumbnails = product.thumbnails;
-		this.owner = product.owner;
+		this.thumbnails = product.thumbnails || [];
+		this.owner = product.owner || 'ADMIN';
 		if (product.quantity) {
 			this.quantity = product.quantity;
 		}

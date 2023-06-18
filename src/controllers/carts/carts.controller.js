@@ -1,7 +1,9 @@
 const Route = require('../../router/router.js');
 
 const Carts = require('../../services/carts.service.js');
-// const Products = require('../services/products.service.js');
+const Tickets = require('../../services/tickets.service.js');
+const Products = require('../../services/products.service.js');
+const ProductsDAO = require('../../dao/mongo/mongoManager/Products.mongo.js');
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
@@ -14,23 +16,23 @@ const EnumErrors = require('../../utils/errors/Enum.errors.js');
 
 class CartRouter extends Route {
 	init() {
-		this.get('/', ['PUBLIC'], async (req, res) => {
+		this.get('/', /* ['ADMIN'] */ ['PUBLIC'], async (req, res) => {
 			try {
 				const carts = await Carts.find();
 				res.sendSuccess(carts);
-				/* - borrado para que funcione test
-				res.json({ response: carts });
-				*/
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
 		});
 
-		this.get('/:cid', ['PUBLIC'], async (req, res) => {
-			try {
-				const cartById = await Carts.findOne(req.params);
-				res.sendSuccess(cartById);
-				/* - borrado para que funcione test
+		this.get(
+			'/:cid',
+			['PUBLIC'] /* ['USER', 'PREMIUM', 'ADMIN'] */,
+			async (req, res) => {
+				try {
+					const cartById = await Carts.findOne(req.params);
+					res.sendSuccess(cartById);
+					/* - borrado para que funcione test
 				const products = cartById.products.map(item => {
 					return {
 						id: item.product._id,
@@ -45,12 +47,13 @@ class CartRouter extends Route {
 						quantity: item.quantity,
 					};
 				});
-				res.render('cartId.handlebars', { products, style: 'home.css' });
+				res.render('cartId.handlebars', { products, style: 'products.css' });
 				*/
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
+				}
 			}
-		});
+		);
 
 		// Add all carts from fs to the db
 		this.post('/loadintodb', ['ADMIN'], async (req, res) => {
@@ -61,7 +64,9 @@ class CartRouter extends Route {
 
 		this.post(
 			'/',
-			/* ['ADMIN', 'PREMIUM'] - borrado para que funcione test */ ['PUBLIC'],
+			/* ['ADMIN', 'PREMIUM', 'USER'] - borrado para que funcione test */ [
+				'PUBLIC',
+			],
 			async (req, res) => {
 				try {
 					const cart = await Carts.create();
@@ -147,7 +152,7 @@ class CartRouter extends Route {
 			}
 		);
 
-		this.delete('/:cid', ['USER', 'PREMIUM'], async (req, res) => {
+		this.delete('/:cid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
 			try {
 				await Carts.deleteOne(req.params);
 				res.sendSuccess('Cart deleted successfully');
@@ -162,29 +167,46 @@ class CartRouter extends Route {
 			res.json({ message: 'All carts deleted' });
 		});
 
-		this.get('/:cid/purchase', ['USER', 'PREMIUM'], async (req, res) => {
-			try {
-				const { products } = req.body; // products array de productos que llegan con id y quantity
-				const productsOutOfStock = [];
-				products.forEach(async product => {
-					const productBD = await Carts.findOne(product._id);
-					if (product.quantity > productBD.stock) {
-						productsOutOfStock.push(product);
-					} else {
-						await Carts.updateOne(
-							productBD,
-							productBD.stock - product.quantity
-						);
-					}
+		this.get(
+			'/:cid/purchase',
+			['USER', 'PREMIUM', 'ADMIN'],
+			async (req, res) => {
+				try {
+					const { cid } = req.params;
+					const cart = await Carts.findOne(cid);
+					const { products } = req.body;
+					const productsOutOfStock = [];
+					const productsPurchase = [];
+					products.forEach(async product => {
+						const productDB = await Products.findOne(product._id);
+						if (product.quantity > productDB.stock) {
+							productsOutOfStock.push(product._id);
+						} else {
+							const updateProduct = productDB;
+							updateProduct.stock -= product.quantity;
+							await ProductsDAO.updateOne(
+								{ _id: productDB._id },
+								updateProduct
+							);
+							productsPurchase.push(product);
+						}
+					});
 					if (productsOutOfStock.length > 0) {
+						const cartNoPurchaseProd = { ...cart };
+
+						cartNoPurchaseProd.products = cart.products.filter(
+							product =>
+								!productsPurchase.some(purchase => purchase._id === product._id)
+						);
 						return res.sendSuccess(productsOutOfStock);
 					}
-					return res.sendSuccess('Successful purchase');
-				});
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
+					const ticket = await Tickets.create(productsPurchase);
+					res.sendSuccess(ticket, productsOutOfStock);
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
+				}
 			}
-		});
+		);
 	}
 }
 

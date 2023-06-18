@@ -38,9 +38,9 @@ class ProductsMongoDAO {
 		}
 	}
 
-	async updateOne(data, newData) {
+	async updateOne(data, newProduct) {
 		try {
-			const product = await Product.updateOne(data, newData);
+			const product = await Product.updateOne(data, newProduct);
 			return product;
 		} catch (error) {
 			return error;

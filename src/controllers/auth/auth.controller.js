@@ -15,6 +15,9 @@ class AuthRouter extends Route {
 			}),
 			async (req, res) => {
 				try {
+					if (!req.session.user) {
+						req.session.user = req.user;
+					}
 					req.user.last_connection.login_date = Date.now();
 					const user = await Users.updateOne(req.user._id, req.user);
 					req.session.user = user;
@@ -44,10 +47,14 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('github', { failureRedirect: '/login' }),
 			async (req, res) => {
+				if (!req.session.user) {
+					req.session.user = req.user;
+				}
 				req.user.last_connection.login_date = Date.now();
 				const user = await Users.updateOne(req.user._id, req.user);
-				req.session.user = new UserDTO(user);
-				res.redirect('/api');
+				req.session.user = user;
+				res.sendSuccess(user);
+				// res.redirect('/api/products');
 			}
 		);
 
@@ -63,22 +70,30 @@ class AuthRouter extends Route {
 			['PUBLIC'],
 			passport.authenticate('google', { failureRedirect: '/login' }),
 			async (req, res) => {
+				if (!req.session.user) {
+					req.session.user = req.user;
+				}
 				req.user.last_connection.login_date = Date.now();
 				const user = await Users.updateOne(req.user._id, req.user);
 				req.session.user = new UserDTO(user);
-				res.redirect('/api');
+				res.sendSuccess(user);
+				// res.redirect('/api/products');
 			}
 		);
 
-		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
-			const user = await Users.findOne(req.user._id);
-			user.last_connection.logout_date = Date.now();
-			await Users.updateOne(user._id, user);
-			req.session.destroy(error => {
-				if (error) return res.json({ error });
-				res.redirect('/api/login');
-			});
-		});
+		this.get(
+			'/logout',
+			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
+			async (req, res) => {
+				const user = await Users.findOne(req.user._id);
+				user.last_connection.logout_date = Date.now();
+				await Users.updateOne(user._id, user);
+				req.session.destroy(error => {
+					if (error) return res.json({ error });
+					res.redirect('/api/login');
+				});
+			}
+		);
 
 		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {
@@ -88,7 +103,6 @@ class AuthRouter extends Route {
 					res.redirect('/forgotPassword');
 				}
 				req.session.user = new UserDTO(req.user);
-
 				res.redirect('/api/products');
 			} catch (error) {
 				res.json({ error });

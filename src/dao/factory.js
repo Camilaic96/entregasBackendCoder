@@ -3,6 +3,7 @@ const { persistence } = require('../config/index');
 const UsersDAO = require('./mongo/mongoManager/Users.mongo');
 const ProductsDAO = require('./mongo/mongoManager/Products.mongo');
 const CartsDAO = require('./mongo/mongoManager/Carts.mongo');
+const TicketsDAO = require('./mongo/mongoManager/Tickets.mongo');
 
 switch (persistence) {
 	case 'memory':
@@ -14,6 +15,7 @@ switch (persistence) {
 			UsersDAO,
 			ProductsDAO,
 			CartsDAO,
+			TicketsDAO,
 		};
 		break;
 }

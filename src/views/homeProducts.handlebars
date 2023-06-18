@@ -1,0 +1,30 @@
+<section id="section-welcome" class="m-5 d-flex justify-content-between">
+	{{#if user}}
+		<p class="fs-3">Welcome <span class="bold ">{{user.first_name}} {{user.last_name}}</span></p>
+		<div>
+			<a href='/api/profile' class="btn btn-secondary">Profile</a>
+			<a href='' class="btn btn-secondary"><img src="/img/cart.svg" alt="cart" width="32" height="32"></a> <!--AGREGAR RUTA QUE CONECTE AL USER CON LOS PRODUCTS DE SUS CARTS  (user.carts)-->
+			<a href='/api/auth/logout' class="btn btn-secondary">Log out</a>
+		</div>
+	{{/if}}
+</section>
+
+<section id="section-products" class="m-5">
+	<h2 class="text-center">Products</h2>
+	<div class='row d-flex justify-content-evenly'>
+		{{#each products}}
+			<div class='card col-md-3 m-3'>
+				<div class='card-body'>
+					<p class='card-text'>Id: <span class="bold">{{this.id}}</span></p>
+					<p class='card-text'>Title: <span class="bold">{{this.title}}</span></p>
+					<p class='card-text'>Description: <span class="bold">{{this.description}}</span></p>
+					<p class='card-text'>Code: <span class="bold">{{this.code}}</span></p>
+					<p class='card-text'>Price: <span class="bold">{{this.price}}</span></p>
+					<p class='card-text'>Stock: <span class="bold">{{this.stock}}</span></p>
+					<p class='card-text'>Category: <span class="bold">{{this.category}}</span></p>
+				</div>
+				<a href='/api/products/{{this.id}}' class="btn btn-secondary">See more</a>
+			</div>
+		{{/each}}
+	</div>
+</section>
