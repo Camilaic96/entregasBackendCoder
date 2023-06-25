@@ -1,18 +1,76 @@
-<div class="card">
+<section id='section-welcome' class='m-5 d-flex justify-content-between'>
+	<div>
+		<p class='fs-3'>Welcome</p>
+	</div>
+	<div class='d-flex align-items-center'>
+		{{#if idCart}}
+			<a href='/api/carts/{{idCart}}' class='btn'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
+		{{/if}}
+		<div class='dropdown'>
+			<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+				<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
+			</button>
+			<ul class='dropdown-menu fs-4'>
+				<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
+				{{#if isUser}}
+					<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
+				{{/if}}
+				<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
+			</ul>
+		</div>
+	</div>
+</section>
+
+
+<div class='card col-md-6'>
     <h1>Profile</h1>
 
-    <label for=''>First name</label>
-    <p class="bold">{{user.first_name}}</p>
+    <div class='fs-5'>
+        <label for=''>First name</label>
+        <p class='bold'>{{user.first_name}}</p>
 
-    <label for=''>Last name</label>
-    <p class="bold">{{user.last_name}}</p>
+        <label for=''>Last name</label>
+        <p class='bold'>{{user.last_name}}</p>
 
-    <label for=''>Age</label>
-    <p class="bold">{{user.age}}</p>
+        <label for=''>Age</label>
+        <p class='bold'>{{user.age}}</p>
 
-    <label for=''>Email</label>
-    <p class="bold">{{user.email}}</p>
+        <label for=''>Email</label>
+        <p class='bold'>{{user.email}}</p>
+        
+        <label for=''>Role</label>
+        <p class='bold'>{{user.role}}</p>
+        
+        <label for=''>Documents</label>
+        {{#each user.documents}}
+            <p class='bold'>{{this.name}} - '{{this.reference}}'</p>
+        {{/each}}
+    </div>
+    
+    <div class='col-md-6 offset-3 d-flex flex-column'>
+        <a href='/api/products' class='btn btn-secondary m-3 fs-4'>Home</a>
+        <div class='m-3'>
+            <p>
+                <a class='btn btn-secondary fs-4 col-md-12' data-bs-toggle='collapse' href='#collapseAddDocument' role='button' aria-expanded='false' aria-controls='collapseAddProduct'>
+                    Add document
+                </a>
+            </p>
+            <div class='collapse' id='collapseAddDocument'>
+                <form action='' id='formAddDocument' class='fs-3 border d-flex flex-column justify-content-center align-items-center p-3'>
+                    <div class='m-3 col-md-10'>
+                        <input type='text' name='name' placeholder='Name' class='w-100 text-center' required />
+                    </div>
+                    <div class='m-3 col-md-10'>
+                        <input type='text' name='reference' placeholder='Reference' class='w-100 text-center' required />
+                    </div>
 
-    <a href='/api/products' class="btn btn-secondary">Home</a>
-    <a href='/api/auth/logout' class="btn btn-secondary mt-3">Log out</a>
+                    <button type='submit' class='btn btn-success fs-3'>Add document</button>
+                </form>
+            </div>
+        </div>
+        {{#if isUser}}
+        <a href='/api/premium' class='btn btn-secondary m-3 fs-4'>Premium</a>
+        {{/if}}
+        <a href='/api/auth/logout' class='btn btn-secondary m-3 fs-4'>Log out</a>
+    </div>
 </div>

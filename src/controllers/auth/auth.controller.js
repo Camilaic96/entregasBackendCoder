@@ -21,8 +21,8 @@ class AuthRouter extends Route {
 					req.user.last_connection.login_date = Date.now();
 					const user = await Users.updateOne(req.user._id, req.user);
 					req.session.user = user;
-					res.sendSuccess(user);
-					// res.redirect('/api/products');
+					// res.sendSuccess(user);
+					res.redirect('/api/products');
 				} catch (error) {
 					req.logger.error(error);
 					res.sendServerError('Login failed');
@@ -31,7 +31,7 @@ class AuthRouter extends Route {
 		);
 
 		this.get('/failLogin', ['PUBLIC'], (req, res) => {
-			req.logger.error('Login failed');
+			// req.logger.error('Login failed');
 			res.sendServerError('Login failed');
 		});
 
@@ -53,8 +53,8 @@ class AuthRouter extends Route {
 				req.user.last_connection.login_date = Date.now();
 				const user = await Users.updateOne(req.user._id, req.user);
 				req.session.user = user;
-				res.sendSuccess(user);
-				// res.redirect('/api/products');
+				// res.sendSuccess(user);
+				res.redirect('/api/products');
 			}
 		);
 
@@ -76,24 +76,20 @@ class AuthRouter extends Route {
 				req.user.last_connection.login_date = Date.now();
 				const user = await Users.updateOne(req.user._id, req.user);
 				req.session.user = new UserDTO(user);
-				res.sendSuccess(user);
-				// res.redirect('/api/products');
+				// res.sendSuccess(user);
+				res.redirect('/api/products');
 			}
 		);
 
-		this.get(
-			'/logout',
-			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
-			async (req, res) => {
-				const user = await Users.findOne(req.user._id);
-				user.last_connection.logout_date = Date.now();
-				await Users.updateOne(user._id, user);
-				req.session.destroy(error => {
-					if (error) return res.json({ error });
-					res.redirect('/api/login');
-				});
-			}
-		);
+		this.get('/logout', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
+			const user = await Users.findOne({ _id: req.session.user._id });
+			user.last_connection.logout_date = Date.now();
+			await Users.updateOne(user._id, user);
+			req.session.destroy(error => {
+				if (error) return res.json({ error });
+				res.redirect('/api/login');
+			});
+		});
 
 		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {

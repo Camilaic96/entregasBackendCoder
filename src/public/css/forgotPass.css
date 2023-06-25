@@ -4,10 +4,7 @@ body {
 }
 
 .container {
-    width: 60vw;
     min-height: 50vh;
-    margin: center;
-    margin-top: 50px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -16,9 +13,8 @@ body {
     text-align: center;
 }
 
-.container-login {
-    border: 1px solid rgb(145, 135, 201);
+.container-forgotPass {
+    border: 1px solid grey;
     border-radius: 5px;
-    margin: 20px;
     padding: 20px;
 }

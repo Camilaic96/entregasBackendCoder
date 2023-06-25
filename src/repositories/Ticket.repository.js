@@ -4,6 +4,22 @@ class TicketsRepository {
 		this.dao = dao;
 	}
 
+	async find() {
+		try {
+			return await this.dao.find();
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async findOne(param) {
+		try {
+			return await this.dao.findOne(param);
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	async create(newProductInfo) {
 		try {
 			return await this.dao.create(newProductInfo);

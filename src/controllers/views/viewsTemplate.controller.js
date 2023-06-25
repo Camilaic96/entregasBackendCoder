@@ -6,14 +6,13 @@ class ViewRouter extends Route {
 			res.render('home.handlebars', { style: 'home.css' });
 		});
 
-		this.get(
-			'/profile',
-			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
-			(req, res) => {
-				const { user } = req.session;
-				res.render('profile.handlebars', { user, style: 'profile.css' });
-			}
-		);
+		this.get('/profile', ['USER', 'PREMIUM', 'ADMIN'], (req, res) => {
+			const { user } = req.session;
+			res.render('profile.handlebars', {
+				user,
+				style: 'profile.css',
+			});
+		});
 
 		this.get('/login', ['PUBLIC'], (req, res) => {
 			res.render('login.handlebars', { style: 'login.css' });
@@ -24,7 +23,6 @@ class ViewRouter extends Route {
 		});
 
 		this.get('/forgotPassword', ['PUBLIC'], (req, res) => {
-			console.log(req.session.validLink);
 			if (!req.session.validLink) {
 				const validLink = false;
 				res.render('forgotPassword.handlebars', {
@@ -51,6 +49,10 @@ class ViewRouter extends Route {
 		// AGREGAR VISTA modificación y eliminación de usuario
 		this.get('/premium', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
 			res.render('premium.handlebars', { style: 'premium.css' });
+		});
+
+		this.get('/purchase', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
+			res.render('purchase.handlebars', { style: 'purchase.css' });
 		});
 	}
 }

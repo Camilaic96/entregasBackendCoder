@@ -3,7 +3,10 @@ const Route = require('../../router/router.js');
 const Carts = require('../../services/carts.service.js');
 const Tickets = require('../../services/tickets.service.js');
 const Products = require('../../services/products.service.js');
-const ProductsDAO = require('../../dao/mongo/mongoManager/Products.mongo.js');
+const { usersRepository } = require('../../repositories');
+const Users = usersRepository;
+const { productsRepository } = require('../../repositories');
+const ProductsRepo = productsRepository;
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
@@ -16,7 +19,7 @@ const EnumErrors = require('../../utils/errors/Enum.errors.js');
 
 class CartRouter extends Route {
 	init() {
-		this.get('/', /* ['ADMIN'] */ ['PUBLIC'], async (req, res) => {
+		this.get('/', ['ADMIN'], async (req, res) => {
 			try {
 				const carts = await Carts.find();
 				res.sendSuccess(carts);
@@ -25,14 +28,11 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.get(
-			'/:cid',
-			['PUBLIC'] /* ['USER', 'PREMIUM', 'ADMIN'] */,
-			async (req, res) => {
-				try {
-					const cartById = await Carts.findOne(req.params);
-					res.sendSuccess(cartById);
-					/* - borrado para que funcione test
+		this.get('/:cid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
+			try {
+				const { user } = req.session;
+				const cartById = await Carts.findOne(req.params);
+				// res.sendSuccess(cartById);
 				const products = cartById.products.map(item => {
 					return {
 						id: item.product._id,
@@ -45,15 +45,20 @@ class CartRouter extends Route {
 						category: item.product.category,
 						thumbnail: item.product.thumbnail,
 						quantity: item.quantity,
+						total: item.quantity * item.product.price,
 					};
 				});
-				res.render('cartId.handlebars', { products, style: 'products.css' });
-				*/
-				} catch (error) {
-					res.sendServerError(`Something went wrong. ${error}`);
-				}
+				console.log(products);
+				res.render('cartId.handlebars', {
+					products,
+					cartId: cartById._id,
+					user,
+					style: 'products.css',
+				});
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
 			}
-		);
+		});
 
 		// Add all carts from fs to the db
 		this.post('/loadintodb', ['ADMIN'], async (req, res) => {
@@ -62,32 +67,50 @@ class CartRouter extends Route {
 			res.json({ message: response });
 		});
 
+		this.post('/', ['ADMIN', 'PREMIUM', 'USER'], async (req, res) => {
+			try {
+				const cart = await Carts.create();
+				res.sendSuccessCreated(cart);
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
+
 		this.post(
-			'/',
-			/* ['ADMIN', 'PREMIUM', 'USER'] - borrado para que funcione test */ [
-				'PUBLIC',
-			],
+			'/:cid/products/:pid',
+			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
-					const cart = await Carts.create();
-					res.sendSuccessCreated(cart);
+					const { cid } = req.params;
+					const { user } = req.session;
+					const cart = await Carts.createProductInCart(
+						req.params,
+						req.body,
+						user
+					);
+
+					const existingCartIndex = user.carts.findIndex(
+						existingCart => existingCart._id === cart._id
+					);
+					console.log(existingCartIndex);
+					if (existingCartIndex !== -1) {
+						user.carts[existingCartIndex] = { ...cart };
+					} else {
+						user.carts.push({ ...cart });
+					}
+
+					await Users.findOneAndUpdate({ _id: user._id }, user, {
+						new: true,
+					});
+					res.redirect(`/api/carts/${cid}`);
+					// res.sendSuccess('Product added to the cart successfully');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
 			}
 		);
 
-		this.post('/:cid/products/:pid', ['USER', 'PREMIUM'], async (req, res) => {
-			try {
-				const { user } = req.session;
-				await Carts.createProductInCart(req.params, req.body, user);
-				res.sendSuccess('Product added to the cart successfully');
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
-			}
-		});
-
-		this.put('/:cid', ['USER', 'PREMIUM'], async (req, res) => {
+		this.put('/:cid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
 			try {
 				const { products } = req.body;
 				const cart = await Carts.findOne(req.params);
@@ -101,33 +124,37 @@ class CartRouter extends Route {
 			}
 		});
 
-		this.put('/:cid/products/:pid', ['USER', 'PREMIUM'], async (req, res) => {
-			try {
-				const { pid } = req.params;
-				const { quantity } = req.body;
-				const cart = await Carts.findOne(req.params);
-				const index = cart.products.findIndex(
-					element => element.product._id.toString() === pid
-				);
-				if (index === -1) {
-					CustomErrors.createError({
-						name: 'Product not found in cart',
-						cause: notFoundProductErrorInfo(pid),
-						message: 'Error trying to find product',
-						code: EnumErrors.NOT_FOUND,
-					});
+		this.put(
+			'/:cid/products/:pid',
+			['USER', 'PREMIUM', 'ADMIN'],
+			async (req, res) => {
+				try {
+					const { pid } = req.params;
+					const { quantity } = req.body;
+					const cart = await Carts.findOne(req.params);
+					const index = cart.products.findIndex(
+						element => element.product._id.toString() === pid
+					);
+					if (index === -1) {
+						CustomErrors.createError({
+							name: 'Product not found in cart',
+							cause: notFoundProductErrorInfo(pid),
+							message: 'Error trying to find product',
+							code: EnumErrors.NOT_FOUND,
+						});
+					}
+					cart.products[index].quantity = quantity;
+					await Carts.updateOne(req.params, cart);
+					res.sendSuccess('Quantity updated successfully');
+				} catch (error) {
+					res.sendServerError(`Something went wrong. ${error}`);
 				}
-				cart.products[index].quantity = quantity;
-				await Carts.updateOne(req.params, cart);
-				res.sendSuccess('Quantity updated successfully');
-			} catch (error) {
-				res.sendServerError(`Something went wrong. ${error}`);
 			}
-		});
+		);
 
 		this.delete(
 			'/:cid/products/:pid',
-			['PUBLIC'] /* ['USER', 'PREMIUM'] - borrado para que funcione test */,
+			['USER', 'PREMIUM'],
 			async (req, res) => {
 				try {
 					const { pid } = req.params;
@@ -172,36 +199,54 @@ class CartRouter extends Route {
 			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
-					const { cid } = req.params;
-					const cart = await Carts.findOne(cid);
-					const { products } = req.body;
+					const { user } = req.session;
+					const cart = await Carts.findOne(req.params);
+					const products = cart.products.map(product => {
+						return {
+							_id: product.product._id.toString(),
+							quantity: product.quantity,
+						};
+					});
 					const productsOutOfStock = [];
 					const productsPurchase = [];
-					products.forEach(async product => {
-						const productDB = await Products.findOne(product._id);
-						if (product.quantity > productDB.stock) {
-							productsOutOfStock.push(product._id);
+
+					for (let i = 0; i < products.length; i++) {
+						const product = products[i];
+						req.params.pid = product._id;
+						const productDB = await Products.findOne(req.params);
+
+						if (!productDB || product.quantity > productDB.stock) {
+							productsOutOfStock.push(product);
 						} else {
-							const updateProduct = productDB;
-							updateProduct.stock -= product.quantity;
-							await ProductsDAO.updateOne(
-								{ _id: productDB._id },
-								updateProduct
+							const updateProduct = {
+								stock: productDB.stock - product.quantity,
+							};
+							await ProductsRepo.updateOne(
+								{ _id: product._id },
+								updateProduct,
+								{
+									new: true,
+								}
 							);
+							product.price = productDB.price;
 							productsPurchase.push(product);
 						}
-					});
-					if (productsOutOfStock.length > 0) {
-						const cartNoPurchaseProd = { ...cart };
-
-						cartNoPurchaseProd.products = cart.products.filter(
-							product =>
-								!productsPurchase.some(purchase => purchase._id === product._id)
-						);
-						return res.sendSuccess(productsOutOfStock);
 					}
-					const ticket = await Tickets.create(productsPurchase);
-					res.sendSuccess(ticket, productsOutOfStock);
+					const t = await Tickets.create(productsPurchase, user.email);
+					cart.products = productsOutOfStock;
+					await Carts.updateOne({ _id: cart._id }, cart);
+					const ticket = {
+						code: t.code,
+						purchase_datetime: t.purchase_datetime,
+						amount: t.amount,
+						purchaser: t.purchaser,
+					};
+					res.render('ticket.handlebars', {
+						ticket,
+						productsOutOfStock,
+						style: 'ticket.css',
+					});
+					// res.sendSuccess(ticket, productsOutOfStock);
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}

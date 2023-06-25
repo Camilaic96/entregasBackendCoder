@@ -1,8 +1,26 @@
 const Ticket = require('../models/Tickets.model');
 
-class TicketDao {
+class TicketMongoDAO {
 	constructor(file) {
 		this.file = `${process.cwd()}/src/files/${file}`;
+	}
+
+	async find() {
+		try {
+			const tickets = await Ticket.find();
+			return tickets;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	async findOne(param) {
+		try {
+			const ticket = await Ticket.findOne(param);
+			return ticket;
+		} catch (error) {
+			return error;
+		}
 	}
 
 	async create(newTicket) {
@@ -15,4 +33,4 @@ class TicketDao {
 	}
 }
 
-module.exports = TicketDao;
+module.exports = TicketMongoDAO;

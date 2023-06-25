@@ -1,30 +1,28 @@
-<div class="container">
+<section class='m-5 d-flex justify-content-end'>
+	<a href='/api/products' class='btn btn-secondary fs-5'>Continue without logging in</a>	
+</section>
+
+<div class='container'>
 	<h1>Login</h1>
-	<div class="container-login">
-		<form action='' id='formLogin'>
-			<div class="m-3">
-				<label for=''>Username</label>
-				<input type='email' name='email' />
+	<div class='container-login col-md-8'>
+		<form action='' id='formLogin' class='fs-3'>
+			<div class='m-3'>
+				<input type='email' name='email' placeholder='username' class='w-75 text-center' />
+			</div>
+			<div class='m-3'>
+				<input type='password' name='password' placeholder='password' class='w-75 text-center' />
 			</div>
 
-			<div class="m-3">
-				<label for=''>Password</label>
-				<input type='password' name='password' />
-			</div>
-
-			<button type='submit' class="btn btn-secondary">Log in</button>
+			<button type='submit' class='btn btn-secondary fs-3'>Log in</button>
 		</form>
-
-		<div>
-			<a href='/api/auth/github' class="btn btn-secondary">Login with Github</a>
-			<a href='/api/auth/google' class="btn btn-secondary">Login with Google</a>
+		<div class='d-flex justify-content-between mt-5 fs-4'>
+			<p>Don't have an account? <a href='/api/signup'>Sign Up</a></p>
+			<a href='/api/resetPassword'>Forgot your password?</a>
 		</div>
-
 	</div>
-
-	<div>
-		<a href='/api/resetPassword' class="btn btn-secondary">Password reset</a>
-		<a href='/api/signup' class="btn btn-secondary">Register</a>
+	<div class='d-flex justify-content-between col-md-6'>
+		<a href='/api/auth/github' class='btn btn-secondary fs-3'>Login with Github</a>
+		<a href='/api/auth/google' class='btn btn-secondary fs-3'>Login with Google</a>
 	</div>
 
 </div>

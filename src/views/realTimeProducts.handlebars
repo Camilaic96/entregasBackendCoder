@@ -1,24 +1,116 @@
-<h2>Real-time products</h2>
+<section id='section-welcome' class='m-5 d-flex justify-content-end'>
+	<div class='dropdown'>
+		<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+			<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
+		</button>
+		<ul class='dropdown-menu fs-4'>
+			<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
+			<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
+			<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
+		</ul>
+	</div>
+</section>
+<section id='section-products' class='m-5'>
+	<h2 class='text-center'>Manage products</h2>
 
-<div id="preLoadProducts" class="row">
-    {{#each products}}
-		<div class='card col-md-3 m-3'>
-			<div class='card-body'>
-				<p class='card-text'>Id: <span class="bold">{{this.id}}</span></p>
-				<p class='card-text'>Title: <span class="bold">{{this.title}}</span></p>
-				<p class='card-text'>Description: <span class="bold">{{this.description}}</span></p>
-				<p class='card-text'>Code: <span class="bold">{{this.code}}</span></p>
-				<p class='card-text'>Price: <span class="bold">{{this.price}}</span></p>
-				<p class='card-text'>Stock: <span class="bold">{{this.stock}}</span></p>
-				<p class='card-text'>Category: <span class="bold">{{this.category}}</span></p>
-			</div>
+	<div class='m-5'>
+		<p>
+			<a class='btn btn-light fs-5' data-bs-toggle='collapse' href='#collapseAddProduct' role='button' aria-expanded='false' aria-controls='collapseAddProduct'>
+				Add product
+			</a>
+		</p>
+		<div class='collapse' id='collapseAddProduct'>
+			<form action='' id='formAddProduct' class='fs-3 col-md-6 border d-flex flex-column justify-content-center align-items-center p-3'>
+				<div class='m-3 col-md-8'>
+					<input type='text' name='title' placeholder='Title' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='text' name='description' placeholder='Description' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='text' name='code' placeholder='Code' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='number' name='price' placeholder='Price' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='number' name='stock' placeholder='Stock' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='text' name='category' placeholder='Category' class='w-100 text-center' required />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='files' name='thumbnails' placeholder='Thumbnails' class='w-100 text-center' />
+				</div>
+				<div class='m-3 col-md-8'>
+					<input type='email' name='email' placeholder='Owner' class='w-100 text-center' />
+				</div>
+
+				<button type='submit' class='btn btn-secondary fs-4'>Add product</button>
+			</form>
 		</div>
-	{{/each}}
-</div>
+	</div>
 
-<div id="messageProduct" class="row">
+	<div id='preLoadProducts' class='row d-flex justify-content-evenly'>
+		{{#each products}}
+			<div class='card col-md-3 m-3'>
+				<div class='card-body fs-5'>
+					<p class='card-text'>Id: <span class='bold'>{{this.id}}</span></p>
+					<p class='card-text'>Title: <span class='bold'>{{this.title}}</span></p>
+					<p class='card-text'>Description: <span class='bold'>{{this.description}}</span></p>
+					<p class='card-text'>Code: <span class='bold'>{{this.code}}</span></p>
+					<p class='card-text'>Price: <span class='bold'>{{this.price}}</span></p>
+					<p class='card-text'>Stock: <span class='bold'>{{this.stock}}</span></p>
+					<p class='card-text'>Category: <span class='bold'>{{this.category}}</span></p>
+				</div>
+				<div class='d-flex justify-content-end'>
+					<div>
+						<div class='m-3'>
+							<p>
+								<a class='btn btn-light fs-5' data-bs-toggle='collapse' href='#collapseUpdateProduct{{this.id}}' role='button' aria-expanded='false' aria-controls='collapseUpdateProduct{{this.id}}'>
+									Update
+								</a>
+							</p>
+							<div class='collapse' id='collapseUpdateProduct{{this.id}}'>
+								<form action='' id='formUpdateProduct' class='fs-3 col-md-12 border d-flex flex-column justify-content-center align-items-center p-3'>
+									<div class='m-3 col-md-10'>
+										<input type='text' name='title' placeholder='Title' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='text' name='description' placeholder='Description' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='text' name='code' placeholder='Code' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='number' name='price' placeholder='Price' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='number' name='stock' placeholder='Stock' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='text' name='category' placeholder='Category' class='w-100 text-center' required />
+									</div>
+									<div class='m-3 col-md-10'>
+										<input type='files' name='thumbnails' placeholder='Thumbnails' class='w-100 text-center' />
+									</div>
 
-</div>
+									<button type='submit' class='btn btn-secondary fs-4'>Update</button>
+								</form>
+							</div>
+						</div>
+					</div>
+					<a href='' class='btn fs-5 m-3'><img src='/img/delete.png' alt='dropdown account' width='32' height='32'></a>
+				</div>
+			</div>
+		{{/each}}
+	</div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+	<div id='messageProduct' class='row'>
+
+	</div>
+</section>
+
+
+<script src='/socket.io/socket.io.js'></script>
+<script src='/js/realTime.js'></script>

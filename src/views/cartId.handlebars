@@ -1,19 +1,59 @@
-<section  class="m-5">
-    <h2 class="text-center">Products added to the cart</h2>
+{{#if user}}
+		<section id='section-welcome' class='m-5 d-flex justify-content-between'>
+			<div>
+				<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
+			</div>
+			<div class='d-flex align-items-center'>
+				<div class='dropdown'>
+					<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+						<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
+					</button>
+					<ul class='dropdown-menu fs-4'>
+						<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
+						{{#if isUser}}
+							<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
+						{{/if}}
+						<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+{{else}}
+		<section class='m-5 d-flex justify-content-end'>
+			<a href='/api/login' class='btn btn-secondary fs-5 m-3'>Log in</a>	
+			<a href='/api/signup' class='btn btn-secondary fs-5 m-3'>Sign up</a>	
+		</section>
+{{/if}}
+
+<section  class='m-5'>
+    <h2 class='text-center'>Products added to the cart</h2>
 	<div class='row d-flex justify-content-center'>
+		<div class='card col-md-10 m-3 fs-4 border-0'>
+				<div class='card-body d-flex justify-content-between'>
+					<p class='card-text bold col-md-2'>Title</p>
+					<p class='card-text bold col-md-2'>Description</p>
+					<p class='card-text bold col-md-2'>Price</p>
+					<p class='card-text bold col-md-2'>Quantity</p>
+					<p class='card-text bold col-md-2'>Total</p>
+				</div>
+			</div>
 		{{#each products}}
-			<div class='card col-md-3 m-3'>
-				<div class='card-body'>
-					<p class='card-text'>Id: <span class="bold">{{this.id}}</span></p>
-					<p class='card-text'>Title: <span class="bold">{{this.title}}</span></p>
-					<p class='card-text'>Description: <span class="bold">{{this.description}}</span></p>
-					<p class='card-text'>Code: <span class="bold">{{this.code}}</span></p>
-					<p class='card-text'>Price: <span class="bold">{{this.price}}</span></p>
-					<p class='card-text'>Stock: <span class="bold">{{this.stock}}</span></p>
-					<p class='card-text'>Category: <span class="bold">{{this.category}}</span></p>
-					<p class='card-text'>Quantity: <span class="bold">{{this.quantity}}</span></p>
+			<div class='card col-md-10 m-3 fs-4'>
+				<div class='card-body d-flex justify-content-between'>
+					<p class='card-text bold col-md-2'>{{this.title}}</p>
+					<p class='card-text bold col-md-2'>{{this.description}}</p>
+					<p class='card-text bold col-md-2'>${{this.price}}</p>
+					<p class='card-text bold col-md-2'>{{this.quantity}}</p>
+					<p class='card-text bold col-md-2'>${{this.total}}</p>
 				</div>
 			</div>
 		{{/each}}
 	</div>
 </section>
+
+<div>
+	<a href='/api/products' class='btn btn-secondary m-3 fs-3'>See all products</a>
+</div>
+<div>
+	<a href='/api/carts/{{cartId}}/purchase' class='btn btn-secondary m-3 fs-3'>Purchase</a>
+</div>

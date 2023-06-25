@@ -3,17 +3,37 @@ const { ticketsRepository } = require('../repositories');
 const Tickets = ticketsRepository;
 const TicketDTO = require('../DTOs/Ticket.dto.js');
 
-const create = async (products, owner) => {
+const find = async () => {
+	try {
+		const tickets = Tickets.find();
+		return tickets;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const findOne = async params => {
+	try {
+		const { tid } = params;
+		const ticket = await Tickets.findOne({ _id: tid });
+		return ticket;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const create = async (products, purchaser) => {
 	try {
 		const amount = products.reduce(
-			(total, product) => total + product.price,
+			(total, product) => total + product.price * product.quantity,
 			0
 		);
 		const newTicket = new TicketDTO({
 			amount,
-			purchaser: owner,
+			purchaser,
 		});
 		const ticket = await Tickets.create(newTicket);
+
 		return ticket;
 	} catch (error) {
 		throw error;
@@ -21,5 +41,7 @@ const create = async (products, owner) => {
 };
 
 module.exports = {
+	find,
+	findOne,
 	create,
 };

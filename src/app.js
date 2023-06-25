@@ -28,16 +28,14 @@ app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(loggerMiddleware);
 app.use(morgan('combined'));
-app.use(cookieParser());
+app.use(cookieParser(false));
 app.use(session(sessionMongo));
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(errorHandler);
 
 router(app);
-
-app.use(errorHandler);
 
 module.exports = { app };

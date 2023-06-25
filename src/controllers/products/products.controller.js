@@ -3,6 +3,7 @@ const uploader = require('../../utils/multer.js');
 const Route = require('../../router/router.js');
 
 const Products = require('../../services/products.service.js');
+const Carts = require('../../services/carts.service.js');
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
@@ -12,15 +13,21 @@ class ProductRouter extends Route {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
+				const cart =
+					user.carts.length !== 0
+						? user.carts[user.carts.length - 1]
+						: await Carts.create();
+				const isUser = user.role === 'USER';
 				const products = await Products.find(req.query);
-				res.sendSuccess(products);
-				/*
-				res.render('homeProducts.handlebars', {
+				console.log(cart);
+				// res.sendSuccess(products);
+				res.render('products.handlebars', {
 					products,
 					user,
+					isUser,
+					idCart: cart._id,
 					style: 'products.css',
 				});
-				*/
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -41,8 +48,21 @@ class ProductRouter extends Route {
 
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
+				const { user } = req.session;
+				const cart =
+					user.carts.length !== 0
+						? user.carts[user.carts.length - 1]._doc
+						: await Carts.create();
+				const isUser = user.role === 'USER';
 				const product = await Products.findOne(req.params);
-				res.sendSuccess(product);
+				// res.sendSuccess(product);
+				res.render('productId.handlebars', {
+					product,
+					user,
+					isUser,
+					idCart: cart._id,
+					style: 'products.css',
+				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -61,7 +81,7 @@ class ProductRouter extends Route {
 
 		this.post(
 			'/',
-			/* ['ADMIN', 'PREMIUM'] - borrado para que funcione test */ ['PUBLIC'],
+			['ADMIN', 'PREMIUM'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {
@@ -71,7 +91,7 @@ class ProductRouter extends Route {
 					/* - borrado para que funcione test
 					await Products.create(req.body, req.files, user);
 					const products = await Products.find(req.query); 
-					res.render('homeProducts.handlebars', { products, user, style: 'products.css' });
+					res.render('products.handlebars', { products, user, style: 'products.css' });
 					*/
 				} catch (error) {
 					if (error.code === 2) {
@@ -105,7 +125,7 @@ class ProductRouter extends Route {
 
 		this.put(
 			'/realtimeproducts/:pid',
-			/* ['ADMIN', 'PREMIUM'] - borrado para que funcione test */ ['PUBLIC'],
+			['ADMIN', 'PREMIUM'],
 			uploader.array('files'),
 			async (req, res) => {
 				try {

@@ -72,7 +72,8 @@ const createProductInCart = async (params, body, user) => {
 			};
 			cart.products.push(newProduct);
 		}
-		const updateCart = await Carts.updateOne(cid, cart);
+		await Carts.updateOne(cid, cart);
+		const updateCart = await Carts.findOne({ _id: cid });
 		return updateCart;
 	} catch (error) {}
 };

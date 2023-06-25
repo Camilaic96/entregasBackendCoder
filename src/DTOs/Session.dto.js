@@ -1,10 +1,11 @@
+const { v4: uuidV4 } = require('uuid');
+
 class SessionDTO {
 	constructor(user) {
 		this.first_name = user.first_name;
 		this.last_name = user.last_name;
-		this.email = user.email;
+		this.email = user.email || uuidV4() + 'error@email';
 		this.age = user.age;
-		this.carts = user.carts;
 		this.role = user.role;
 	}
 }

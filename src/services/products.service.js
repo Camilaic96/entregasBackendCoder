@@ -61,7 +61,6 @@ const find = async query => {
 		const products = mapProducts(productsDB.docs);
 		return products;
 	} catch (error) {
-		console.log('error', error);
 		throw error;
 	}
 };
@@ -128,7 +127,7 @@ const create = async (body, files, user) => {
 			status,
 			stock,
 			category,
-			owner: /* user.email - borrado para que funcione test || */ 'admin',
+			owner: user.email || 'ADMIN',
 		};
 		newProduct.thumbnails = [];
 		if (files) {
