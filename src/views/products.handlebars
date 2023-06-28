@@ -4,9 +4,7 @@
 				<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
 			</div>
 			<div class='d-flex align-items-center'>
-				{{#if idCart}}
-					<a href='/api/carts/{{idCart}}' class='btn'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
-				{{/if}}
+				<a href='/api/carts/{{idCart}}' class='btn'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
 				<div class='dropdown'>
 					<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
 						<img src='/img/account.png' alt='dropdown account' width='32' height='32'>

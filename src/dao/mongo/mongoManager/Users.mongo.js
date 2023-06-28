@@ -55,6 +55,24 @@ class UsersMongoDAO {
 			throw error;
 		}
 	}
+
+	async deleteOne(param) {
+		try {
+			const user = await User.deleteOne(param);
+			return user;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	async deleteMany() {
+		try {
+			await User.deleteMany();
+			return 'Users deleted';
+		} catch (error) {
+			return error;
+		}
+	}
 }
 
 module.exports = UsersMongoDAO;

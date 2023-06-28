@@ -4,6 +4,7 @@ const Route = require('../../router/router');
 
 const Users = require('../../services/users.service');
 const UserDTO = require('../../DTOs/User.dto');
+const SendEmail = require('../../utils/email.utils.js');
 
 class AuthRouter extends Route {
 	init() {
@@ -91,14 +92,32 @@ class AuthRouter extends Route {
 			});
 		});
 
+		this.post('/resetPassword', ['PUBLIC'], async (req, res) => {
+			try {
+				const { email } = req.body;
+				const user = await Users.findOne({ email });
+				if (user) {
+					req.session.emailSent = user.email;
+					SendEmail.sendEmail(
+						user.email,
+						'Reset password',
+						`Click <a href="http://localhost:8080/api/forgotPassword/${user._id}">here</a> to reset your password`
+					);
+				}
+				res.redirect('/api/resetPassword');
+			} catch (error) {
+				res.json({ error });
+			}
+		});
+
 		this.patch('/forgotPassword', ['PUBLIC'], async (req, res) => {
 			try {
-				const newUser = await Users.updateOne(req.body);
+				const newUser = await Users.updatePassword(req.body);
 				if (!newUser) {
 					console.log('The password cannot be the same as the previous one');
 					res.redirect('/forgotPassword');
 				}
-				req.session.user = new UserDTO(req.user);
+				req.session.user = new UserDTO(newUser);
 				res.redirect('/api/products');
 			} catch (error) {
 				res.json({ error });

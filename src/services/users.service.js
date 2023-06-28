@@ -66,7 +66,8 @@ const updateOne = async (param, body) => {
 const findOneAndUpdate = async (param, body) => {
 	try {
 		const user = new UserDTO(body);
-		const updateUser = await Users.updateOne({ _id: param }, user);
+		await Users.updateOne({ _id: param }, user);
+		const updateUser = await Users.findById({ _id: param });
 		return updateUser;
 	} catch (error) {
 		throw error;
@@ -105,6 +106,25 @@ const updatePremium = async params => {
 	}
 };
 
+const updatePassword = async body => {
+	try {
+		const { email, password } = body;
+		const user = await Users.findOne({ email });
+		user.password = hashPassword(password);
+		const newUser = new UserDTO(user);
+		const updateUser = await Users.findOneAndUpdate(
+			{ _id: user._id },
+			newUser,
+			{
+				new: true,
+			}
+		);
+		return updateUser;
+	} catch (error) {
+		throw error;
+	}
+};
+
 const updateDocuments = async (params, documents) => {
 	try {
 		const { uid } = params;
@@ -132,6 +152,25 @@ const updateDocuments = async (params, documents) => {
 	}
 };
 
+const deleteOne = async params => {
+	try {
+		const { _id } = params;
+		const deleteUser = await Users.deleteOne(_id);
+		return deleteUser;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const deleteMany = async () => {
+	try {
+		const deleteUsers = await Users.deleteMany();
+		return deleteUsers;
+	} catch (error) {
+		throw error;
+	}
+};
+
 module.exports = {
 	find,
 	findOne,
@@ -140,5 +179,8 @@ module.exports = {
 	updateOne,
 	findOneAndUpdate,
 	updatePremium,
+	updatePassword,
 	updateDocuments,
+	deleteOne,
+	deleteMany,
 };

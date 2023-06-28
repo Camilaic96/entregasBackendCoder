@@ -1,4 +1,5 @@
 const Route = require('../../router/router');
+const Users = require('../../services/users.service.js');
 
 class ViewRouter extends Route {
 	init() {
@@ -22,8 +23,12 @@ class ViewRouter extends Route {
 			res.render('signup.handlebars', { style: 'signup.css' });
 		});
 
+		/*
 		this.get('/forgotPassword', ['PUBLIC'], (req, res) => {
-			if (!req.session.validLink) {
+			const { email } = req.body;
+			console.log(email, 'email body forgot');
+			console.log(req.session.email, 'req.session.email en forgot');
+			if (!req.session.validLink || email !== req.session.email) {
 				const validLink = false;
 				res.render('forgotPassword.handlebars', {
 					validLink,
@@ -38,22 +43,65 @@ class ViewRouter extends Route {
 		});
 
 		this.get('/resetPassword', ['PUBLIC'], (req, res) => {
-			const emailSent = req.session.emailSent;
-			req.session.validLink = true;
+			if (!req.session.emailVerified) {
+				res.render('resetPassword.handlebars', {
+					style: 'forgotPass.css',
+				});
+			} else {
+				const emailSent = req.session.emailSent;
+				req.session.validLink = true;
+				const emailVerified = req.session.emailVerified;
+				console.log(req.session.email, 'req.session.email en reset');
+				res.render('resetPassword.handlebars', {
+					emailSent,
+					emailVerified,
+					style: 'forgotPass.css',
+				});
+			}
+		});
+		*/
+
+		this.get('/resetPassword', ['PUBLIC'], (req, res) => {
+			const { emailSent } = req.session;
 			res.render('resetPassword.handlebars', {
 				emailSent,
 				style: 'forgotPass.css',
 			});
 		});
 
-		// AGREGAR VISTA modificación y eliminación de usuario
-		this.get('/premium', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
-			res.render('premium.handlebars', { style: 'premium.css' });
+		this.get('/forgotPassword/:uid', ['PUBLIC'], async (req, res) => {
+			if (req.session.emailSent) {
+				const user = await Users.findById(req.params);
+				const { email } = user;
+				res.render('forgotPassword.handlebars', {
+					user,
+					email,
+					style: 'forgotPass.css',
+				});
+			} else {
+				res.render('forgotPassword.handlebars', {
+					style: 'forgotPass.css',
+				});
+			}
 		});
 
-		this.get('/purchase', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
-			res.render('purchase.handlebars', { style: 'purchase.css' });
+		this.get('/premium', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
+			const { user } = req.session;
+			const isPremium = user.role === 'PREMIUM';
+			res.render('premium.handlebars', {
+				user,
+				isPremium,
+				style: 'premium.css',
+			});
 		});
+
+		this.get(
+			'/purchase',
+			['PUBLIC'] /* ['USER', 'PREMIUM', 'ADMIN'] */,
+			(req, res) => {
+				res.render('purchase.handlebars', { style: 'purchase.css' });
+			}
+		);
 	}
 }
 

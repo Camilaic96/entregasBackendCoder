@@ -8,6 +8,7 @@ const jwt = require('passport-jwt');
 const { comparePassword } = require('../utils/bcrypt.utils');
 const cookieExtractor = require('../utils/cookieExtractor.utils');
 const Users = require('../services/users.service');
+const Carts = require('../services/carts.service');
 
 const { github, google, jwtToken } = require('.');
 const { clientID_github, clientSecret_github } = github;
@@ -18,6 +19,7 @@ const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
+// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 const initializePassport = () => {
 	passport.use(
 		'register',
@@ -26,6 +28,7 @@ const initializePassport = () => {
 			async (req, username, password, done) => {
 				try {
 					const user = await Users.findOne({ email: username });
+					req.body.carts = await Carts.create();
 					if (user) {
 						req.logger.error('User already exists');
 						return done(null, false);
@@ -80,6 +83,7 @@ const initializePassport = () => {
 				try {
 					const user = await Users.findOne({ email: profile._json.email });
 					if (!user) {
+						const carts = await Carts.create();
 						const newUserInfo = {
 							first_name: profile._json.name,
 							last_name: '',
@@ -87,7 +91,7 @@ const initializePassport = () => {
 							email: profile._json.email,
 							password: ' ',
 							role: 'USER',
-							carts: [],
+							carts,
 						};
 						const newUser = await Users.create(newUserInfo);
 
@@ -114,6 +118,7 @@ const initializePassport = () => {
 					const user = await Users.findOne({ googleId: profile._json.sub });
 
 					if (!user) {
+						const carts = await Carts.create();
 						const newUserInfo = {
 							googleId: profile._json.sub,
 							first_name: profile._json.given_name,
@@ -122,7 +127,7 @@ const initializePassport = () => {
 							email: profile._json.email,
 							password: ' ',
 							role: 'USER',
-							carts: [],
+							carts,
 						};
 
 						const newUser = await Users.create(newUserInfo);

@@ -8,6 +8,7 @@ const {
 	notFoundProductErrorInfo,
 } = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');
+const SendEmail = require('../utils/email.utils.js');
 
 const mapProducts = prod => {
 	const products = prod.map(
@@ -143,9 +144,10 @@ const create = async (body, files, user) => {
 const updateOne = async (params, body, files, user) => {
 	try {
 		const { pid } = params;
+		const product = await Products.findOne({ _id: pid });
 		const { title, description, code, price, status, stock, category, owner } =
 			body;
-		if (user.role === 'PREMIUM' && user.email !== owner) {
+		if (user.role === 'PREMIUM' && user.email !== product.owner) {
 			console.log(
 				'You are not authorized to modify products that are not your own'
 			);
@@ -198,6 +200,13 @@ const updateOne = async (params, body, files, user) => {
 				new: true,
 			}
 		);
+		if (updateProduct.nModified !== 0 && product.owner !== 'ADMIN') {
+			SendEmail.sendEmail(
+				product.owner,
+				'Modification of a product in the database',
+				`The product with ID ${pid}, authored by you, has been modified in the database.`
+			);
+		}
 		if (updateProduct.nModified === 0) {
 			CustomErrors.createError({
 				name: 'Product not found in database',
@@ -224,6 +233,13 @@ const deleteOne = async (params, user) => {
 		}
 
 		const deleteProduct = await Products.deleteOne({ _id: pid });
+		if (deleteProduct.deletedCount !== 0 && product.owner !== 'ADMIN') {
+			SendEmail.sendEmail(
+				product.owner,
+				'Product removal from the database',
+				`The product with ID ${pid}, authored by you, has been removed from the database.`
+			);
+		}
 		if (deleteProduct.deletedCount === 0) {
 			CustomErrors.createError({
 				name: 'Product not found in database',

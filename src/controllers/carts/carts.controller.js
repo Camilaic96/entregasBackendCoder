@@ -3,8 +3,6 @@ const Route = require('../../router/router.js');
 const Carts = require('../../services/carts.service.js');
 const Tickets = require('../../services/tickets.service.js');
 const Products = require('../../services/products.service.js');
-const { usersRepository } = require('../../repositories');
-const Users = usersRepository;
 const { productsRepository } = require('../../repositories');
 const ProductsRepo = productsRepository;
 
@@ -19,7 +17,7 @@ const EnumErrors = require('../../utils/errors/Enum.errors.js');
 
 class CartRouter extends Route {
 	init() {
-		this.get('/', ['ADMIN'], async (req, res) => {
+		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const carts = await Carts.find();
 				res.sendSuccess(carts);
@@ -28,6 +26,7 @@ class CartRouter extends Route {
 			}
 		});
 
+		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/:cid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
 			try {
 				const { user } = req.session;
@@ -48,7 +47,6 @@ class CartRouter extends Route {
 						total: item.quantity * item.product.price,
 					};
 				});
-				console.log(products);
 				res.render('cartId.handlebars', {
 					products,
 					cartId: cartById._id,
@@ -83,25 +81,7 @@ class CartRouter extends Route {
 				try {
 					const { cid } = req.params;
 					const { user } = req.session;
-					const cart = await Carts.createProductInCart(
-						req.params,
-						req.body,
-						user
-					);
-
-					const existingCartIndex = user.carts.findIndex(
-						existingCart => existingCart._id === cart._id
-					);
-					console.log(existingCartIndex);
-					if (existingCartIndex !== -1) {
-						user.carts[existingCartIndex] = { ...cart };
-					} else {
-						user.carts.push({ ...cart });
-					}
-
-					await Users.findOneAndUpdate({ _id: user._id }, user, {
-						new: true,
-					});
+					await Carts.createProductInCart(req.params, req.body, user);
 					res.redirect(`/api/carts/${cid}`);
 					// res.sendSuccess('Product added to the cart successfully');
 				} catch (error) {
@@ -152,9 +132,10 @@ class CartRouter extends Route {
 			}
 		);
 
+		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.delete(
 			'/:cid/products/:pid',
-			['USER', 'PREMIUM'],
+			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
 					const { pid } = req.params;
@@ -171,8 +152,10 @@ class CartRouter extends Route {
 						});
 					}
 					cart.products.splice(index, 1);
+					console.log(cart);
 					await Carts.updateOne(req.params, cart);
-					res.sendSuccess('Product deleted successfully');
+					res.sendSuccess('Product successfully removed from the cart.');
+					// res.redirect(`/api/carts/${cart._id}`);
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
@@ -194,6 +177,7 @@ class CartRouter extends Route {
 			res.json({ message: 'All carts deleted' });
 		});
 
+		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get(
 			'/:cid/purchase',
 			['USER', 'PREMIUM', 'ADMIN'],
@@ -232,9 +216,24 @@ class CartRouter extends Route {
 							productsPurchase.push(product);
 						}
 					}
+					if (productsPurchase.length === 0) {
+						res.json({ message: 'not stock of any product' });
+					}
 					const t = await Tickets.create(productsPurchase, user.email);
-					cart.products = productsOutOfStock;
-					await Carts.updateOne({ _id: cart._id }, cart);
+					cart.products = [];
+
+					const productsOutOfStockFormatted = productsOutOfStock.map(
+						product => {
+							return {
+								product: product._id,
+								quantity: product.quantity,
+							};
+						}
+					);
+
+					cart.products.push(...productsOutOfStockFormatted);
+					req.params.cid = cart._id;
+					await Carts.updateOne(req.params, cart);
 					const ticket = {
 						code: t.code,
 						purchase_datetime: t.purchase_datetime,
@@ -244,6 +243,7 @@ class CartRouter extends Route {
 					res.render('ticket.handlebars', {
 						ticket,
 						productsOutOfStock,
+						productsPurchase,
 						style: 'ticket.css',
 					});
 					// res.sendSuccess(ticket, productsOutOfStock);

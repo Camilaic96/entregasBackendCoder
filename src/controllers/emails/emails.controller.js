@@ -9,26 +9,29 @@ class EmailRouter extends Route {
 	init() {
 		this.post('/', ['PUBLIC'], async (req, res) => {
 			try {
-				const { to } = req.body;
+				const { to, subject, message, urlRedirect } = req.body;
+				// req.session.email = to;
+				console.log(to);
 				const user = await Users.findOne({ email: to });
-				req.session.emailSent = false;
+				console.log(user);
+				// req.session.emailSent = false;
 				if (user) {
 					const mailOptions = {
 						from: emailUser,
 						to,
-						subject: 'Reset password',
+						subject,
 						html: `
 							<div>
-								<h1>Click <a href="http://localhost:8080/api/forgotPassword">here</a> to reset your password</h1>
+								<h1>${message}</h1>
 							</div>
 						`,
 						attachments: [],
 					};
 					await transport.sendMail(mailOptions);
-					req.session.emailSent = true;
-					res.redirect('/api/resetPassword');
+					// req.session.emailSent = true;
+					res.redirect(302, urlRedirect);
 				} else {
-					res.redirect('/api/resetPassword');
+					res.redirect(302, urlRedirect);
 				}
 			} catch (error) {
 				// req.logger.error(error);

@@ -9,7 +9,7 @@ class UserDTO {
 		this.email = user.email || uuidV4() + 'error@email';
 		this.age = user.age;
 		this.password = user.password;
-		this.carts = user.carts || [];
+		this.carts = user.carts;
 		this.role = user.role || 'USER';
 		this.documents = user.documents || [];
 		this.last_connection = user.last_connection || {

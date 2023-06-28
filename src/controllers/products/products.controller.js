@@ -10,24 +10,28 @@ const FilesManager = new FilesDao('Products.json');
 
 class ProductRouter extends Route {
 	init() {
+		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
-				const cart =
-					user.carts.length !== 0
-						? user.carts[user.carts.length - 1]
-						: await Carts.create();
-				const isUser = user.role === 'USER';
 				const products = await Products.find(req.query);
-				console.log(cart);
+				if (user) {
+					const idCart = user.carts._id || user.carts;
+					const isUser = user.role === 'USER';
+					res.render('products.handlebars', {
+						products,
+						user,
+						isUser,
+						idCart,
+						style: 'products.css',
+					});
+				} else {
+					res.render('products.handlebars', {
+						products,
+						style: 'products.css',
+					});
+				}
 				// res.sendSuccess(products);
-				res.render('products.handlebars', {
-					products,
-					user,
-					isUser,
-					idCart: cart._id,
-					style: 'products.css',
-				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -46,23 +50,26 @@ class ProductRouter extends Route {
 			}
 		});
 
+		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
-				const cart =
-					user.carts.length !== 0
-						? user.carts[user.carts.length - 1]._doc
-						: await Carts.create();
-				const isUser = user.role === 'USER';
 				const product = await Products.findOne(req.params);
+				if (user) {
+					res.render('productId.handlebars', {
+						product,
+						user,
+						isUser: user.role === 'USER',
+						idCart: user.carts._id || user.carts,
+						style: 'products.css',
+					});
+				} else {
+					res.render('productId.handlebars', {
+						product,
+						style: 'products.css',
+					});
+				}
 				// res.sendSuccess(product);
-				res.render('productId.handlebars', {
-					product,
-					user,
-					isUser,
-					idCart: cart._id,
-					style: 'products.css',
-				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}

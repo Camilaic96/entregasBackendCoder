@@ -1,0 +1,58 @@
+[
+	{
+		"first_name": "Admin prueba 0",
+        "last_name": "Pass: 123",
+        "email": "prueba0admin@gmail.com",
+        "age": 40,
+        "password": "123",
+        "role": "ADMIN"
+	},
+	{
+		"first_name": "Admin prueba 1",
+        "last_name": "Pass: 1234",
+        "email": "prueba1admin@gmail.com",
+        "age": 30,
+        "password": "1234",
+        "role": "ADMIN"
+	},
+	{
+		"first_name": "Admin prueba 2",
+        "last_name": "Pass: 12345",
+        "email": "prueba2admin@gmail.com",
+        "age": 20,
+        "password": "12345",
+        "role": "ADMIN"
+	},
+	{
+		"first_name": "User prueba 0",
+        "last_name": "Pass: 123",
+        "email": "prueba0user@gmail.com",
+        "age": 45,
+        "password": "123",
+        "role": "USER"
+	},
+	{
+		"first_name": "User prueba 1",
+        "last_name": "Pass: 1234",
+        "email": "prueba1user@gmail.com",
+        "age": 35,
+        "password": "1234",
+        "role": "USER"
+	},
+	{
+		"first_name": "User prueba 2",
+        "last_name": "Pass: 12345",
+        "email": "prueba2user@gmail.com",
+        "age": 25,
+        "password": "12345",
+        "role": "USER"
+	},
+	{
+		"first_name": "Admin",
+        "last_name": "Coder Pass: adminCod3r123",
+        "email": "prueba2user@gmail.com",
+        "age": 25,
+        "password": "12345",
+        "role": "ADMIN"
+	}
+]

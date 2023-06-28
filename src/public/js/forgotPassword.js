@@ -3,10 +3,14 @@ const form = document.getElementById('forgotPasswordForm');
 form.addEventListener('submit', e => {
 	e.preventDefault();
 
+	const emailUserElement = document.getElementById('email');
+	const emailUser = emailUserElement.textContent;
+
 	const data = new FormData(form);
 	const obj = {};
 
 	data.forEach((value, key) => (obj[key] = value));
+	obj.email = emailUser;
 
 	const url = '/api/auth/forgotPassword';
 	const headers = {

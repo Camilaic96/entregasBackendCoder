@@ -51,6 +51,22 @@ class UsersRepository {
 			throw error;
 		}
 	}
+
+	async deleteOne(param) {
+		try {
+			return await this.dao.deleteOne(param);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async deleteMany() {
+		try {
+			return await this.dao.deleteMany();
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 module.exports = UsersRepository;

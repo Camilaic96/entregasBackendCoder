@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const passport = require('passport');
 
 const uploader = require('../../utils/multer.js');
@@ -5,16 +6,38 @@ const Users = require('../../services/users.service.js');
 const UserDTO = require('../../DTOs/User.dto.js');
 const SessionDTO = require('../../DTOs/Session.dto.js');
 const Route = require('../../router/router.js');
+const SendEmail = require('../../utils/email.utils.js');
 
 class UserRouter extends Route {
 	init() {
-		this.get('/', ['ADMIN'], async (req, res) => {
+		this.get('/', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
 			try {
 				const users = await Users.find();
 				const usersPrincipalData = users.map(user => ({
 					user: new SessionDTO(user),
 				}));
-				res.sendSuccess(usersPrincipalData);
+				res.render('panelAdmin.handlebars', {
+					users: usersPrincipalData,
+					style: 'purchase.css',
+				});
+				// res.sendSuccess(usersPrincipalData);
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
+
+		this.get('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+			try {
+				const user = await Users.findById(req.params);
+				const { _id, first_name, last_name, email, role } = user;
+				res.render('userId.handlebars', {
+					_id,
+					first_name,
+					last_name,
+					email,
+					role,
+					style: 'products.css',
+				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -44,10 +67,12 @@ class UserRouter extends Route {
 			res.sendServerError('Registration failed');
 		});
 
-		this.put('/premium/:uid', ['USER'], async (req, res) => {
+		this.put('/premium/:uid', ['PUBLIC'] /* ['USER'] */, async (req, res) => {
 			try {
-				const userPremium = await Users.updatePremium(req.params);
-				res.sendSuccess(userPremium);
+				const user = await Users.updatePremium(req.params);
+				console.log(user);
+				req.session.user = user;
+				res.redirect(302, '/api/premium');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -55,7 +80,7 @@ class UserRouter extends Route {
 
 		this.post(
 			'/:uid/documents',
-			['USER', 'PREMIUM'],
+			['PUBLIC'] /* ['USER', 'PREMIUM'] */,
 			uploader.array('documents'),
 			async (req, res) => {
 				try {
@@ -65,7 +90,7 @@ class UserRouter extends Route {
 					);
 					res.sendSuccess(user);
 
-					const files = req.files;
+					const files = req.documents;
 
 					res.sendSuccess(
 						`Tus archivos ${files[0].filename} se cargaron correctamente`
@@ -76,10 +101,49 @@ class UserRouter extends Route {
 			}
 		);
 
-		// deberá limpiar a todos los usuarios que no hayan tenido 	conexión en los últimos 2 días. (puedes hacer pruebas con los 	últimos 30 minutos, por ejemplo). Deberá enviarse un correo indicando al usuario que su cuenta ha sido eliminada por inactividad
-		this.delete('/', ['ADMIN'], async (req, res) => {
-			// eslint-disable-next-line no-empty
+		this.patch('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
 			try {
+				const { uid } = req.params;
+				const user = await Users.findById(req.params);
+				const { userRole } = req.body;
+				user.role = userRole || user.role;
+				await Users.findOneAndUpdate(uid, user);
+				res.redirect(302, '/api/users');
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
+
+		this.delete('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+			try {
+				await Users.deleteOne(req.params);
+				res.redirect(302, '/api/users');
+			} catch (error) {
+				res.sendServerError(`Something went wrong. ${error}`);
+			}
+		});
+
+		this.delete('/inactive', ['ADMIN'], async (req, res) => {
+			try {
+				const maxDaysOfInactivity = new Date();
+				maxDaysOfInactivity.setDate(maxDaysOfInactivity.getDate() - 2);
+
+				const users = await Users.find();
+				const inactiveUsers = users.filter(user => {
+					return user.last_connection.logout_date < maxDaysOfInactivity;
+				});
+
+				inactiveUsers.forEach(async user => {
+					const { _id } = user;
+					req.params = _id.toString();
+					await Users.deleteOne(req.params);
+					SendEmail.sendEmail(
+						user.email,
+						'Account deactivation due to inactivity',
+						'Your account has been deactivated due to inactivity.'
+					);
+				});
+				res.redirect(302, '/api/users');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
