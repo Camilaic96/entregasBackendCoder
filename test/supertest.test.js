@@ -3,10 +3,10 @@
 /* eslint-disable no-undef */
 const chai = require('chai');
 const supertest = require('supertest');
-const { port } = require('../src/config');
+const { PORT } = require('../src/config');
 
 const expect = chai.expect;
-const requester = supertest(`http://localhost:${port}`);
+const requester = supertest(`http://localhost:${PORT}`);
 
 describe('Testing Ecommerce Backend Coder', () => {
 	describe('Test de products', () => {

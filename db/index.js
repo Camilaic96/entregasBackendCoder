@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const { db } = require('../src/config');
-const { mongoUrl } = db;
+const { MONGO_URL } = db;
 
 class MongoConnect {
 	static #instance;
@@ -13,7 +13,7 @@ class MongoConnect {
 	async mongoConnect() {
 		try {
 			mongoose.set('strictQuery', false);
-			await mongoose.connect(mongoUrl);
+			await mongoose.connect(MONGO_URL);
 			console.log('Successful connections to db');
 		} catch (error) {
 			console.log(`Something went wrong. ${error}`);
