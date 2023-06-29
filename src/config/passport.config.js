@@ -11,9 +11,9 @@ const Users = require('../services/users.service');
 const Carts = require('../services/carts.service');
 
 const { github, google, jwtToken } = require('.');
-const { clientID_github, clientSecret_github } = github;
-const { clientID_google, clientSecret_google } = google;
-const { secretKey } = jwtToken;
+const { CLIENT_ID_GITHUB, CLIENT_SECRET_GITHUB, URL_GITHUB } = github;
+const { CLIENT_ID_GOOGLE, CLIENT_SECRET_GOOGLE, URL_GOOGLE } = google;
+const { SECRET_KEY } = jwtToken;
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -75,9 +75,9 @@ const initializePassport = () => {
 		'github',
 		new GitHubStrategy(
 			{
-				clientID: clientID_github,
-				clientSecret: clientSecret_github,
-				callbackURL: 'http://localhost:8080/api/auth/githubcallback',
+				clientID: CLIENT_ID_GITHUB,
+				clientSecret: CLIENT_SECRET_GITHUB,
+				callbackURL: URL_GITHUB,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
@@ -109,9 +109,9 @@ const initializePassport = () => {
 		'google',
 		new GoogleStrategy(
 			{
-				clientID: clientID_google,
-				clientSecret: clientSecret_google,
-				callbackURL: 'http://localhost:8080/api/auth/google/callback',
+				clientID: CLIENT_ID_GOOGLE,
+				clientSecret: CLIENT_SECRET_GOOGLE,
+				callbackURL: URL_GOOGLE,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
@@ -147,7 +147,7 @@ const initializePassport = () => {
 		new JWTStrategy(
 			{
 				jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-				secretOrKey: secretKey,
+				secretOrKey: SECRET_KEY,
 			},
 			async (jwt_payload, done) => {
 				try {

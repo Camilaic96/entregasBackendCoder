@@ -22,15 +22,17 @@ const config = {
 		dbPassword: process.env.DB_PASSWORD || 'admin',
 	},
 	github: {
-		clientID_github: process.env.CLIENT_ID_GITHUB,
-		clientSecret_github: process.env.CLIENT_SECRET_GITHUB,
+		CLIENT_ID_GITHUB: process.env.CLIENT_ID_GITHUB,
+		CLIENT_SECRET_GITHUB: process.env.CLIENT_SECRET_GITHUB,
+		URL_GITHUB: process.env.URL_GITHUB,
 	},
 	google: {
-		clientID_google: process.env.CLIENT_ID_GOOGLE,
-		clientSecret_google: process.env.CLIENT_SECRET_GOOGLE,
+		CLIENT_ID_GOOGLE: process.env.CLIENT_ID_GOOGLE,
+		CLIENT_SECRET_GOOGLE: process.env.CLIENT_SECRET_GOOGLE,
+		URL_GOOGLE: process.env.URL_GOOGLE,
 	},
 	jwtToken: {
-		secretKey: process.env.SECRET_KEY,
+		SECRET_KEY: process.env.SECRET_KEY,
 	},
 	persistence: process.env.PERSISTENCE || 'memory',
 	email: {
