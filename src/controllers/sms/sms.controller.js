@@ -1,3 +1,4 @@
+/*
 const twilio = require('twilio');
 const Route = require('../../router/router');
 const { sms } = require('../../config');
@@ -29,3 +30,4 @@ const smsRouter = new SmsRouter();
 const smsController = smsRouter.getRouter();
 
 module.exports = smsController;
+*/
