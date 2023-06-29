@@ -10,11 +10,7 @@ class EmailRouter extends Route {
 		this.post('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { to, subject, message, urlRedirect } = req.body;
-				// req.session.email = to;
-				console.log(to);
 				const user = await Users.findOne({ email: to });
-				console.log(user);
-				// req.session.emailSent = false;
 				if (user) {
 					const mailOptions = {
 						from: emailUser,

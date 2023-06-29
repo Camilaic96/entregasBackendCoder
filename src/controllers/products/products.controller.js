@@ -14,7 +14,6 @@ class ProductRouter extends Route {
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
-				console.log(user);
 				const products = await Products.find(req.query);
 				if (user) {
 					const idCart = user.carts._id || user.carts;

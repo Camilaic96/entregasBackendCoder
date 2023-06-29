@@ -52,7 +52,6 @@ productElements.forEach(productElement => {
 			_id: pid,
 			quantity,
 		};
-		console.log({ quantity });
 
 		const url = `/api/carts/${cid}/products/${pid}`;
 		const headers = {
@@ -79,7 +78,6 @@ productElements.forEach(productElement => {
 		objC.forEach(function (ob) {
 			if (ob.pid === pid) {
 				quantityContainer.textContent = ob.counter;
-				console.log(ob.counter);
 			}
 		});
 	}

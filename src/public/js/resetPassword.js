@@ -7,7 +7,6 @@ form.addEventListener('submit', e => {
 	const obj = {};
 
 	data.forEach((value, key) => (obj[key] = value));
-	console.log(obj);
 
 	const url = '/api/auth/resetPassword';
 	const headers = {

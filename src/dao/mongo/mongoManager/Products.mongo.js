@@ -4,7 +4,6 @@ const Product = require('../models/Products.model');
 class ProductsMongoDAO {
 	async find(filter, optionsFind) {
 		try {
-			console.log('llega a find en dao');
 			const products = await Product.paginate(filter, optionsFind);
 			return products;
 		} catch (error) {

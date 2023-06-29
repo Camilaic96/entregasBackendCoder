@@ -160,7 +160,6 @@ class CartRouter extends Route {
 						});
 					}
 					cart.products.splice(index, 1);
-					console.log(cart);
 					await Carts.updateOne(req.params, cart);
 					res.sendSuccess('Product successfully removed from the cart.');
 					// res.redirect(`/api/carts/${cart._id}`);

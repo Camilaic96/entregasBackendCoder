@@ -34,7 +34,7 @@ const config = {
 	jwtToken: {
 		SECRET_KEY: process.env.SECRET_KEY,
 	},
-	persistence: process.env.PERSISTENCE || 'memory',
+	PERSISTENCE: process.env.PERSISTENCE || 'memory',
 	email: {
 		EMAIL_SERVICE: process.env.EMAIL_SERVICE,
 		EMAIL_PORT: process.env.EMAIL_PORT,

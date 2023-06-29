@@ -43,7 +43,6 @@ const mapProducts = prod => {
 
 const find = async query => {
 	try {
-		console.log('llega a find en services');
 		const limit = parseInt(query.limit) || 10;
 		const page = parseInt(query.page) || 1;
 		let sort = query.sort ? query.sort.toLowerCase() : '';
@@ -61,11 +60,7 @@ const find = async query => {
 			...(category && { category }),
 			...(stock && { stock: parseInt(stock) }),
 		};
-		console.log('antes de mandar en service');
-		console.log(filter);
-		console.log(optionsFind);
 		const productsDB = await Products.find(filter, optionsFind);
-		console.log(productsDB);
 		const products = mapProducts(productsDB.docs);
 		return products;
 	} catch (error) {

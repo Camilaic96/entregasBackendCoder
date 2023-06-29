@@ -10,7 +10,7 @@ const SendEmail = require('../../utils/email.utils.js');
 
 class UserRouter extends Route {
 	init() {
-		this.get('/', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+		this.get('/', ['ADMIN'], async (req, res) => {
 			try {
 				const users = await Users.find();
 				const usersPrincipalData = users.map(user => ({
@@ -26,7 +26,7 @@ class UserRouter extends Route {
 			}
 		});
 
-		this.get('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+		this.get('/:uid', ['ADMIN'], async (req, res) => {
 			try {
 				const user = await Users.findById(req.params);
 				const { _id, first_name, last_name, email, role } = user;
@@ -67,10 +67,9 @@ class UserRouter extends Route {
 			res.sendServerError('Registration failed');
 		});
 
-		this.put('/premium/:uid', ['PUBLIC'] /* ['USER'] */, async (req, res) => {
+		this.put('/premium/:uid', ['USER'], async (req, res) => {
 			try {
 				const user = await Users.updatePremium(req.params);
-				console.log(user);
 				req.session.user = user;
 				res.redirect(302, '/api/premium');
 			} catch (error) {
@@ -80,7 +79,7 @@ class UserRouter extends Route {
 
 		this.post(
 			'/:uid/documents',
-			['PUBLIC'] /* ['USER', 'PREMIUM'] */,
+			['USER', 'PREMIUM'],
 			uploader.array('documents'),
 			async (req, res) => {
 				try {
@@ -101,7 +100,7 @@ class UserRouter extends Route {
 			}
 		);
 
-		this.patch('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+		this.patch('/:uid', ['ADMIN'], async (req, res) => {
 			try {
 				const { uid } = req.params;
 				const user = await Users.findById(req.params);
@@ -114,7 +113,7 @@ class UserRouter extends Route {
 			}
 		});
 
-		this.delete('/:uid', ['PUBLIC'] /* ['ADMIN'] */, async (req, res) => {
+		this.delete('/:uid', ['ADMIN'], async (req, res) => {
 			try {
 				await Users.deleteOne(req.params);
 				res.redirect(302, '/api/users');
