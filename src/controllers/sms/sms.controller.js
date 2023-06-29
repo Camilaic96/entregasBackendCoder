@@ -3,6 +3,7 @@ const Route = require('../../router/router');
 const { sms } = require('../../config');
 
 const { smsAccountSID, smsAuthToken, smsPhoneNumber } = sms;
+console.log(sms);
 const client = twilio(smsAccountSID, smsAuthToken);
 
 class SmsRouter extends Route {
