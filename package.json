@@ -5,6 +5,7 @@
 	"type": "commonjs",
 	"scripts": {
 		"test": "mocha",
+		"start": "node src/index.js --mode production",
 		"start:local": "node src/index.js --mode local",
 		"start:dev": "nodemon src/index.js --mode development",
 		"start:prod": "nodemon src/index.js --mode production",
