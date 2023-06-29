@@ -3,8 +3,8 @@ const Route = require('../../router/router.js');
 const Carts = require('../../services/carts.service.js');
 const Tickets = require('../../services/tickets.service.js');
 const Products = require('../../services/products.service.js');
-const { productsRepository } = require('../../repositories');
-const ProductsRepo = productsRepository;
+// const { productsRepository } = require('../../repositories');
+// const ProductsRepo = productsRepository;
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
@@ -213,7 +213,7 @@ class CartRouter extends Route {
 							const updateProduct = {
 								stock: productDB.stock - product.quantity,
 							};
-							await ProductsRepo.updateOne(
+							await Products.updateQuantity(
 								{ _id: product._id },
 								updateProduct,
 								{

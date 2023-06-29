@@ -32,5 +32,5 @@ class TicketMongoDAO {
 		}
 	}
 }
-
-module.exports = TicketMongoDAO;
+const Tickets = new TicketMongoDAO();
+module.exports = Tickets;

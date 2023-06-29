@@ -1,6 +1,6 @@
 const Cart = require('../models/Carts.model');
 
-class CartDao {
+class CartsMongoDAO {
 	constructor(file) {
 		this.file = `${process.cwd()}/src/files/${file}`;
 	}
@@ -68,5 +68,5 @@ class CartDao {
 		}
 	}
 }
-
-module.exports = CartDao;
+const Carts = new CartsMongoDAO();
+module.exports = Carts;

@@ -1,6 +1,8 @@
 /* eslint-disable no-useless-catch */
-const { productsRepository } = require('../repositories');
-const Products = productsRepository;
+// const { productsRepository } = require('../repositories');
+// const Products = productsRepository;
+
+const Products = require('../dao/mongo/mongoManager/Products.mongo');
 const ProductDTO = require('../DTOs/Product.dto.js');
 const CustomErrors = require('../utils/errors/Custom.errors');
 const {
@@ -41,6 +43,7 @@ const mapProducts = prod => {
 
 const find = async query => {
 	try {
+		console.log('llega a find en services');
 		const limit = parseInt(query.limit) || 10;
 		const page = parseInt(query.page) || 1;
 		let sort = query.sort ? query.sort.toLowerCase() : '';
@@ -58,7 +61,11 @@ const find = async query => {
 			...(category && { category }),
 			...(stock && { stock: parseInt(stock) }),
 		};
+		console.log('antes de mandar en service');
+		console.log(filter);
+		console.log(optionsFind);
 		const productsDB = await Products.find(filter, optionsFind);
+		console.log(productsDB);
 		const products = mapProducts(productsDB.docs);
 		return products;
 	} catch (error) {
@@ -139,6 +146,10 @@ const create = async (body, files, user) => {
 	} catch (error) {
 		throw error;
 	}
+};
+
+const updateQuantity = async (param, newProduct) => {
+	await updateOne(param, newProduct);
 };
 
 const updateOne = async (params, body, files, user) => {
@@ -269,6 +280,7 @@ module.exports = {
 	insertMany,
 	create,
 	updateOne,
+	updateQuantity,
 	deleteOne,
 	deleteMany,
 };

@@ -1,3 +1,4 @@
+/*
 const UsersRepository = require('./User.repository');
 const ProductsRepository = require('./Product.repository');
 const CartsRepository = require('./Cart.repository');
@@ -15,3 +16,10 @@ module.exports = {
 	cartsRepository,
 	ticketsRepository,
 };
+*/
+const UsersDao = require('../dao/factory');
+const UserRepository = require('./User.repository');
+
+const userRepository = new UserRepository(new UsersDao());
+
+module.exports = userRepository;

@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-catch */
-const { cartsRepository } = require('../repositories');
-const Carts = cartsRepository;
+// const { cartsRepository } = require('../repositories');
+// const Carts = cartsRepository;
+const Carts = require('../dao/mongo/mongoManager/Carts.mongo');
 const CustomErrors = require('../utils/errors/Custom.errors');
 const { notFoundCartErrorInfo } = require('../utils/errors/info.errors');
 const EnumErrors = require('../utils/errors/Enum.errors');

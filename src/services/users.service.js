@@ -1,8 +1,7 @@
 /* eslint-disable no-useless-catch */
 
 const UserDTO = require('../DTOs/User.dto');
-const { usersRepository } = require('../repositories');
-const Users = usersRepository;
+const Users = require('../repositories');
 
 const CustomErrors = require('../utils/errors/Custom.errors');
 const {
