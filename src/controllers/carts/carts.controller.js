@@ -76,13 +76,21 @@ class CartRouter extends Route {
 
 		this.post(
 			'/:cid/products/:pid',
-			['USER', 'PREMIUM', 'ADMIN'],
+			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
 			async (req, res) => {
 				try {
 					const { cid } = req.params;
 					const { user } = req.session;
-					await Carts.createProductInCart(req.params, req.body, user);
-					res.redirect(`/api/carts/${cid}`);
+					const cart = await Carts.createProductInCart(
+						req.params,
+						req.body,
+						user
+					);
+					cart
+						? res.redirect(`/api/carts/${cid}`)
+						: res.sendUserError(
+								'Error trying to add product to cart. You are not authorized to add a product of your authorship to the carts'
+						  );
 					// res.sendSuccess('Product added to the cart successfully');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -135,7 +143,7 @@ class CartRouter extends Route {
 		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.delete(
 			'/:cid/products/:pid',
-			['USER', 'PREMIUM', 'ADMIN'],
+			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
 			async (req, res) => {
 				try {
 					const { pid } = req.params;

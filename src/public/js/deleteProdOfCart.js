@@ -1,85 +1,109 @@
-const deleteProdOfCartBtn = document.getElementById('deleteProdOfCartBtn');
-deleteProdOfCartBtn.addEventListener('click', () => {
-	const idProductElement = document.getElementById('pid');
+let counter = 0;
+const idCartElement = document.getElementById('cid');
+const cid = idCartElement.textContent;
+// Get all product elements
+const productElements = document.querySelectorAll('[id^="product-"]');
+const objC = [];
+
+// Iterate over each product element
+productElements.forEach(productElement => {
+	const idProductElement = productElement.querySelector('[id^="pid"]');
 	const pid = idProductElement.textContent;
-	const idCartElement = document.getElementById('cid');
-	const cid = idCartElement.textContent;
 
-	const url = `/api/carts/${cid}/products/${pid}`;
-	const headers = {
-		'Content-Type': 'application/json',
-	};
-	const method = 'DELETE';
+	const quantityContainer = productElement.querySelector(`#quantity-${pid}`);
+	counter = parseInt(quantityContainer.textContent);
 
-	fetch(url, {
-		headers,
-		method,
-	})
-		.then(response =>
-			response.redirected
-				? (window.location.href = response.url)
-				: response.json()
-		)
-		.then(data => console.log(data))
-		.catch(error => console.log(error));
-});
+	objC.push({ pid, counter, lastQuantity: counter });
 
-const incrementBtn = document.getElementById('incrementBtn');
-incrementBtn.addEventListener('click', incrementQuantity);
-
-const decrementBtn = document.getElementById('decrementBtn');
-decrementBtn.addEventListener('click', decrementQuantity);
-
-const checkQuantityBtn = document.getElementById('checkQuantityBtn');
-checkQuantityBtn.addEventListener('click', () => {
-	const idProductElement = document.getElementById('pid');
-	const pid = idProductElement.textContent;
-	const idCartElement = document.getElementById('cid');
-	const cid = idCartElement.textContent;
-	const obj = {
-		_id: pid,
-		quantity: counter - q,
-	};
-
-	const url = `/api/carts/${cid}/products/${pid}`;
-	const headers = {
-		'Content-Type': 'application/json',
-	};
-	const method = 'POST';
-	const body = JSON.stringify(obj);
-
-	fetch(url, {
-		headers,
-		method,
-		body,
-	})
-		.then(response =>
-			response.redirected
-				? (window.location.href = response.url)
-				: response.json()
-		)
-		.then(data => console.log(data))
-		.catch(error => console.log(error));
-});
-
-const quantityContainer = document.getElementById('quantity');
-const q = quantityContainer.textContent;
-
-let counter = q;
-
-function incrementQuantity() {
-	counter++;
-	updateQuantity();
-}
-
-function decrementQuantity() {
-	if (counter > 0) {
-		counter--;
+	const incrementBtn = productElement.querySelector(`#incrementBtn-${pid}`);
+	incrementBtn.addEventListener('click', () => {
+		objC.forEach(function (ob) {
+			if (ob.pid === pid) {
+				ob.counter++;
+			}
+		});
 		updateQuantity();
-	}
-}
+	});
 
-function updateQuantity() {
-	const counterElement = document.getElementById('quantity');
-	counterElement.textContent = counter.toString();
-}
+	const decrementBtn = productElement.querySelector(`#decrementBtn-${pid}`);
+	decrementBtn.addEventListener('click', () => {
+		objC.forEach(function (ob) {
+			if (ob.pid === pid) {
+				if (ob.counter > 0) {
+					ob.counter--;
+				}
+			}
+		});
+		updateQuantity();
+	});
+
+	const checkQuantityBtn = productElement.querySelector(
+		`#checkQuantityBtn-${pid}`
+	);
+	checkQuantityBtn.addEventListener('click', () => {
+		const quantityContainer = productElement.querySelector(`#quantity-${pid}`);
+		let quantity = parseInt(quantityContainer.textContent);
+		objC.forEach(function (ob) {
+			if (ob.pid === pid) {
+				quantity -= ob.lastQuantity;
+			}
+		});
+		const obj = {
+			_id: pid,
+			quantity,
+		};
+		console.log({ quantity });
+
+		const url = `/api/carts/${cid}/products/${pid}`;
+		const headers = {
+			'Content-Type': 'application/json',
+		};
+		const method = 'POST';
+		const body = JSON.stringify(obj);
+
+		fetch(url, {
+			headers,
+			method,
+			body,
+		})
+			.then(response =>
+				response.redirected
+					? (window.location.href = response.url)
+					: response.json()
+			)
+			.then(data => console.log(data))
+			.catch(error => console.log(error));
+	});
+
+	function updateQuantity() {
+		objC.forEach(function (ob) {
+			if (ob.pid === pid) {
+				quantityContainer.textContent = ob.counter;
+				console.log(ob.counter);
+			}
+		});
+	}
+
+	const deleteProdOfCartBtn = productElement.querySelector(
+		`#deleteProdOfCartBtn-${pid}`
+	);
+	deleteProdOfCartBtn.addEventListener('click', () => {
+		const url = `/api/carts/${cid}/products/${pid}`;
+		const headers = {
+			'Content-Type': 'application/json',
+		};
+		const method = 'DELETE';
+
+		fetch(url, {
+			headers,
+			method,
+		})
+			.then(response =>
+				response.redirected
+					? (window.location.href = response.url)
+					: response.json()
+			)
+			.then(data => console.log(data))
+			.catch(error => console.log(error));
+	});
+});

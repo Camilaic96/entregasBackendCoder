@@ -16,52 +16,23 @@ class ViewRouter extends Route {
 		});
 
 		this.get('/login', ['PUBLIC'], (req, res) => {
+			if (req.session.user) {
+				res.redirect('/api/products');
+			}
 			res.render('login.handlebars', { style: 'login.css' });
 		});
 
 		this.get('/signup', ['PUBLIC'], (req, res) => {
+			if (req.session.user) {
+				res.redirect('/api/products');
+			}
 			res.render('signup.handlebars', { style: 'signup.css' });
 		});
 
-		/*
-		this.get('/forgotPassword', ['PUBLIC'], (req, res) => {
-			const { email } = req.body;
-			console.log(email, 'email body forgot');
-			console.log(req.session.email, 'req.session.email en forgot');
-			if (!req.session.validLink || email !== req.session.email) {
-				const validLink = false;
-				res.render('forgotPassword.handlebars', {
-					validLink,
-					style: 'forgotPass.css',
-				});
-			}
-			const validLink = true;
-			res.render('forgotPassword.handlebars', {
-				validLink,
-				style: 'forgotPass.css',
-			});
-		});
-
 		this.get('/resetPassword', ['PUBLIC'], (req, res) => {
-			if (!req.session.emailVerified) {
-				res.render('resetPassword.handlebars', {
-					style: 'forgotPass.css',
-				});
-			} else {
-				const emailSent = req.session.emailSent;
-				req.session.validLink = true;
-				const emailVerified = req.session.emailVerified;
-				console.log(req.session.email, 'req.session.email en reset');
-				res.render('resetPassword.handlebars', {
-					emailSent,
-					emailVerified,
-					style: 'forgotPass.css',
-				});
+			if (req.session.user) {
+				res.redirect('/api/products');
 			}
-		});
-		*/
-
-		this.get('/resetPassword', ['PUBLIC'], (req, res) => {
 			const { emailSent } = req.session;
 			res.render('resetPassword.handlebars', {
 				emailSent,
@@ -70,6 +41,9 @@ class ViewRouter extends Route {
 		});
 
 		this.get('/forgotPassword/:uid', ['PUBLIC'], async (req, res) => {
+			if (req.session.user) {
+				res.redirect('/api/products');
+			}
 			if (req.session.emailSent) {
 				const user = await Users.findById(req.params);
 				const { email } = user;
@@ -85,7 +59,7 @@ class ViewRouter extends Route {
 			}
 		});
 
-		this.get('/premium', ['PUBLIC'] /* ['ADMIN'] */, (req, res) => {
+		this.get('/premium', ['ADMIN'], (req, res) => {
 			const { user } = req.session;
 			const isPremium = user.role === 'PREMIUM';
 			res.render('premium.handlebars', {
@@ -95,13 +69,9 @@ class ViewRouter extends Route {
 			});
 		});
 
-		this.get(
-			'/purchase',
-			['PUBLIC'] /* ['USER', 'PREMIUM', 'ADMIN'] */,
-			(req, res) => {
-				res.render('purchase.handlebars', { style: 'purchase.css' });
-			}
-		);
+		this.get('/purchase', ['USER', 'PREMIUM', 'ADMIN'], (req, res) => {
+			res.render('purchase.handlebars', { style: 'purchase.css' });
+		});
 	}
 }
 

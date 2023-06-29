@@ -56,7 +56,14 @@ const createProductInCart = async (params, body, user) => {
 		const { pid, cid } = params;
 		const product = await Products.findOne(params);
 		if (user.role === 'PREMIUM' && user.email === product.owner) {
-			return 'You are not authorized to add a product of your authorship to the cart';
+			// return 'You are not authorized to add a product of your authorship to the cart';
+			CustomErrors.createError({
+				name: 'Cart not found in database',
+				cause: notFoundCartErrorInfo(cid),
+				message:
+					'Error trying to add product to cart. You are not authorized to add a product of your authorship to the cart',
+				code: EnumErrors.NOT_FOUND,
+			});
 		}
 		const cart = await Carts.findOne({ _id: cid });
 		const { quantity } = body;
