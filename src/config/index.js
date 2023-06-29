@@ -15,6 +15,7 @@ const config = {
 	mode,
 	port: process.env.PORT || 8080,
 	db: {
+		mongoUrl: process.env.MONGO_URL,
 		dbHost: process.env.DB_HOST,
 		dbName: process.env.DB_NAME || '',
 		dbAdmin: process.env.DB_ADMIN || 'admin',

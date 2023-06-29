@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const { db } = require('../src/config');
-const { dbHost, dbName, dbAdmin, dbPassword } = db;
+const { mongoUrl } = db;
 
 class MongoConnect {
 	static #instance;
@@ -13,10 +13,8 @@ class MongoConnect {
 	async mongoConnect() {
 		try {
 			mongoose.set('strictQuery', false);
-			await mongoose.connect(
-				`mongodb+srv://${dbAdmin}:${dbPassword}@${dbHost}/${dbName}?retryWrites=true&w=majority`
-			);
-			console.log('Successfull connections to db');
+			await mongoose.connect(mongoUrl);
+			console.log('Successful connections to db');
 		} catch (error) {
 			console.log(`Something went wrong. ${error}`);
 		}
