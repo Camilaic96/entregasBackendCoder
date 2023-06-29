@@ -1,9 +1,5 @@
 const MongoConnect = require('../../db');
 const { persistence } = require('../config/index');
-const UsersDAO = require('./mongo/mongoManager/Users.mongo');
-const ProductsDAO = require('./mongo/mongoManager/Products.mongo');
-const CartsDAO = require('./mongo/mongoManager/Carts.mongo');
-const TicketsDAO = require('./mongo/mongoManager/Tickets.mongo');
 
 switch (persistence) {
 	case 'memory':
@@ -12,10 +8,10 @@ switch (persistence) {
 	case 'mongo':
 		MongoConnect.getInstance();
 		module.exports = {
-			UsersDAO,
-			ProductsDAO,
-			CartsDAO,
-			TicketsDAO,
+			UsersDAO: require('./mongo/mongoManager/Users.mongo'),
+			ProductsDAO: require('./mongo/mongoManager/Products.mongo'),
+			CartsDAO: require('./mongo/mongoManager/Carts.mongo'),
+			TicketsDAO: require('./mongo/mongoManager/Tickets.mongo'),
 		};
 		break;
 }
