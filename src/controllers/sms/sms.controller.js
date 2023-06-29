@@ -1,10 +1,11 @@
+/*
 const twilio = require('twilio');
 const Route = require('../../router/router');
 const { sms } = require('../../config');
 
-const { smsAccountSID, smsAuthToken, smsPhoneNumber } = sms;
+const { SMS_ACCOUNT_SID, SMS_AUTH_TOKEN, SMS_PHONE_NUMBER } = sms;
 console.log(sms);
-const client = twilio(smsAccountSID, smsAuthToken);
+const client = twilio(SMS_ACCOUNT_SID, SMS_AUTH_TOKEN);
 
 class SmsRouter extends Route {
 	init() {
@@ -12,7 +13,7 @@ class SmsRouter extends Route {
 			try {
 				const { to, message } = req.body;
 				const smsOptions = {
-					from: smsPhoneNumber,
+					from: SMS_PHONE_NUMBER,
 					to,
 					body: message,
 				};
@@ -29,3 +30,4 @@ const smsRouter = new SmsRouter();
 const smsController = smsRouter.getRouter();
 
 module.exports = smsController;
+*/

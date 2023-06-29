@@ -1,33 +1,20 @@
 const nodemailer = require('nodemailer');
 const { email } = require('../config');
-const { emailService, emailPort, emailUser, emailPass } = email;
-
-/*
-const transport = nodemailer.createTransport({
-	service: emailService,
-	port: emailPort,
-	auth: {
-		user: emailUser,
-		pass: emailPass,
-	},
-});
-
-module.exports = transport;
-*/
+const { EMAIL_SERVICE, EMAIL_PORT, EMAIL_USER, EMAIL_PASS } = email;
 
 class SendEmail {
 	static transporter = nodemailer.createTransport({
-		service: emailService,
-		port: emailPort,
+		service: EMAIL_SERVICE,
+		port: EMAIL_PORT,
 		auth: {
-			user: emailUser,
-			pass: emailPass,
+			user: EMAIL_USER,
+			pass: EMAIL_PASS,
 		},
 	});
 
 	static sendEmail = (to, subject, message) => {
 		const mailOptions = {
-			from: emailUser,
+			from: EMAIL_USER,
 			to,
 			subject,
 			html: `

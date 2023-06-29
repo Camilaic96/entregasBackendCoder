@@ -34,15 +34,15 @@ const config = {
 	},
 	persistence: process.env.PERSISTENCE || 'memory',
 	email: {
-		emailService: process.env.EMAIL_SERVICE,
-		emailPort: process.env.EMAIL_PORT,
-		emailUser: process.env.EMAIL_USER,
-		emailPass: process.env.EMAIL_PASS,
+		EMAIL_SERVICE: process.env.EMAIL_SERVICE,
+		EMAIL_PORT: process.env.EMAIL_PORT,
+		EMAIL_USER: process.env.EMAIL_USER,
+		EMAIL_PASS: process.env.EMAIL_PASS,
 	},
 	sms: {
-		smsAccountSID: process.env.SMS_ACCOUNT_SID,
-		smsAuthToken: process.env.SMS_AUTH_TOKEN,
-		smsPhoneNumber: process.env.SMS_PHONE_NUMBER,
+		SMS_ACCOUNT_SID: process.env.SMS_ACCOUNT_SID,
+		SMS_AUTH_TOKEN: process.env.SMS_AUTH_TOKEN,
+		SMS_PHONE_NUMBER: process.env.SMS_PHONE_NUMBER,
 	},
 };
 
