@@ -6,7 +6,7 @@ const {
 	messagesController,
 	usersController,
 	emailsController,
-	// smsController,
+	smsController,
 	sessionController,
 	mockingProductsController,
 	loggerTestController,
@@ -21,7 +21,7 @@ const router = app => {
 	app.use('/api/session', sessionController);
 	app.use('/api/messages', messagesController);
 	app.use('/api/emails', emailsController);
-	// app.use('/api/sms', smsController);
+	app.use('/api/sms', smsController);
 	app.use('/api/mockingproducts', mockingProductsController);
 	app.use('/api/loggerTest', loggerTestController);
 };
