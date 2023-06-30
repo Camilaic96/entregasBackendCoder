@@ -1,43 +1,46 @@
-{{#if user}}
-		<section id='section-welcome' class='m-5 d-flex justify-content-between'>
-			<div>
-				<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
-			</div>
-			<div class='d-flex align-items-center'>
-				<a href='/api/carts/{{idCart}}' class='btn'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
+<header id='header' class='p-4 d-flex justify-content-between align-items-center'>
+	<img src='/img/logo.png' alt='logo' width='100' class="mx-5">
+	{{#if user}}
+	<div>
+		<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
+	</div>
+	<div class='d-flex align-items-center'>
+				<a href='/api/carts/{{idCart}}' class='btn btn-light border'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
 				<div class='dropdown'>
-					<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+					<button class='dropdown-toggle border-0 p-2' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
 						<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
 					</button>
 					<ul class='dropdown-menu fs-4'>
 						<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
 						{{#if isUser}}
-							<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
+							<li><a href='/api/premium' class='dropdown-item'>Be Premium</a></li>
 						{{/if}}
 						<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
 					</ul>
 				</div>
 			</div>
-		</section>
-		{{#if isUser}}
-		{{else}}
+	{{else}}
 		<div>
-			<a href='/api/products/realtimeproducts' class='btn btn-secondary fs-5 m-3'>Manage products</a>
+			<a href='/api/login' class='btn btn-outline-dark fs-4 m-4'>Log in</a>	
+			<a href='/api/signup' class='btn btn-outline-dark fs-4 m-4'>Sign up</a>	
 		</div>
-		{{/if}}
-{{else}}
-		<section class='m-5 d-flex justify-content-end'>
-			<a href='/api/login' class='btn btn-secondary fs-5 m-3'>Log in</a>	
-			<a href='/api/signup' class='btn btn-secondary fs-5 m-3'>Sign up</a>	
-		</section>
+	{{/if}}
+</header>
+
+{{#if user}}
+	{{#if isUser}}
+	{{else}}
+		<div class="d-flex justify-content-end p-3">
+			<a href='/api/products/realtimeproducts' class='btn btn-outline-dark fs-5'>Manage products</a>
+		</div>
+	{{/if}}
 {{/if}}
 
 <section id='section-products' class='m-5'>
-	<h2 class='text-center'>Products</h2>	
 	<div class='row d-flex justify-content-evenly'>
-		<div class='d-flex justify-content-end mx-5'>	
+		<div class='d-flex justify-content-center'>	
 			<div class='dropdown'>
-				<button class='dropdown-toggle border-0 fs-4' type='button' data-bs-toggle='dropdown' aria-expanded='false'>Sort by:</button>
+				<button class='dropdown-toggle border-0 fs-3' type='button' data-bs-toggle='dropdown' aria-expanded='false'>Sort by:</button>
 				<ul class='dropdown-menu fs-4'>
 					<li><a href='/api/products?sort=ASC' class='dropdown-item'>By price - from lowest to highest.</a></li>
 					<li><a href='/api/products?sort=DESC' class='dropdown-item'>By price - from highest to lowest.</a></li>
@@ -45,18 +48,6 @@
 			</div>
 			<nav aria-label='Page navigation' class='mx-5'>
 				<ul class='pagination'>
-					<li class='page-item'>
-					<a class='page-link' href='#' aria-label='Previous'>
-						<span aria-hidden='true'>&laquo;</span>
-					</a>
-					</li>
-					<li class='page-item'><a class='page-link' href='/api/products?page=1'>1</a></li>
-					<li class='page-item'><a class='page-link' href='/api/products?page=2'>2</a></li>
-					<li class='page-item'>
-					<a class='page-link' href='#' aria-label='Next'>
-						<span aria-hidden='true'>&raquo;</span>
-					</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
@@ -76,3 +67,5 @@
 		{{/each}}
 	</div>
 </section>
+
+<script src='/js/pagination.js'></script>

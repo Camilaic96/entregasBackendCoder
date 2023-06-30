@@ -1,16 +1,13 @@
-/* eslint-disable no-unused-vars */
 const uploader = require('../../utils/multer.js');
 const Route = require('../../router/router.js');
 
 const Products = require('../../services/products.service.js');
-const Carts = require('../../services/carts.service.js');
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const FilesManager = new FilesDao('Products.json');
 
 class ProductRouter extends Route {
 	init() {
-		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
@@ -18,6 +15,7 @@ class ProductRouter extends Route {
 				if (user) {
 					const idCart = user.carts._id || user.carts;
 					const isUser = user.role === 'USER';
+
 					res.render('products.handlebars', {
 						products,
 						user,
@@ -50,7 +48,6 @@ class ProductRouter extends Route {
 			}
 		});
 
-		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/:pid', ['PUBLIC'], async (req, res) => {
 			try {
 				const { user } = req.session;
