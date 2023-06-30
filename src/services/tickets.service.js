@@ -1,6 +1,4 @@
 /* eslint-disable no-useless-catch */
-// const { ticketsRepository } = require('../repositories');
-// const Tickets = ticketsRepository;
 const Tickets = require('../dao/mongo/mongoManager/Tickets.mongo');
 const TicketDTO = require('../DTOs/Ticket.dto.js');
 

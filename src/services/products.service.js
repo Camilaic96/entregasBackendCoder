@@ -144,7 +144,8 @@ const create = async (body, files, user) => {
 };
 
 const updateQuantity = async (param, newProduct) => {
-	await updateOne(param, newProduct);
+	const updateQuantityProduct = await Products.updateOne(param, newProduct);
+	return updateQuantityProduct;
 };
 
 const updateOne = async (params, body, files, user) => {

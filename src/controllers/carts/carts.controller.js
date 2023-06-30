@@ -3,8 +3,6 @@ const Route = require('../../router/router.js');
 const Carts = require('../../services/carts.service.js');
 const Tickets = require('../../services/tickets.service.js');
 const Products = require('../../services/products.service.js');
-// const { productsRepository } = require('../../repositories');
-// const ProductsRepo = productsRepository;
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
@@ -26,7 +24,6 @@ class CartRouter extends Route {
 			}
 		});
 
-		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get('/:cid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
 			try {
 				const { user } = req.session;
@@ -140,7 +137,6 @@ class CartRouter extends Route {
 			}
 		);
 
-		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.delete(
 			'/:cid/products/:pid',
 			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
@@ -184,7 +180,6 @@ class CartRouter extends Route {
 			res.json({ message: 'All carts deleted' });
 		});
 
-		// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 		this.get(
 			'/:cid/purchase',
 			['USER', 'PREMIUM', 'ADMIN'],
@@ -200,12 +195,10 @@ class CartRouter extends Route {
 					});
 					const productsOutOfStock = [];
 					const productsPurchase = [];
-
 					for (let i = 0; i < products.length; i++) {
 						const product = products[i];
 						req.params.pid = product._id;
 						const productDB = await Products.findOne(req.params);
-
 						if (!productDB || product.quantity > productDB.stock) {
 							productsOutOfStock.push(product);
 						} else {
