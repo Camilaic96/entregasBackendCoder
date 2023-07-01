@@ -71,7 +71,7 @@ class UserRouter extends Route {
 			try {
 				const user = await Users.updatePremium(req.params);
 				req.session.user = user;
-				res.redirect(302, '/api/premium');
+				res.redirect(303, '/api/premium');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -107,7 +107,7 @@ class UserRouter extends Route {
 				const { userRole } = req.body;
 				user.role = userRole || user.role;
 				await Users.findOneAndUpdate(uid, user);
-				res.redirect(302, '/api/users');
+				res.redirect(303, '/api/users');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -116,7 +116,7 @@ class UserRouter extends Route {
 		this.delete('/:uid', ['ADMIN'], async (req, res) => {
 			try {
 				await Users.deleteOne(req.params);
-				res.redirect(302, '/api/users');
+				res.redirect(303, '/api/users');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}
@@ -142,7 +142,7 @@ class UserRouter extends Route {
 						'Your account has been deactivated due to inactivity.'
 					);
 				});
-				res.redirect(302, '/api/users');
+				res.redirect(303, '/api/users');
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
 			}

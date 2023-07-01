@@ -26,7 +26,7 @@ if (currentSortLink) {
 	currentSortLink.classList.add('active');
 }
 
-const sortLinks = document.querySelectorAll('.dropdown-menu a');
+const sortLinks = document.querySelectorAll('.sort a');
 sortLinks.forEach(link => {
 	link.addEventListener('click', e => {
 		e.preventDefault();

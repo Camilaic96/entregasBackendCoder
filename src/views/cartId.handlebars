@@ -1,72 +1,83 @@
-{{#if user}}
-		<section id='section-welcome' class='m-5 d-flex justify-content-between'>
-			<div>
-				<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
-			</div>
-			<div class='d-flex align-items-center'>
-				<div class='dropdown'>
-					<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
-						<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
-					</button>
-					<ul class='dropdown-menu fs-4'>
-						<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
-						{{#if isUser}}
-							<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
-						{{/if}}
-						<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
-					</ul>
-				</div>
-			</div>
-		</section>
-{{else}}
-		<section class='m-5 d-flex justify-content-end'>
-			<a href='/api/login' class='btn btn-secondary fs-5 m-3'>Log in</a>	
-			<a href='/api/signup' class='btn btn-secondary fs-5 m-3'>Sign up</a>	
-		</section>
-{{/if}}
+<header id='header' class='p-4 d-flex justify-content-between align-items-center'>
+	<img src='/img/logo.png' alt='logo' width='100' class="mx-5">
+	{{#if user}}
+	<div>
+		<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
+	</div>
+	<div class='d-flex align-items-center'>
+		<div class='dropdown mx-3'>
+			<button class='dropdown-toggle border-0 p-2' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+				<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
+			</button>
+			<ul class='dropdown-menu fs-4'>
+				<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
+					{{#if isUser}}
+						<li><a href='/api/premium' class='dropdown-item'>Be Premium</a></li>
+					{{/if}}
+				<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
+			</ul>
+		</div>
+	</div>
+	{{else}}
+		<div>
+			<a href='/api/login' class='btn btn-outline-dark fs-4 m-4'>Log in</a>	
+			<a href='/api/signup' class='btn btn-outline-dark fs-4 m-4'>Sign up</a>	
+		</div>
+	{{/if}}
+</header>
 
-<section  class='m-5'>
-    <h2 class='text-center'>Products added to the cart</h2>
-	<div class='row d-flex justify-content-center'>
-		<div class='card col-md-10 m-3 fs-4 border-0'>
-			<div class='card-body d-flex justify-content-between'>
-				<p class='card-text bold col-md-2'>Title</p>
-				<p class='card-text bold col-md-2'>Description</p>
-				<p class='card-text bold col-md-2'>Price</p>
-				<p class='card-text bold col-md-2'>Quantity</p>
-				<p class='card-text bold col-md-2'>Total</p>
+<main id="main">
+	<div class='m-5'>
+		<a href='/api/products' class='btn btn-outline-dark fs-4 m-4'>Continue shopping</a>
+	</div>
+
+	<section class="m-3" id="section-cart">
+		<div class='row d-flex justify-content-center'>
+			<div class="row">
+				<table class="table fs-3">
+					<thead>
+						<tr>
+							<th scope="col">Title</th>
+							<th scope="col">Description</th>
+							<th scope="col" class="text-center">Price</th>
+							<th scope="col" class="text-center">Quantity</th>
+							<th scope="col" class="text-center">Total</th>
+							<th scope="col">&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each products}}
+							<p id="cid" hidden>{{../cartId}}</p>
+							<tr id="product-{{this.id}}">
+								<td class="align-middle">{{this.title}}</td>
+								<td class="align-middle">{{this.description}}</td>
+								<td class="text-center align-middle">${{this.price}}</td>
+								<td class="text-center align-middle">
+									<div class="btn-group d-flex flex-column align-items-center bold" role="group" aria-label="quantity product" id="updateQuantityContainer-{{this.id}}">
+										<p id="pid" hidden>{{this.id}}</p>
+										<button type="button" class="btn col-md-3" id="incrementBtn-{{this.id}}">+</button>
+										<div class="d-flex border justify-content-between col-md-3 align-items-center">
+											<button type="button" class="fs-3 border-0 text-dark" id="quantity-{{this.id}}" disabled>{{this.quantity}}</button>
+											<button class="border-0" id="checkQuantityBtn-{{this.id}}"><img src="/img/check.svg" alt="dropdown account" width="32" height="32"></button>
+										</div>
+										<button type="button" class="btn col-md-3" id="decrementBtn-{{this.id}}">-</button>
+									</div>
+								</td>
+								<td class="text-center align-middle">${{this.total}}</td>
+								<td class="text-center align-middle">
+									<button class='btn btn-secondary fs-3' id='deleteProdOfCartBtn-{{this.id}}'><img src='/img/delete.png' alt='dropdown account' width='32' height='32'></button>
+								</td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
 			</div>
 		</div>
-		{{#each products}}
-			<div class='card col-md-10 m-3 fs-4' id="product-{{this.id}}">
-				<div class='card-body d-flex justify-content-between '>
-					<p id="cid" hidden>{{../cartId}}</p>
-					<p class='card-text bold col-md-2'>{{this.title}}</p>
-					<p class='card-text bold col-md-2'>{{this.description}}</p>
-					<p class='card-text bold col-md-2'>${{this.price}}</p>
-					<div class='btn-group d-flex flex-column card-text bold col-md-2' role='group' aria-label='quantity product' id="updateQuantityContainer-{{this.id}}">
-						<p id="pid" hidden>{{this.id}}</p>
-						<button type='button' class='btn' id='incrementBtn-{{this.id}}'>+</button>
-						<div class="d-flex border justify-content-between">
-							<button type='button' class='fs-3 border-0 mx-5 text-dark' id='quantity-{{this.id}}' disabled>{{this.quantity}}</button>
-							<button class='btn btn-secondary fs-3 m-3 col-md-6 border-0' id='checkQuantityBtn-{{this.id}}'>check</button>
-						</div>
-						<button type='button' class='btn' id='decrementBtn-{{this.id}}'>-</button>
-					</div>
-					<p class='card-text bold col-md-2'>${{this.total}}</p>
-					<button class='btn btn-secondary fs-3' id='deleteProdOfCartBtn-{{this.id}}'><img src='/img/delete.png' alt='dropdown account' width='32' height='32'></button>
-				</div>
-			</div>
-		{{/each}}
-	</div>
-	<div class="row justify-content-end">
-	<a href='/api/carts/{{cartId}}/purchase' class='btn btn-success m-3 fs-3 col-md-2'>Purchase</a>
-</div>
-</section>
-
-<div>
-	<a href='/api/products' class='btn btn-secondary m-3 fs-3'>See all products</a>
-</div>
+		<div class="row justify-content-end">
+			<a href='/api/carts/{{cartId}}/purchase' class='btn btn-success m-3 fs-3 col-md-2'>Proceed to checkout</a>
+		</div>
+	</section>
+</main>
 
 
-<script src='/js/deleteProdOfCart.js'></script>
+<script src='/js/productsOfCart.js'></script>

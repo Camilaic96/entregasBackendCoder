@@ -48,7 +48,7 @@ class CartRouter extends Route {
 					products,
 					cartId: cartById._id,
 					user,
-					style: 'products.css',
+					style: 'cartId.css',
 				});
 			} catch (error) {
 				res.sendServerError(`Something went wrong. ${error}`);
@@ -73,7 +73,7 @@ class CartRouter extends Route {
 
 		this.post(
 			'/:cid/products/:pid',
-			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
+			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
 					const { cid } = req.params;
@@ -139,7 +139,7 @@ class CartRouter extends Route {
 
 		this.delete(
 			'/:cid/products/:pid',
-			/* ['USER', 'PREMIUM', 'ADMIN'] */ ['PUBLIC'],
+			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
 					const { pid } = req.params;
@@ -157,8 +157,8 @@ class CartRouter extends Route {
 					}
 					cart.products.splice(index, 1);
 					await Carts.updateOne(req.params, cart);
-					res.sendSuccess('Product successfully removed from the cart.');
-					// res.redirect(`/api/carts/${cart._id}`);
+					res.redirect(303, `/api/carts/${cart._id}`);
+					// res.sendSuccess('Product successfully removed from the cart.');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
 				}
