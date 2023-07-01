@@ -26,3 +26,10 @@ body {
 #main {
     padding-top: 300px;
 }
+
+#ticket-purchase{
+    border: 1px solid rgb(35, 35, 131);
+    margin: 50px 0px;
+    padding: 20px;
+    box-shadow: 0 0 5px rgb(24, 19, 49);
+}

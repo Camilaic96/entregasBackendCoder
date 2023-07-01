@@ -58,12 +58,12 @@ class ProductRouter extends Route {
 						user,
 						isUser: user.role === 'USER',
 						idCart: user.carts._id || user.carts,
-						style: 'products.css',
+						style: 'productId.css',
 					});
 				} else {
 					res.render('productId.handlebars', {
 						product,
-						style: 'products.css',
+						style: 'productId.css',
 					});
 				}
 				// res.sendSuccess(product);

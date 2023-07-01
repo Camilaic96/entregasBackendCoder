@@ -52,6 +52,11 @@ class UserRouter extends Route {
 			async (req, res) => {
 				try {
 					req.session.user = new UserDTO(req.user);
+					SendEmail.sendEmail(
+						req.user.email,
+						'Account created successfully.',
+						`Welcome, ${req.user.first_name}! Your account on TA has been created successfully.`
+					);
 					res.redirect('/api/products');
 					// res.sendSuccessCreated(req.session.user);
 				} catch (error) {

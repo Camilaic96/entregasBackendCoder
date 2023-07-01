@@ -1,6 +1,5 @@
 <header id='header' class='p-4 d-flex justify-content-between align-items-center'>
 	<img src='/img/logo.png' alt='logo' width='100' class="mx-5">
-	{{#if user}}
 	<div>
 		<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
 	</div>
@@ -18,12 +17,6 @@
 			</ul>
 		</div>
 	</div>
-	{{else}}
-		<div>
-			<a href='/api/login' class='btn btn-outline-dark fs-4 m-4'>Log in</a>	
-			<a href='/api/signup' class='btn btn-outline-dark fs-4 m-4'>Sign up</a>	
-		</div>
-	{{/if}}
 </header>
 
 <main id="main">

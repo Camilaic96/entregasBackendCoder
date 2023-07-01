@@ -1,66 +1,66 @@
-{{#if user}}
-		<section id='section-welcome' class='m-5 d-flex justify-content-between'>
-			<div>
-				<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
-			</div>
-			<div class='d-flex align-items-center'>
-				<a href='/api/carts/{{idCart}}' class='btn'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
-				<div class='dropdown'>
-					<button class='dropdown-toggle border-0' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+<header id='header' class='p-4 d-flex justify-content-between align-items-center'>
+	<img src='/img/logo.png' alt='logo' width='100' class="mx-5">
+	{{#if user}}
+	<div>
+		<p class='fs-3'>Welcome <span class='bold '>{{user.first_name}} {{user.last_name}}</span></p>
+	</div>
+	<div class='d-flex align-items-center'>
+				<a href='/api/carts/{{idCart}}' class='btn btn-light border mx-3'><img src='/img/cart.svg' alt='cart' width='32' height='32'></a>
+				<div class='dropdown mx-3'>
+					<button class='dropdown-toggle border-0 p-2' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
 						<img src='/img/account.png' alt='dropdown account' width='32' height='32'>
 					</button>
 					<ul class='dropdown-menu fs-4'>
 						<li><a href='/api/profile' class='dropdown-item'>Profile</a></li>
 						{{#if isUser}}
-							<li><a href='/api/premium' class='dropdown-item'>Premium</a></li>
+							<li><a href='/api/premium' class='dropdown-item'>Be Premium</a></li>
 						{{/if}}
 						<li><a href='/api/auth/logout' class='dropdown-item'>Log out</a></li>
 					</ul>
 				</div>
 			</div>
-		</section>
+	{{else}}
 		<div>
-			<a href='/api/products/realtimeproducts' class='btn btn-secondary fs-5 m-3'>Manage products</a>
+			<a href='/api/login' class='btn btn-outline-dark fs-4 m-4'>Log in</a>	
+			<a href='/api/signup' class='btn btn-outline-dark fs-4 m-4'>Sign up</a>	
 		</div>
-{{else}}
-		<section class='m-5 d-flex justify-content-end'>
-			<a href='/api/login' class='btn btn-secondary fs-5 m-3'>Log in</a>	
-			<a href='/api/signup' class='btn btn-secondary fs-5 m-3'>Sign up</a>	
-		</section>
-{{/if}}
+	{{/if}}
+</header>
 
-<div class='d-flex align-items-center justify-content-center flex-column offset-2 col-md-8'>
-	<div class='card fs-5 col-md-6'>
-		<div class='card-body'>
-			<p class='card-text'>Id: <span class='bold'>{{product._id}}</span></p>
-			<p class='card-text'>Title: <span class='bold'>{{product.title}}</span></p>
-			<p class='card-text'>Description: <span class='bold'>{{product.description}}</span></p>
-			<p class='card-text'>Code: <span class='bold'>{{product.code}}</span></p>
-			<p class='card-text'>Price: <span class='bold'>{{product.price}}</span></p>
-			<p class='card-text'>Stock: <span class='bold'>{{product.stock}}</span></p>
-			<p class='card-text'>Category: <span class='bold'>{{product.category}}</span></p>
-			<p class='card-text'>Status: <span class='bold'>{{product.status}}</span></p>
-			<p class='card-text'>Thumbnail: <span class='bold'>{{product.thumbnail}}</span></p>
-		</div>
-		<div class='d-flex align-items-center flex-column'>
-			<div class='btn-group col-md-6 m-3' role='group' aria-label='quantity product'>
-				<button type='button' class='btn btn-secondary fs-3' id='decrementBtn'>-</button>
-				<button type='button' class='btn btn-secondary fs-3' id='quantity' disabled>0</button>
-				<button type='button' class='btn btn-secondary fs-3' id='incrementBtn'>+</button>
+<main id="main">
+	<div class='d-flex align-items-center justify-content-center flex-column offset-2 col-md-8'>
+		<div class='card fs-5 col-md-6'>
+			<div class='card-body'>
+				<p class='card-text'>Id: <span class='bold'>{{product._id}}</span></p>
+				<p class='card-text'>Title: <span class='bold'>{{product.title}}</span></p>
+				<p class='card-text'>Description: <span class='bold'>{{product.description}}</span></p>
+				<p class='card-text'>Code: <span class='bold'>{{product.code}}</span></p>
+				<p class='card-text'>Price: <span class='bold'>{{product.price}}</span></p>
+				<p class='card-text'>Stock: <span class='bold'>{{product.stock}}</span></p>
+				<p class='card-text'>Category: <span class='bold'>{{product.category}}</span></p>
+				<p class='card-text'>Thumbnail: <span class='bold'>{{product.thumbnail}}</span></p>
 			</div>
-			<p hidden id='idCart'>{{idCart}}</p>
-			<p hidden id='idProduct'>{{product._id}}</p>
-			{{#if user}}
-				<button class='btn btn-secondary fs-3 m-3 col-md-6' id='addProductBtn'>Add to cart</button>
-			{{else}}
-				<a href='/api/login' class='btn btn-danger m-3 fs-3'>Log in to start shopping</a>
-			{{/if}}
+			<div class='d-flex align-items-center flex-column'>
+				<div class='btn-group col-md-6 m-3' role='group' aria-label='quantity product'>
+					<button type='button' class='btn btn-outline-dark fs-4' id='decrementBtn'>-</button>
+					<button type='button' class='btn btn-outline-dark fs-4' id='quantity' disabled>0</button>
+					<button type='button' class='btn btn-outline-dark fs-4' id='incrementBtn'>+</button>
+				</div>
+				<p hidden id='idCart'>{{idCart}}</p>
+				<p hidden id='idProduct'>{{product._id}}</p>
+				{{#if user}}
+					<button class='btn btn-outline-success fs-3 m-4' id='addProductBtn'>Add to cart</button>
+				{{else}}
+					<a href='/api/login' class='btn btn-danger m-3 fs-3'>Log in to start shopping</a>
+				{{/if}}
+			</div>
+		</div>
+
+		<div class="m-3">
+			<a href='/api/products' class='btn btn-outline-dark fs-4 m-4'>See all products</a>
 		</div>
 	</div>
+</main>
 
-	<div>
-		<a href='/api/products' class='btn btn-secondary m-3 fs-3'>See all products</a>
-	</div>
-</div>
 
 <script src='/js/addProduct.js'></script>

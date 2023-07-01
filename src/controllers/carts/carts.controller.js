@@ -7,6 +7,8 @@ const Products = require('../../services/products.service.js');
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
 
+const SendEmail = require('../../utils/email.utils.js');
+
 const CustomErrors = require('../../utils/errors/Custom.errors.js');
 const {
 	notFoundProductErrorInfo,
@@ -220,6 +222,11 @@ class CartRouter extends Route {
 						res.json({ message: 'not stock of any product' });
 					}
 					const t = await Tickets.create(productsPurchase, user.email);
+					SendEmail.sendEmail(
+						user.email,
+						'Purchase receipt',
+						`Purchase successfully completed. Reference code: ${t.code}`
+					);
 					cart.products = [];
 
 					const productsOutOfStockFormatted = productsOutOfStock.map(
@@ -241,6 +248,7 @@ class CartRouter extends Route {
 						purchaser: t.purchaser,
 					};
 					res.render('ticket.handlebars', {
+						user,
 						ticket,
 						productsOutOfStock,
 						productsPurchase,

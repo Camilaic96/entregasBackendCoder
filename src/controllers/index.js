@@ -5,7 +5,6 @@ module.exports = {
 	cartsController: require('./carts/carts.controller'),
 	messagesController: require('./messages/messages.controller'),
 	usersController: require('./users/users.controller'),
-	emailsController: require('./emails/emails.controller'),
 	smsController: require('./sms/sms.controller'),
 	sessionController: require('./sessions/session.controller'),
 	mockingProductsController: require('./mock/mockingProducts.controller'),
