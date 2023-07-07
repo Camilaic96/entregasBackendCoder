@@ -1,19 +1,11 @@
 const Route = require('../../router/router.js');
 
 const Carts = require('../../services/carts.service.js');
-const Tickets = require('../../services/tickets.service.js');
-const Products = require('../../services/products.service.js');
 
 const FilesDao = require('../../dao/memory/Files.dao.js');
 const CartManager = new FilesDao('Carts.json');
 
-const SendEmail = require('../../utils/email.utils.js');
-
-const CustomErrors = require('../../utils/errors/Custom.errors.js');
-const {
-	notFoundProductErrorInfo,
-} = require('../../utils/errors/info.errors.js');
-const EnumErrors = require('../../utils/errors/Enum.errors.js');
+const ProductCartDTO = require('../../DTOs/ProductCart.dto.js');
 
 class CartRouter extends Route {
 	init() {
@@ -32,19 +24,7 @@ class CartRouter extends Route {
 				const cartById = await Carts.findOne(req.params);
 				// res.sendSuccess(cartById);
 				const products = cartById.products.map(item => {
-					return {
-						id: item.product._id,
-						title: item.product.title,
-						description: item.product.description,
-						code: item.product.code,
-						price: item.product.price,
-						status: item.product.status,
-						stock: item.product.stock,
-						category: item.product.category,
-						thumbnail: item.product.thumbnail,
-						quantity: item.quantity,
-						total: item.quantity * item.product.price,
-					};
+					return new ProductCartDTO(item);
 				});
 				res.render('cartId.handlebars', {
 					products,
@@ -80,16 +60,8 @@ class CartRouter extends Route {
 				try {
 					const { cid } = req.params;
 					const { user } = req.session;
-					const cart = await Carts.createProductInCart(
-						req.params,
-						req.body,
-						user
-					);
-					cart
-						? res.redirect(`/api/carts/${cid}`)
-						: res.sendUserError(
-								'Error trying to add product to cart. You are not authorized to add a product of your authorship to the carts'
-						  );
+					await Carts.createProductInCart(req.params, req.body, user);
+					res.redirect(303, `/api/carts/${cid}`);
 					// res.sendSuccess('Product added to the cart successfully');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -116,22 +88,7 @@ class CartRouter extends Route {
 			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
-					const { pid } = req.params;
-					const { quantity } = req.body;
-					const cart = await Carts.findOne(req.params);
-					const index = cart.products.findIndex(
-						element => element.product._id.toString() === pid
-					);
-					if (index === -1) {
-						CustomErrors.createError({
-							name: 'Product not found in cart',
-							cause: notFoundProductErrorInfo(pid),
-							message: 'Error trying to find product',
-							code: EnumErrors.NOT_FOUND,
-						});
-					}
-					cart.products[index].quantity = quantity;
-					await Carts.updateOne(req.params, cart);
+					await Carts.updateQuantity(req.params, req.body);
 					res.sendSuccess('Quantity updated successfully');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -144,22 +101,9 @@ class CartRouter extends Route {
 			['USER', 'PREMIUM', 'ADMIN'],
 			async (req, res) => {
 				try {
-					const { pid } = req.params;
-					const cart = await Carts.findOne(req.params);
-					const index = cart.products.findIndex(
-						element => element.product._id.toString() === pid
-					);
-					if (index === -1) {
-						CustomErrors.createError({
-							name: 'Product not found in cart',
-							cause: notFoundProductErrorInfo(pid),
-							message: 'Error trying to delete product',
-							code: EnumErrors.NOT_FOUND,
-						});
-					}
-					cart.products.splice(index, 1);
-					await Carts.updateOne(req.params, cart);
-					res.redirect(303, `/api/carts/${cart._id}`);
+					const { cid } = req.params;
+					await Carts.deleteOneProductOfCart(req.params);
+					res.redirect(303, `/api/carts/${cid}`);
 					// res.sendSuccess('Product successfully removed from the cart.');
 				} catch (error) {
 					res.sendServerError(`Something went wrong. ${error}`);
@@ -188,65 +132,8 @@ class CartRouter extends Route {
 			async (req, res) => {
 				try {
 					const { user } = req.session;
-					const cart = await Carts.findOne(req.params);
-					const products = cart.products.map(product => {
-						return {
-							_id: product.product._id.toString(),
-							quantity: product.quantity,
-						};
-					});
-					const productsOutOfStock = [];
-					const productsPurchase = [];
-					for (let i = 0; i < products.length; i++) {
-						const product = products[i];
-						req.params.pid = product._id;
-						const productDB = await Products.findOne(req.params);
-						if (!productDB || product.quantity > productDB.stock) {
-							productsOutOfStock.push(product);
-						} else {
-							const updateProduct = {
-								stock: productDB.stock - product.quantity,
-							};
-							await Products.updateQuantity(
-								{ _id: product._id },
-								updateProduct,
-								{
-									new: true,
-								}
-							);
-							product.price = productDB.price;
-							productsPurchase.push(product);
-						}
-					}
-					if (productsPurchase.length === 0) {
-						res.json({ message: 'not stock of any product' });
-					}
-					const t = await Tickets.create(productsPurchase, user.email);
-					SendEmail.sendEmail(
-						user.email,
-						'Purchase receipt',
-						`Purchase successfully completed. Reference code: ${t.code}`
-					);
-					cart.products = [];
-
-					const productsOutOfStockFormatted = productsOutOfStock.map(
-						product => {
-							return {
-								product: product._id,
-								quantity: product.quantity,
-							};
-						}
-					);
-
-					cart.products.push(...productsOutOfStockFormatted);
-					req.params.cid = cart._id;
-					await Carts.updateOne(req.params, cart);
-					const ticket = {
-						code: t.code,
-						purchase_datetime: t.purchase_datetime,
-						amount: t.amount,
-						purchaser: t.purchaser,
-					};
+					const { ticket, productsOutOfStock, productsPurchase } =
+						await Carts.createPurchase(user, req.params);
 					res.render('ticket.handlebars', {
 						user,
 						ticket,

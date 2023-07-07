@@ -66,11 +66,6 @@ describe('Testing Ecommerce Backend Coder', () => {
 			expect(_body).to.have.property('status');
 			expect(_body.status).is.equal(400);
 		});
-		/*
-		it('El endpoint PUT /api/products debe poder actualizar correctamente a un producto determinada comparando el valor previo con el nuevo valor de la base de datos', async () => {});
-
-		it('El endpoint DELETE /api/product', async () => {});
-		*/
 	});
 
 	describe('Test de carts', () => {
@@ -103,19 +98,6 @@ describe('Testing Ecommerce Backend Coder', () => {
 			expect(_body.payload).to.have.property('products');
 			expect(_body.payload.products).to.be.an('array').that.is.empty;
 		});
-		/*
-		it('El endpoint POST /api/carts/:cid/products/:pid ', async () => {});
-
-		it('El endpoint PUT /api/carts/:cid ', async () => {});
-
-		it('El endpoint PUT /api/carts/:cid/products/:pid ', async () => {});
-
-		it('El endpoint DELETE /api/carts/:cid/products/:pid ', async () => {});
-
-		it('El endpoint DELETE /api/carts/:cid ', async () => {});
-
-		it('El endpoint GET /api/carts/:cid/purchase ', async () => {});
-	*/
 	});
 
 	describe('Test de session', () => {

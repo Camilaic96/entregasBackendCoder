@@ -1,7 +1,4 @@
 /* eslint-disable no-useless-catch */
-// const { productsRepository } = require('../repositories');
-// const Products = productsRepository;
-
 const Products = require('../dao/mongo/mongoManager/Products.mongo');
 const ProductDTO = require('../DTOs/Product.dto.js');
 const CustomErrors = require('../utils/errors/Custom.errors');

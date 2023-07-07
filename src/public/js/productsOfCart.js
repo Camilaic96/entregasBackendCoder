@@ -1,11 +1,9 @@
 let counter = 0;
 const idCartElement = document.getElementById('cid');
 const cid = idCartElement.textContent;
-// Get all product elements
 const productElements = document.querySelectorAll('[id^="product-"]');
 const objC = [];
 
-// Iterate over each product element
 productElements.forEach(productElement => {
 	const idProductElement = productElement.querySelector('[id^="pid"]');
 	const pid = idProductElement.textContent;

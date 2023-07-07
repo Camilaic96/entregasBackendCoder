@@ -19,7 +19,6 @@ const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
-// CAMBIADO CON NUEVA ESTRUCTURA DE CART
 const initializePassport = () => {
 	passport.use(
 		'register',

@@ -32,7 +32,7 @@ class AuthRouter extends Route {
 		);
 
 		this.get('/failLogin', ['PUBLIC'], (req, res) => {
-			// req.logger.error('Login failed');
+			req.logger.error('Login failed');
 			res.sendServerError('Login failed');
 		});
 

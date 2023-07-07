@@ -92,11 +92,6 @@ class ProductRouter extends Route {
 					const { user } = req.session;
 					const product = await Products.create(req.body, req.files, user);
 					res.sendSuccessCreated(product);
-					/* - borrado para que funcione test
-					await Products.create(req.body, req.files, user);
-					const products = await Products.find(req.query); 
-					res.render('products.handlebars', { products, user, style: 'products.css' });
-					*/
 				} catch (error) {
 					if (error.code === 2) {
 						res.sendUserError(`Something went wrong. ${error.cause}`);
